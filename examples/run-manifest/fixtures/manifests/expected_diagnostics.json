@@ -1,0 +1,176 @@
+{
+  "invalid/actuation_enabled.json": [
+    {
+      "code": "ACTUATION_NOT_NONE",
+      "path": "/action_space/actuation"
+    }
+  ],
+  "invalid/address_in_value.json": [
+    {
+      "code": "ADDRESS_IN_VALUE",
+      "path": "/placement/0/node"
+    }
+  ],
+  "invalid/censor_reason_missing.json": [
+    {
+      "code": "CENSOR_REASON_MISSING",
+      "path": "/outcome/censor_reason"
+    }
+  ],
+  "invalid/censoring_inconsistent.json": [
+    {
+      "code": "CENSORING_INCONSISTENT",
+      "path": "/outcome/censored"
+    }
+  ],
+  "invalid/clock_sync_incomplete.json": [
+    {
+      "code": "CLOCK_SYNC_INCOMPLETE",
+      "path": "/clocks/estimated_max_offset"
+    }
+  ],
+  "invalid/clocks_missing.json": [
+    {
+      "code": "CLOCK_MISSING",
+      "path": "/clocks"
+    }
+  ],
+  "invalid/duplicate_key.json": [
+    {
+      "code": "DUPLICATE_KEY",
+      "path": "/run/seed"
+    }
+  ],
+  "invalid/malformed_json.json": [
+    {
+      "code": "MALFORMED_JSON",
+      "path": ""
+    }
+  ],
+  "invalid/measurement_kind_mismatch.json": [
+    {
+      "code": "MEASUREMENT_KIND_MISMATCH",
+      "path": "/measurement_source/kind"
+    }
+  ],
+  "invalid/oci_digest_missing.json": [
+    {
+      "code": "DIGEST_MISSING",
+      "path": "/images/0/oci_digest"
+    }
+  ],
+  "invalid/oci_digest_placeholder.json": [
+    {
+      "code": "PLACEHOLDER_VALUE",
+      "path": "/images/0/oci_digest"
+    }
+  ],
+  "invalid/revision_missing_model.json": [
+    {
+      "code": "REVISION_MISSING",
+      "path": "/model/revision"
+    }
+  ],
+  "invalid/run_id_malformed.json": [
+    {
+      "code": "ID_MALFORMED",
+      "path": "/run/independent_run_id"
+    }
+  ],
+  "invalid/schema_version_unknown.json": [
+    {
+      "code": "SCHEMA_VERSION_UNKNOWN",
+      "path": "/schema_version"
+    }
+  ],
+  "invalid/secret_like_key.json": [
+    {
+      "code": "SECRET_LIKE_KEY",
+      "path": "/x_password"
+    }
+  ],
+  "invalid/seed_bool.json": [
+    {
+      "code": "BOOL_AS_NUMBER",
+      "path": "/run/seed"
+    }
+  ],
+  "invalid/seed_list.json": [
+    {
+      "code": "WRONG_TYPE",
+      "path": "/run/seed"
+    }
+  ],
+  "invalid/source_sha_malformed.json": [
+    {
+      "code": "HASH_MALFORMED",
+      "path": "/source/git_sha"
+    }
+  ],
+  "invalid/source_sha_missing.json": [
+    {
+      "code": "REVISION_MISSING",
+      "path": "/source/git_sha"
+    }
+  ],
+  "invalid/task_success_inconsistent.json": [
+    {
+      "code": "TASK_SUCCESS_INCONSISTENT",
+      "path": "/outcome/task_success/value"
+    }
+  ],
+  "invalid/time_order.json": [
+    {
+      "code": "TIME_ORDER",
+      "path": "/run/ended_utc"
+    }
+  ],
+  "invalid/timeout_nan.json": [
+    {
+      "code": "NON_FINITE_VALUE",
+      "path": "/run/timeout/value"
+    }
+  ],
+  "invalid/timestamp_impossible_date.json": [
+    {
+      "code": "TIMESTAMP_MALFORMED",
+      "path": "/run/started_utc"
+    }
+  ],
+  "invalid/timestamp_not_utc.json": [
+    {
+      "code": "TIMESTAMP_NOT_UTC",
+      "path": "/run/started_utc"
+    }
+  ],
+  "invalid/timestamp_trailing_newline.json": [
+    {
+      "code": "TIMESTAMP_MALFORMED",
+      "path": "/run/started_utc"
+    }
+  ],
+  "invalid/top_level_array.json": [
+    {
+      "code": "MALFORMED_DOCUMENT",
+      "path": ""
+    }
+  ],
+  "invalid/unit_missing.json": [
+    {
+      "code": "UNIT_MISSING",
+      "path": "/timing/action_age_deadline/unit"
+    }
+  ],
+  "invalid/unit_wrong_dimension.json": [
+    {
+      "code": "UNIT_NOT_ALLOWED",
+      "path": "/run/timeout/unit"
+    }
+  ],
+  "invalid/warmup_negative.json": [
+    {
+      "code": "NEGATIVE_VALUE",
+      "path": "/run/warmup/value"
+    }
+  ]
+}

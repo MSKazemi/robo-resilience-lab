@@ -1,0 +1,378 @@
+"""Summary tables (Markdown) and plots (hand-written SVG) from SYNTHETIC run files.
+
+Stdlib only, offline, deterministic: the same inputs give byte-identical
+outputs (no timestamps, seeded bootstrap, fixed number formatting).
+
+    python3 examples/run-manifest/rm_summary.py            # regenerate reports/
+    python3 examples/run-manifest/rm_summary.py --check    # exit 1 if reports/ drifted
+
+Policy enforced in code: only ``data_kind: synthetic`` inputs are accepted;
+every output is labelled SYNTHETIC; fewer than 3 independent runs prints
+"n<3: no statistical claim" instead of an interval; censored runs are never
+averaged in and withhold the interval; no p-values or significance wording.
+
+Exit codes: 0 ok, 1 problems with the inputs or drift (nothing is written), 2 usage/I-O error.
+"""
+
+from __future__ import annotations
+
+import argparse
+import itertools
+import os
+import sys
+from typing import Optional
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+
+import rm_metrics as m  # noqa: E402
+import rm_runfile as rf  # noqa: E402
+import rm_stats as st  # noqa: E402
+
+DEFAULT_BASE_DIR = os.path.join(HERE, "fixtures")
+DEFAULT_RUN_DIR = os.path.join(DEFAULT_BASE_DIR, "run-files")
+DEFAULT_OUT_DIR = os.path.join(HERE, "reports")
+
+PLOT_METRICS = ("action_age_ms", "recovery_time_ms", "deadline_miss_fraction")
+BANNER = "SYNTHETIC fixture data - not a measurement"
+
+
+# --------------------------------------------------------------------------- aggregation
+
+
+def aggregate(runs: list) -> dict:
+    """``{arm: {metric_id: summary}}`` using independent runs only."""
+    arms = sorted({r.arm for r in runs})
+    out: dict = {}
+    for arm in arms:
+        arm_runs = [r for r in runs if r.arm == arm]
+        indep = [r for r in arm_runs if r.fresh_deployment]
+        per_metric = {}
+        for met in m.METRICS:
+            mid = met["id"]
+            vals, bounds = [], []
+            counts = {"ok": 0, "censored": 0, "not_computable": 0, "not_applicable": 0}
+            for r in indep:
+                e = r.metrics[mid]
+                counts[e["status"]] += 1
+                if e["status"] == "ok":
+                    vals.append(e["value"])
+                elif e["status"] == "censored":
+                    bounds.append(e["censored_lower_bound"])
+            n_ok = counts["ok"]
+            numeric = met["value_domain"] != "boolean"
+            nums = [float(v) for v in vals] if numeric else []
+            ci: Optional[tuple] = None
+            cn = counts
+            note = ""
+            if n_ok == 0:
+                why = ", ".join(f"{cn[k]} {k.replace('_', ' ')}" for k in ("censored", "not_computable", "not_applicable") if cn[k])
+                note = "no values: " + (why or "no independent runs")
+            elif cn["censored"] > 0:
+                note = f"{cn['censored']} censored run(s), lower bound {st.fmt(max(bounds))}; no mean, median or interval"
+            elif n_ok < st.MIN_RUNS:
+                note = st.NO_CLAIM
+            elif not numeric:
+                note = "no interval for proportions in v1"
+            else:
+                ci = st.ci_mean(nums, st.derived_seed(arm, mid))
+                if cn["not_computable"]:
+                    note = f"over {n_ok} of {len(indep)} runs ({cn['not_computable']} not computable)"
+            per_metric[mid] = {
+                "counts": counts,
+                "values": vals,
+                "numbers": nums,
+                "bounds": bounds,
+                "n_ok": n_ok,
+                # With censored runs the ok-only mean/median would be biased low: not reported.
+                "mean": st.mean(nums) if nums and not counts["censored"] else None,
+                "median": st.median(nums) if nums and not counts["censored"] else None,
+                "ci": ci,
+                "note": note,
+                "n_true": sum(1 for v in vals if v is True) if not numeric else None,
+            }
+        out[arm] = {
+            "runs": len(arm_runs),
+            "independent": len(indep),
+            "excluded": len(arm_runs) - len(indep),
+            "non_completed": sum(1 for r in arm_runs if r.manifest["outcome"]["status"] != "completed"),
+            "failure_events": sum(r.metrics["failure_count"]["value"] for r in arm_runs),
+            "metrics": per_metric,
+        }
+    return out
+
+
+# --------------------------------------------------------------------------- markdown
+
+
+def _cell_stat(s: dict, met: dict) -> tuple:
+    if s["n_ok"] == 0 or s["mean"] is None:
+        return "-", "-", "-"
+    if met["value_domain"] == "boolean":
+        return f"{s['n_true']}/{s['n_ok']} true", "-", "-"
+    ci = f"[{st.fmt(s['ci'][0])}, {st.fmt(s['ci'][1])}]" if s["ci"] else "-"
+    return st.fmt(s["median"]), st.fmt(s["mean"]), ci
+
+
+def render_markdown(runs: list, agg: dict, plots: dict) -> str:
+    L = [
+        f"# {BANNER}",
+        "",
+        "<!-- GENERATED by rm_summary.py. Do not edit; run `python3 examples/run-manifest/rm_summary.py`. -->",
+        "",
+        "> **SYNTHETIC.** Every number on this page comes from invented fixture run files (`fixtures/run-files/`) made by `fixture_gen.py` from a seeded pseudo-random generator. No ROS 2, Kubernetes, DDS, GPU, simulator or robot was run, and the values say nothing about any real system. The page demonstrates the **table and plot format** and the **statistical guardrails** only.",
+        "",
+        "## Guardrails applied to this page",
+        "",
+        f"- Fewer than {st.MIN_RUNS} independent runs with a value: the interval column says `{st.NO_CLAIM}`; no interval, no significance statement.",
+        f"- Intervals are {int(st.LEVEL * 100)}% percentile bootstrap intervals of the mean of RUN-LEVEL values (B={st.BOOTSTRAP_B}, base seed {st.BOOTSTRAP_BASE_SEED}, per-cell seed derived from arm and metric). They describe these invented numbers only.",
+        "- A cell with any censored run withholds its interval: censored runs are not averaged in, and the interval of the rest would be biased.",
+        "- Only runs with `fresh_deployment: true` count as independent; others are listed as excluded.",
+        "- No p-values are computed and no result is called significant, here or anywhere in this tool.",
+        "",
+        "## Inputs",
+        "",
+        "| run file | independent_run_id | arm | sha256 (first 12) |",
+        "|---|---|---|---|",
+    ]
+    for r in sorted(runs, key=lambda x: x.file):
+        L.append(f"| `{r.file}` | `{r.run_id}` | `{r.arm}` | `{r.file_sha256[:12]}` |")
+    L += ["", "## Runs per arm", "", "| arm | runs | independent | excluded (not independent) | runs not completed | total failure events |", "|---|---|---|---|---|---|"]
+    for arm, a in agg.items():
+        L.append(f"| `{arm}` | {a['runs']} | {a['independent']} | {a['excluded']} | {a['non_completed']} | {a['failure_events']} |")
+    L += ["", "## Per-metric summary (SYNTHETIC)", ""]
+    L += [
+        "`n ok / cens / n.c. / n.a.` = independent runs with status ok / censored / not computable / not applicable. Median and mean are over the ok runs, and are not reported when any run is censored.",
+        "",
+        "| metric | unit | arm | n ok / cens / n.c. / n.a. | median | mean | 95% bootstrap CI of mean | note |",
+        "|---|---|---|---|---|---|---|---|",
+    ]
+    for met in m.METRICS:
+        for arm, a in agg.items():
+            s = a["metrics"][met["id"]]
+            cn = s["counts"]
+            med, mean, ci = _cell_stat(s, met)
+            L.append(
+                f"| `{met['id']}` | {met['unit']} | `{arm}` | {cn['ok']} / {cn['censored']} / {cn['not_computable']} / {cn['not_applicable']} | {med} | {mean} | {ci} | {s['note'] or '-'} |"
+            )
+    L += ["", "## Arm comparisons (difference of means, B minus A; SYNTHETIC)", ""]
+    L += [
+        f"Printed only when both arms have at least {st.MIN_RUNS} ok runs and no censored run. This is a bootstrap interval of a difference of invented numbers, not a significance test.",
+        "",
+        "| metric | A | B | B - A (mean) | 95% bootstrap CI of the difference |",
+        "|---|---|---|---|---|",
+    ]
+    arms = list(agg)
+    for met in m.METRICS:
+        if met["value_domain"] == "boolean":
+            continue
+        for a_name, b_name in itertools.combinations(arms, 2):
+            sa, sb = agg[a_name]["metrics"][met["id"]], agg[b_name]["metrics"][met["id"]]
+            if sa["n_ok"] == 0 or sb["n_ok"] == 0:
+                continue
+            if sa["n_ok"] < st.MIN_RUNS or sb["n_ok"] < st.MIN_RUNS:
+                cell, diff = st.NO_CLAIM, "-"
+            elif sa["counts"]["censored"] or sb["counts"]["censored"]:
+                cell, diff = "interval withheld: censored run(s)", "-"
+            else:
+                ci = st.ci_diff_mean(sa["numbers"], sb["numbers"], st.derived_seed(a_name, b_name, met["id"]))
+                cell = f"[{st.fmt(ci[0])}, {st.fmt(ci[1])}]"
+                diff = st.fmt(sb["mean"] - sa["mean"])
+            L.append(f"| `{met['id']}` | `{a_name}` | `{b_name}` | {diff} | {cell} |")
+    L += ["", "## Plots (hand-written SVG, SYNTHETIC)", ""]
+    for name in sorted(plots):
+        L.append(f"- [{name}]({name})")
+    L += [
+        "",
+        "## What this page does NOT show",
+        "",
+        "- Anything measured. Real benchmarking is gated on the cross-worker baseline (#14, #15, #16) and needs at least 3 independent repetitions as a starting minimum, with a method-driven power analysis.",
+        "- Any ROS 2, DDS, Kubernetes, CNI, GPU, policy or robot behaviour.",
+        "- That 3 runs are enough: 3 only unlocks printing an interval; the interval from so few runs is unstable.",
+        "",
+    ]
+    return "\n".join(L)
+
+
+# --------------------------------------------------------------------------- svg
+
+
+def _esc(s: str) -> str:
+    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+
+
+def nice_ticks(vmax: float, target: int = 5) -> list:
+    """Round tick values 0..>=vmax with a 1/2/5 x 10^k step."""
+    if vmax <= 0:
+        return [0.0, 1.0]
+    raw = vmax / target
+    exp = 0
+    while raw >= 10:
+        raw /= 10
+        exp += 1
+    while raw < 1:
+        raw *= 10
+        exp -= 1
+    step = next(k for k in (1, 2, 5, 10) if raw <= k) * (10.0 ** exp)
+    n = int(vmax / step)
+    if n * step < vmax - 1e-12:
+        n += 1
+    return [round(i * step, 10) for i in range(n + 1)]
+
+
+def _f(x: float) -> str:
+    return f"{x:.2f}"
+
+
+def render_svg(agg: dict, met: dict) -> str:
+    mid = met["id"]
+    arms = list(agg)
+    W, H, ML, MR, MT, MB = 640, 400, 74, 24, 86, 78
+    pw, ph = W - ML - MR, H - MT - MB
+    tops = [0.0]
+    for arm in arms:
+        s = agg[arm]["metrics"][mid]
+        tops += list(map(float, s["numbers"])) + [float(b) for b in s["bounds"]]
+        if s["ci"]:
+            tops.append(s["ci"][1])
+    ticks = nice_ticks(max(tops))
+    ymax = ticks[-1]
+
+    def ypx(v: float) -> float:
+        return MT + ph - (v / ymax) * ph
+
+    n_arms = len(arms)
+    slot = pw / n_arms
+    out = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-labelledby="t d" font-family="sans-serif" font-size="12">',
+        f"<title id=\"t\">SYNTHETIC: {_esc(met['title'])} per run and arm</title>",
+        f"<desc id=\"d\">{_esc(BANNER)}. Strip plot of the run-level value of {_esc(mid)} ({_esc(met['unit'])}) for each arm; filled circles are runs, hollow triangles are censored runs at their lower bound, a short bar marks the mean and a whisker the bootstrap interval where one is allowed.</desc>",
+        f'<rect x="0" y="0" width="{W}" height="{H}" fill="#ffffff"/>',
+        f'<text x="{W // 2}" y="24" text-anchor="middle" font-size="15" font-weight="bold" fill="#b00020">{_esc(BANNER.upper())}</text>',
+        f'<text x="{W // 2}" y="46" text-anchor="middle" font-size="13" fill="#222222">{_esc(met["title"])} ({_esc(met["unit"])}), one point per independent run</text>',
+        f'<text x="{ML + pw // 2}" y="{MT + ph // 2}" text-anchor="middle" font-size="64" font-weight="bold" fill="#000000" fill-opacity="0.06" transform="rotate(-18 {ML + pw // 2} {MT + ph // 2})">SYNTHETIC</text>',
+    ]
+    for t in ticks:
+        y = _f(ypx(t))
+        out.append(f'<line x1="{ML}" y1="{y}" x2="{ML + pw}" y2="{y}" stroke="#dddddd" stroke-width="1"/>')
+        out.append(f'<text x="{ML - 8}" y="{_f(ypx(t) + 4)}" text-anchor="end" fill="#444444">{_esc(st.fmt(t))}</text>')
+    out.append(f'<line x1="{ML}" y1="{MT}" x2="{ML}" y2="{MT + ph}" stroke="#444444" stroke-width="1"/>')
+    out.append(f'<line x1="{ML}" y1="{MT + ph}" x2="{ML + pw}" y2="{MT + ph}" stroke="#444444" stroke-width="1"/>')
+    out.append(f'<text x="16" y="{MT + ph // 2}" text-anchor="middle" fill="#444444" transform="rotate(-90 16 {MT + ph // 2})">{_esc(met["unit"])}</text>')
+    for i, arm in enumerate(arms):
+        s = agg[arm]["metrics"][mid]
+        cx = ML + slot * (i + 0.5)
+        out.append(f'<text x="{_f(cx)}" y="{MT + ph + 18}" text-anchor="middle" fill="#222222">{_esc(arm)}</text>')
+        if s["n_ok"] == 0 and not s["bounds"]:
+            c_ = s["counts"]
+            why = "not applicable" if c_["not_applicable"] else "not computable"
+            out.append(f'<text x="{_f(cx)}" y="{MT + ph + 34}" text-anchor="middle" fill="#666666">{why}</text>')
+            continue
+        items = [("ok", float(v)) for v in s["numbers"]] + [("cens", float(b)) for b in s["bounds"]]
+        k = len(items)
+        for j, (kind, v) in enumerate(items):
+            x = cx + (j - (k - 1) / 2.0) * 14
+            y = ypx(v)
+            if kind == "ok":
+                out.append(f'<circle cx="{_f(x)}" cy="{_f(y)}" r="4" fill="#1b5fa6"/>')
+            else:
+                out.append(f'<path d="M {_f(x)} {_f(y - 5)} L {_f(x + 5)} {_f(y + 4)} L {_f(x - 5)} {_f(y + 4)} Z" fill="none" stroke="#b00020" stroke-width="1.5"/>')
+        if s["mean"] is not None:
+            y = _f(ypx(s["mean"]))
+            out.append(f'<line x1="{_f(cx - 30)}" y1="{y}" x2="{_f(cx + 30)}" y2="{y}" stroke="#222222" stroke-width="2"/>')
+        if s["ci"]:
+            y1, y2 = _f(ypx(s["ci"][0])), _f(ypx(s["ci"][1]))
+            out.append(f'<line x1="{_f(cx + 36)}" y1="{y1}" x2="{_f(cx + 36)}" y2="{y2}" stroke="#222222" stroke-width="1.5"/>')
+            for y in (y1, y2):
+                out.append(f'<line x1="{_f(cx + 31)}" y1="{y}" x2="{_f(cx + 41)}" y2="{y}" stroke="#222222" stroke-width="1.5"/>')
+        label = f"n={s['n_ok']} ok" + (f", {s['counts']['censored']} censored" if s["counts"]["censored"] else "")
+        out.append(f'<text x="{_f(cx)}" y="{MT + ph + 34}" text-anchor="middle" fill="#444444">{_esc(label)}</text>')
+        if s["note"]:
+            out.append(f'<text x="{_f(cx)}" y="{MT + ph + 49}" text-anchor="middle" fill="#b00020">{_esc(s["note"])}</text>')
+    out.append(
+        f'<text x="{W // 2}" y="{H - 8}" text-anchor="middle" font-size="10" fill="#666666">'
+        f"filled = run; hollow triangle = censored (lower bound); bar = mean; whisker = {int(st.LEVEL * 100)}% seeded bootstrap (n&gt;=3, none censored)</text>"
+    )
+    out.append("</svg>")
+    return "\n".join(out) + "\n"
+
+
+# --------------------------------------------------------------------------- outputs / CLI
+
+
+def build_outputs(runs: list) -> dict:
+    """``{filename: text}`` for the whole report set. Pure and deterministic."""
+    agg = aggregate(runs)
+    plots = {f"{mid}.svg": render_svg(agg, m.BY_ID[mid]) for mid in PLOT_METRICS}
+    files = dict(plots)
+    files["SUMMARY.md"] = render_markdown(runs, agg, plots)
+    return files
+
+
+def _read(path: str) -> Optional[bytes]:
+    try:
+        with open(path, "rb") as fh:
+            return fh.read()
+    except OSError:
+        return None
+
+
+def check_outputs(files: dict, out_dir: str) -> list:
+    """Return a list of drift messages (empty means byte-identical, no stray files)."""
+    bad = []
+    for name, text in sorted(files.items()):
+        if _read(os.path.join(out_dir, name)) != text.encode("utf-8"):
+            bad.append(f"{name}: missing or differs from regenerated output")
+    try:
+        extra = sorted(set(os.listdir(out_dir)) - set(files))
+    except OSError:
+        extra = []
+    bad += [f"{n}: not produced by the generator (stray file)" for n in extra]
+    return bad
+
+
+def main(argv: Optional[list] = None) -> int:
+    ap = argparse.ArgumentParser(
+        prog="rm_summary.py",
+        description="Summary tables and SVG plots from SYNTHETIC run files. Offline, stdlib only, byte-reproducible.",
+        epilog="Exit codes: 0 ok, 1 input problems or drift, 2 usage/I-O error.",
+    )
+    ap.add_argument("--run-dir", default=DEFAULT_RUN_DIR, help="directory of run files (default: fixtures/run-files)")
+    ap.add_argument("--base-dir", default=DEFAULT_BASE_DIR, help="directory manifest_file paths are relative to (default: fixtures)")
+    ap.add_argument("--out-dir", default=DEFAULT_OUT_DIR, help="where to write (default: reports)")
+    ap.add_argument("--check", action="store_true", help="do not write; exit 1 if the output directory differs from a regeneration")
+    try:
+        args = ap.parse_args(argv)
+    except SystemExit as exc:
+        return 0 if exc.code in (0, None) else 2
+    runs, problems = rf.load_runfile_set(args.run_dir, args.base_dir, require_synthetic=True)
+    if problems:
+        for name, diag in problems:
+            print(f"[{diag.code}] {name} {diag.path or '(document)'}: {diag.message}", file=sys.stderr)
+            print(f"    hint: {diag.hint}", file=sys.stderr)
+        print(f"refusing to summarise: {len(problems)} problem(s) in the inputs; nothing written", file=sys.stderr)
+        return 1
+    files = build_outputs(runs)
+    if args.check:
+        drift = check_outputs(files, args.out_dir)
+        for line in drift:
+            print("DRIFT " + line, file=sys.stderr)
+        if drift:
+            print("reports drifted: rerun without --check to regenerate", file=sys.stderr)
+            return 1
+        print(f"OK reports match a fresh regeneration ({len(files)} files, {len(runs)} SYNTHETIC runs)")
+        return 0
+    try:
+        os.makedirs(args.out_dir, exist_ok=True)
+        for name, text in files.items():
+            with open(os.path.join(args.out_dir, name), "wb") as fh:
+                fh.write(text.encode("utf-8"))
+    except OSError as exc:
+        print(f"error: cannot write output: {type(exc).__name__}", file=sys.stderr)
+        return 2
+    print(f"wrote {len(files)} files to {args.out_dir} from {len(runs)} SYNTHETIC runs")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

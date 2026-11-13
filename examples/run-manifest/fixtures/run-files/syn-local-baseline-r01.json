@@ -1,0 +1,74 @@
+{
+  "schema_version": "run-metrics/v1",
+  "data_kind": "synthetic",
+  "independent_run_id": "syn-local-baseline-r01",
+  "arm": "local-baseline",
+  "manifest_file": "manifests/valid/syn-local-baseline-r01.json",
+  "manifest_sha256": "d3968538b7d42e93efb2b0dd527b068044832dce85bb5bbcb0022851b68ba9fe",
+  "metrics": {
+    "sensor_to_policy_request_ms": {
+      "status": "ok",
+      "value": 10.245,
+      "unit": "ms",
+      "n_samples": 450
+    },
+    "request_serve_response_ms": {
+      "status": "ok",
+      "value": 34.169,
+      "unit": "ms",
+      "n_samples": 450
+    },
+    "validator_delay_ms": {
+      "status": "ok",
+      "value": 1.658,
+      "unit": "ms",
+      "n_samples": 450
+    },
+    "action_age_ms": {
+      "status": "ok",
+      "value": 54.122,
+      "unit": "ms",
+      "n_samples": 450
+    },
+    "buffer_starvation_fraction": {
+      "status": "ok",
+      "value": 0.008889,
+      "unit": "fraction",
+      "starved_ticks": 4,
+      "control_ticks": 450
+    },
+    "deadline_miss_fraction": {
+      "status": "ok",
+      "value": 0.017937,
+      "unit": "fraction",
+      "missed_actions": 8,
+      "released_actions": 446
+    },
+    "message_gap_max_ms": {
+      "status": "ok",
+      "value": 159.096,
+      "unit": "ms",
+      "n_samples": 450
+    },
+    "message_gap_count": {
+      "status": "ok",
+      "value": 0,
+      "unit": "count"
+    },
+    "recovery_time_ms": {
+      "status": "not_applicable",
+      "value": null,
+      "unit": "ms"
+    },
+    "failure_count": {
+      "status": "ok",
+      "value": 0,
+      "unit": "count"
+    },
+    "task_success": {
+      "status": "not_applicable",
+      "value": null,
+      "unit": "boolean"
+    }
+  }
+}

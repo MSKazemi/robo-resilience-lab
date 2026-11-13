@@ -1,0 +1,73 @@
+{
+  "schema_version": "run-metrics/v1",
+  "data_kind": "synthetic",
+  "independent_run_id": "syn-edge-cloud-single-run-r01",
+  "arm": "edge-cloud-single-run",
+  "manifest_file": "manifests/valid/syn-edge-cloud-single-run-r01.json",
+  "manifest_sha256": "af220974b477807518a5eef34e347485cf2e37f3f9e64ecc9571dc07bc988fe2",
+  "metrics": {
+    "sensor_to_policy_request_ms": {
+      "status": "not_computable",
+      "value": null,
+      "unit": "ms",
+      "reason": "clock_unsynchronized"
+    },
+    "request_serve_response_ms": {
+      "status": "ok",
+      "value": 85.048,
+      "unit": "ms",
+      "n_samples": 450
+    },
+    "validator_delay_ms": {
+      "status": "ok",
+      "value": 1.232,
+      "unit": "ms",
+      "n_samples": 450
+    },
+    "action_age_ms": {
+      "status": "not_computable",
+      "value": null,
+      "unit": "ms",
+      "reason": "clock_unsynchronized"
+    },
+    "buffer_starvation_fraction": {
+      "status": "ok",
+      "value": 0.057778,
+      "unit": "fraction",
+      "starved_ticks": 26,
+      "control_ticks": 450
+    },
+    "deadline_miss_fraction": {
+      "status": "not_computable",
+      "value": null,
+      "unit": "fraction",
+      "reason": "clock_unsynchronized"
+    },
+    "message_gap_max_ms": {
+      "status": "ok",
+      "value": 822.05,
+      "unit": "ms",
+      "n_samples": 450
+    },
+    "message_gap_count": {
+      "status": "ok",
+      "value": 6,
+      "unit": "count"
+    },
+    "recovery_time_ms": {
+      "status": "not_applicable",
+      "value": null,
+      "unit": "ms"
+    },
+    "failure_count": {
+      "status": "ok",
+      "value": 0,
+      "unit": "count"
+    },
+    "task_success": {
+      "status": "not_applicable",
+      "value": null,
+      "unit": "boolean"
+    }
+  }
+}

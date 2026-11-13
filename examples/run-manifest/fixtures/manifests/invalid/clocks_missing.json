@@ -1,0 +1,205 @@
+{
+  "schema_version": "run-manifest/v1",
+  "data_kind": "synthetic",
+  "experiment_id": "SYNTHETIC-EXAMPLE",
+  "arm": "edge-cloud-lossy",
+  "description": "SYNTHETIC fixture run with invented values; not a measurement",
+  "run": {
+    "independent_run_id": "syn-edge-cloud-lossy-r01",
+    "group_id": "syn-group-0001",
+    "run_index": 1,
+    "fresh_deployment": true,
+    "seed": 1001,
+    "started_utc": "2026-01-01T01:10:00Z",
+    "ended_utc": "2026-01-01T01:10:55Z",
+    "warmup": {
+      "value": 10,
+      "unit": "s"
+    },
+    "timeout": {
+      "value": 60,
+      "unit": "s"
+    }
+  },
+  "source": {
+    "git_sha": "e0b5fb61b9c0297c97474757e7cf1105c7f8d1f2",
+    "git_dirty": false
+  },
+  "images": [
+    {
+      "name": "synthetic-policy-server",
+      "oci_digest": "sha256:4be816323f2f34ba844e64c20be22674e1e3a870b7d585d8dec3f191d029d796"
+    },
+    {
+      "name": "synthetic-validator",
+      "oci_digest": "sha256:9a0a15809a3b819b95ee9ffb1f1ad2e6314e708aded9aa04021795da16b4b095"
+    }
+  ],
+  "software": {
+    "ros_distro": "synthetic-distro",
+    "rmw_implementation": "synthetic-rmw",
+    "rmw_version": "0.0.0",
+    "cni": {
+      "name": "synthetic-cni",
+      "version": "0.0.0"
+    },
+    "kubernetes_version": "0.0.0"
+  },
+  "simulator": {
+    "used": false
+  },
+  "hardware": {
+    "cpu": {
+      "model": "SYNTHETIC-CPU",
+      "logical_cores": 8,
+      "architecture": "x86_64"
+    },
+    "memory": {
+      "value": 16,
+      "unit": "GiB"
+    },
+    "gpu": {
+      "present": false
+    },
+    "os": "synthetic-os 0.0",
+    "kernel_version": "0.0.0-synthetic"
+  },
+  "placement": [
+    {
+      "component": "sensor-source",
+      "node": "edge-node",
+      "tier": "edge"
+    },
+    {
+      "component": "policy-client",
+      "node": "edge-node",
+      "tier": "edge"
+    },
+    {
+      "component": "validator",
+      "node": "edge-node",
+      "tier": "edge"
+    },
+    {
+      "component": "policy-server",
+      "node": "cloud-node",
+      "tier": "cloud"
+    }
+  ],
+  "network": {
+    "profile": "synthetic-lossy-wan",
+    "shaped": true,
+    "shaping_tool": "synthetic-shaper",
+    "one_way_delay": {
+      "value": 40,
+      "unit": "ms"
+    },
+    "jitter": {
+      "value": 5,
+      "unit": "ms"
+    },
+    "loss": {
+      "value": 2,
+      "unit": "percent"
+    },
+    "bandwidth": {
+      "value": 50,
+      "unit": "Mbit/s"
+    }
+  },
+  "qos": [
+    {
+      "topic": "/observation",
+      "reliability": "best_effort",
+      "durability": "volatile",
+      "history": "keep_last",
+      "depth": 5,
+      "deadline": {
+        "value": 100,
+        "unit": "ms"
+      }
+    },
+    {
+      "topic": "/action",
+      "reliability": "reliable",
+      "durability": "volatile",
+      "history": "keep_last",
+      "depth": 10
+    }
+  ],
+  "model": {
+    "used": true,
+    "name": "synthetic-mock-policy",
+    "revision": "cfcafb03f484999f671dc8732156ad81d4fde5e5",
+    "license": "CC0-1.0"
+  },
+  "dataset": {
+    "used": false
+  },
+  "code_license": "Apache-2.0",
+  "timing": {
+    "control_rate": {
+      "value": 10,
+      "unit": "Hz"
+    },
+    "action_age_deadline": {
+      "value": 200,
+      "unit": "ms"
+    }
+  },
+  "action_space": {
+    "name": "synthetic-6dof-joint-targets",
+    "dimension": 6,
+    "names": [
+      "shoulder_pan",
+      "shoulder_lift",
+      "elbow_flex",
+      "wrist_flex",
+      "wrist_roll",
+      "gripper"
+    ],
+    "units": [
+      "rad",
+      "rad",
+      "rad",
+      "rad",
+      "rad",
+      "m"
+    ],
+    "actuation": "none"
+  },
+  "fault_injection": {
+    "applied": true,
+    "kind": "network-partition-step",
+    "duration": {
+      "value": 5,
+      "unit": "s"
+    }
+  },
+  "measurement_source": {
+    "kind": "synthetic_generator",
+    "tool": "fixture_gen.py",
+    "tool_version": "1"
+  },
+  "outcome": {
+    "status": "completed",
+    "censored": false,
+    "censor_reason": null,
+    "observed_duration": {
+      "value": 55,
+      "unit": "s"
+    },
+    "failure_count": 2,
+    "task_success": {
+      "applicable": true,
+      "value": true
+    }
+  },
+  "data_hashes": [
+    {
+      "path": "fixtures/synthetic-workload.v1.json",
+      "role": "input",
+      "sha256": "86016abac57a830088d06c5d1c65c937a6e6a54d9f7d94a61a1a984b8863a0c6"
+    }
+  ]
+}
