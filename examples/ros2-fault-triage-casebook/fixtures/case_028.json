@@ -1,0 +1,19 @@
+{
+  "case_id": "case-028",
+  "case_role": "ambiguous",
+  "cites": ["guide-checklist"],
+  "evidence": {},
+  "expected": {
+    "label": "insufficient_evidence",
+    "rationale": "No probe summary, no pod status, no QoS and no discovery information: any label would be a guess.",
+    "safe_next_step": "collect_more_evidence",
+    "secondary_labels": []
+  },
+  "incident_family_id": "fam-no-evidence",
+  "looks_like": null,
+  "schema": "rrl.triage-case/1",
+  "source": "SYNTHETIC: hand-authored teaching case; nothing here was observed from a real system",
+  "split": "dev",
+  "symptom": "Nothing is received. That is all we know.",
+  "synthetic": true
+}

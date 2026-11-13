@@ -1,0 +1,36 @@
+{
+  "case_id": "case-014",
+  "case_role": "positive",
+  "cites": ["guide-checklist"],
+  "evidence": {
+    "pods": {
+      "publisher": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      },
+      "subscriber": {
+        "last_termination": null,
+        "phase": "Pending",
+        "ready": false,
+        "reason": "Unschedulable",
+        "restarts": 0
+      }
+    }
+  },
+  "expected": {
+    "label": "pod_not_running",
+    "rationale": "The subscriber pod is Pending and Unschedulable, so no subscriber ever ran and there is no probe log to read.",
+    "safe_next_step": "inspect_pod_status_and_events",
+    "secondary_labels": []
+  },
+  "incident_family_id": "fam-pod",
+  "looks_like": null,
+  "schema": "rrl.triage-case/1",
+  "source": "SYNTHETIC: hand-authored teaching case; nothing here was observed from a real system",
+  "split": "dev",
+  "symptom": "The talker prints messages; the listener side shows nothing at all.",
+  "synthetic": true
+}

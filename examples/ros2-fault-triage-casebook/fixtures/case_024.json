@@ -1,0 +1,57 @@
+{
+  "case_id": "case-024",
+  "case_role": "hard_negative",
+  "cites": ["probe-clocks"],
+  "evidence": {
+    "clock_offset_check": "offset_small",
+    "latency_summary": {
+      "clock_domain": "wall_cross_node",
+      "max_ns": 2010000000,
+      "min_ns": 1990000000,
+      "negative_samples": 0,
+      "samples": 200
+    },
+    "pods": {
+      "publisher": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      },
+      "subscriber": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      }
+    },
+    "probe_summary": {
+      "completion": "complete",
+      "duplicates": 0,
+      "expected_count": 200,
+      "missing": 0,
+      "missing_ranges": [],
+      "ok": true,
+      "publisher_start_events": 1,
+      "received_total": 200,
+      "reordered": 0,
+      "timeout_reason": null,
+      "unique": 200
+    }
+  },
+  "expected": {
+    "label": "insufficient_evidence",
+    "rationale": "The offset was measured small, so skew does not explain the latency, and nothing in the bundle says what does. Abstain and gather more evidence.",
+    "safe_next_step": "collect_more_evidence",
+    "secondary_labels": []
+  },
+  "incident_family_id": "fam-clock",
+  "looks_like": "clock_skew_misleading_latency",
+  "schema": "rrl.triage-case/1",
+  "source": "SYNTHETIC: hand-authored teaching case; nothing here was observed from a real system",
+  "split": "dev",
+  "symptom": "Every message takes about two seconds according to the dashboard.",
+  "synthetic": true
+}
