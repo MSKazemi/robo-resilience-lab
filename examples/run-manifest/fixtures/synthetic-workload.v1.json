@@ -1,0 +1,7 @@
+{
+  "synthetic": true,
+  "note": "SYNTHETIC workload description. It exists only so that data_hashes[] points at a real file that can be re-hashed.",
+  "control_rate_hz": 10,
+  "warmup_s": 10,
+  "timeout_s": 60
+}
