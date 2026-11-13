@@ -23,7 +23,7 @@ WORKERS     := $(CLUSTER)-worker,$(CLUSTER)-worker2
 VENV ?= .venv
 PY   := $(VENV)/bin/python
 
-.PHONY: help check-prereqs demo verify verify-negative clean analysis-venv analyze-sample analysis-offline analysis-test offline-checks seqprobe-test e02-test placement-test placement-sim serving-test serving-sim lerobot-dq-test agent-mobility-test
+.PHONY: help check-prereqs demo verify verify-negative clean analysis-venv analyze-sample analysis-offline analysis-test offline-checks seqprobe-test e02-test placement-test placement-sim serving-test serving-sim lerobot-dq-test agent-mobility-test run-manifest-test action-gate-test fault-triage-test skill-review-test recovery-test
 
 help:
 	@echo 'ROS 2 on Kubernetes - lightweight kind profile (cluster "$(CLUSTER)")'
@@ -54,6 +54,11 @@ help:
 	@echo '  make serving-test         model-serving fairness simulator tests;  make serving-sim  prints its SIMULATION table'
 	@echo '  make lerobot-dq-test      LeRobot data-quality contract tests (examples/lerobot-data-quality)'
 	@echo '  make agent-mobility-test  mission-state handoff simulator tests (examples/cloud-robotics/agent-mobility)'
+	@echo '  make run-manifest-test    run-manifest contract and synthetic summaries (examples/run-manifest)'
+	@echo '  make action-gate-test     fail-closed simulated action gate and fault suite (examples/cloud-robotics/action-gate)'
+	@echo '  make fault-triage-test    synthetic DDS/QoS fault casebook and rule baseline (examples/ros2-fault-triage-casebook)'
+	@echo '  make skill-review-test    simulated skill catalogue and proposal reviewer (examples/cloud-robotics/skill-proposal-review)'
+	@echo '  make recovery-test        pod-recovery measurement functions and dry-run scripts (DataAnalysis; no cluster)'
 	@echo
 	@echo 'Exit codes: 0 success; non-zero on any failure (missing prerequisite, build, cluster or verification failure).'
 
@@ -151,3 +156,18 @@ lerobot-dq-test:
 
 agent-mobility-test:
 	python3 -m unittest discover -s examples/cloud-robotics/agent-mobility/tests
+
+run-manifest-test:
+	python3 -m unittest discover -s examples/run-manifest/tests -t examples/run-manifest
+
+action-gate-test:
+	python3 -m unittest discover -s examples/cloud-robotics/action-gate/tests -t examples/cloud-robotics/action-gate
+
+fault-triage-test:
+	python3 -m unittest discover -s examples/ros2-fault-triage-casebook/tests -t examples/ros2-fault-triage-casebook
+
+skill-review-test:
+	python3 -m unittest discover -s examples/cloud-robotics/skill-proposal-review/tests -t examples/cloud-robotics/skill-proposal-review
+
+recovery-test:
+	python3 -m unittest discover -s DataAnalysis/tests -p 'test_recovery_metrics.py'
