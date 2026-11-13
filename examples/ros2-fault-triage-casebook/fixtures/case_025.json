@@ -1,0 +1,81 @@
+{
+  "case_id": "case-025",
+  "case_role": "positive",
+  "cites": ["probe-verdict"],
+  "evidence": {
+    "clock_offset_check": "offset_small",
+    "discovery": {
+      "mode": "discovery_server",
+      "server_check": "reachable"
+    },
+    "latency_summary": {
+      "clock_domain": "wall_cross_node",
+      "max_ns": 4200000,
+      "min_ns": 1800000,
+      "negative_samples": 0,
+      "samples": 200
+    },
+    "pods": {
+      "publisher": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      },
+      "subscriber": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      }
+    },
+    "probe_summary": {
+      "completion": "complete",
+      "duplicates": 0,
+      "expected_count": 200,
+      "missing": 0,
+      "missing_ranges": [],
+      "ok": true,
+      "publisher_start_events": 1,
+      "received_total": 200,
+      "reordered": 0,
+      "timeout_reason": null,
+      "unique": 200
+    },
+    "ros": {
+      "publisher": {
+        "domain_id": 42,
+        "qos": {
+          "depth": 10,
+          "durability": "volatile",
+          "reliability": "reliable"
+        },
+        "rmw": "rmw_fastrtps_cpp"
+      },
+      "subscriber": {
+        "domain_id": 42,
+        "qos": {
+          "depth": 10,
+          "durability": "volatile",
+          "reliability": "reliable"
+        },
+        "rmw": "rmw_fastrtps_cpp"
+      }
+    }
+  },
+  "expected": {
+    "label": "no_fault",
+    "rationale": "All 200 messages arrived exactly once with ordinary latency; nothing to fix.",
+    "safe_next_step": "no_action",
+    "secondary_labels": []
+  },
+  "incident_family_id": "fam-healthy",
+  "looks_like": null,
+  "schema": "rrl.triage-case/1",
+  "source": "SYNTHETIC: hand-authored teaching case; nothing here was observed from a real system",
+  "split": "dev",
+  "symptom": "Routine check: the listener should hear every message.",
+  "synthetic": true
+}

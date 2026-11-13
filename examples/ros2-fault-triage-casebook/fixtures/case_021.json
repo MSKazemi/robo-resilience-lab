@@ -1,0 +1,50 @@
+{
+  "case_id": "case-021",
+  "case_role": "ambiguous",
+  "cites": ["e02-validation", "probe-schema"],
+  "evidence": {
+    "fault_markers": ["partition_begin", "partition_end"],
+    "pods": {
+      "publisher": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      },
+      "subscriber": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      }
+    },
+    "probe_summary": {
+      "completion": "timeout",
+      "duplicates": 30,
+      "expected_count": 200,
+      "missing": 40,
+      "missing_ranges": [[60, 99]],
+      "ok": false,
+      "publisher_start_events": 2,
+      "received_total": 190,
+      "reordered": 0,
+      "timeout_reason": "overall",
+      "unique": 160
+    }
+  },
+  "expected": {
+    "label": "insufficient_evidence",
+    "rationale": "Partition markers and a second publisher start are both present, so both causes fit the evidence. Abstain rather than pick one by rule order.",
+    "safe_next_step": "collect_more_evidence",
+    "secondary_labels": []
+  },
+  "incident_family_id": "fam-combined",
+  "looks_like": null,
+  "schema": "rrl.triage-case/1",
+  "source": "SYNTHETIC: hand-authored teaching case; nothing here was observed from a real system",
+  "split": "dev",
+  "symptom": "Ids went missing and some repeated.",
+  "synthetic": true
+}

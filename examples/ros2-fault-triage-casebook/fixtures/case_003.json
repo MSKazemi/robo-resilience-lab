@@ -1,0 +1,73 @@
+{
+  "case_id": "case-003",
+  "case_role": "positive",
+  "cites": ["guide-discovery", "kind-findings", "ros2-qos-upstream"],
+  "evidence": {
+    "discovery": {
+      "mode": "discovery_server",
+      "server_check": "unreachable"
+    },
+    "pods": {
+      "publisher": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      },
+      "subscriber": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      }
+    },
+    "probe_summary": {
+      "completion": "timeout",
+      "duplicates": 0,
+      "expected_count": 200,
+      "missing": 200,
+      "missing_ranges": [[0, 199]],
+      "ok": false,
+      "publisher_start_events": 1,
+      "received_total": 0,
+      "reordered": 0,
+      "timeout_reason": "first_message",
+      "unique": 0
+    },
+    "ros": {
+      "publisher": {
+        "domain_id": 42,
+        "qos": {
+          "depth": 10,
+          "durability": "volatile",
+          "reliability": "best-effort"
+        },
+        "rmw": "rmw_fastrtps_cpp"
+      },
+      "subscriber": {
+        "domain_id": 42,
+        "qos": {
+          "depth": 10,
+          "durability": "volatile",
+          "reliability": "reliable"
+        },
+        "rmw": "rmw_fastrtps_cpp"
+      }
+    }
+  },
+  "expected": {
+    "label": "discovery_server_unreachable",
+    "rationale": "Two faults are visible. Endpoints are matched only after discovery, so the unreachable Discovery Server comes first; the QoS mismatch is recorded as secondary and will surface once discovery is fixed.",
+    "safe_next_step": "check_discovery_server_reachability",
+    "secondary_labels": ["qos_incompatible_reliability"]
+  },
+  "incident_family_id": "fam-qos-reliability",
+  "looks_like": null,
+  "schema": "rrl.triage-case/1",
+  "source": "SYNTHETIC: hand-authored teaching case; nothing here was observed from a real system",
+  "split": "dev",
+  "symptom": "The listener shows no messages from the talker. Both pods are Ready.",
+  "synthetic": true
+}
