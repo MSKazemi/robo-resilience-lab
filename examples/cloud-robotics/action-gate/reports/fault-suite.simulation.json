@@ -1,0 +1,2585 @@
+{
+  "label": "SIMULATION: logical ticks, no hardware, no wall clock, no network, no ROS 2",
+  "scenarios": [
+    {
+      "audit_records": 4,
+      "by_category": {},
+      "counts": {
+        "allowed": 2,
+        "delivered": 2,
+        "dispatched": 2,
+        "dropped_by_link": 0,
+        "fail_open": 0,
+        "false_blocks": 0,
+        "held": 0,
+        "rejected": 0,
+        "scheduled_deliveries": 2,
+        "sent": 2,
+        "undelivered": 0
+      },
+      "deliveries": [
+        {
+          "category": null,
+          "delivery_tick": 1,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "move",
+          "reason": null,
+          "send_tick": 1,
+          "verdict": "ALLOW"
+        },
+        {
+          "category": null,
+          "delivery_tick": 2,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "hold",
+          "reason": null,
+          "send_tick": 2,
+          "verdict": "ALLOW"
+        }
+      ],
+      "description": "valid commands pass every check and are dispatched",
+      "end_tick": 5,
+      "failure_count": 0,
+      "fault_tick": null,
+      "final_epoch": 1,
+      "final_gate_mode": "autonomous",
+      "first_block_by": null,
+      "first_block_tick": null,
+      "gate_ops": [
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 0
+        }
+      ],
+      "mismatches": [],
+      "name": "baseline_valid",
+      "restarts": 0,
+      "time_to_block_ticks": null
+    },
+    {
+      "audit_records": 6,
+      "by_category": {
+        "hold": 1,
+        "stale_response": 1
+      },
+      "counts": {
+        "allowed": 1,
+        "delivered": 3,
+        "dispatched": 1,
+        "dropped_by_link": 0,
+        "fail_open": 0,
+        "false_blocks": 0,
+        "held": 1,
+        "rejected": 1,
+        "scheduled_deliveries": 3,
+        "sent": 3,
+        "undelivered": 0
+      },
+      "deliveries": [
+        {
+          "category": null,
+          "delivery_tick": 3,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "in_window",
+          "reason": null,
+          "send_tick": 1,
+          "verdict": "ALLOW"
+        },
+        {
+          "category": "stale_response",
+          "delivery_tick": 9,
+          "dispatched": false,
+          "expected": {
+            "category": "stale_response",
+            "reason": "EXPIRED",
+            "verdict": "REJECT"
+          },
+          "field": "msg.expires_tick",
+          "label": "too_late",
+          "reason": "EXPIRED",
+          "send_tick": 2,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "hold",
+          "delivery_tick": 14,
+          "dispatched": false,
+          "expected": {
+            "category": "hold",
+            "reason": "GATE_HOLD",
+            "verdict": "HOLD"
+          },
+          "field": "gate.mode",
+          "label": "after_hold",
+          "reason": "GATE_HOLD",
+          "send_tick": 5,
+          "verdict": "HOLD"
+        }
+      ],
+      "description": "a reply delayed past its expiry is rejected; a late reply after the watchdog hold finds the gate holding",
+      "end_tick": 14,
+      "failure_count": 0,
+      "fault_tick": 2,
+      "final_epoch": 1,
+      "final_gate_mode": "hold",
+      "first_block_by": "decision",
+      "first_block_tick": 9,
+      "gate_ops": [
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 0
+        }
+      ],
+      "mismatches": [],
+      "name": "delayed_reply",
+      "restarts": 0,
+      "time_to_block_ticks": 7
+    },
+    {
+      "audit_records": 5,
+      "by_category": {
+        "stale_response": 1
+      },
+      "counts": {
+        "allowed": 2,
+        "delivered": 3,
+        "dispatched": 2,
+        "dropped_by_link": 0,
+        "fail_open": 0,
+        "false_blocks": 0,
+        "held": 0,
+        "rejected": 1,
+        "scheduled_deliveries": 3,
+        "sent": 3,
+        "undelivered": 0
+      },
+      "deliveries": [
+        {
+          "category": null,
+          "delivery_tick": 3,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "seq2_first",
+          "reason": null,
+          "send_tick": 2,
+          "verdict": "ALLOW"
+        },
+        {
+          "category": "stale_response",
+          "delivery_tick": 5,
+          "dispatched": false,
+          "expected": {
+            "category": "stale_response",
+            "reason": "STALE_SEQUENCE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.sequence_id",
+          "label": "seq1_late",
+          "reason": "STALE_SEQUENCE",
+          "send_tick": 1,
+          "verdict": "REJECT"
+        },
+        {
+          "category": null,
+          "delivery_tick": 6,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "seq3",
+          "reason": null,
+          "send_tick": 4,
+          "verdict": "ALLOW"
+        }
+      ],
+      "description": "seq 2 arrives before seq 1: seq 2 is allowed, the late seq 1 is never dispatched",
+      "end_tick": 8,
+      "failure_count": 0,
+      "fault_tick": 1,
+      "final_epoch": 1,
+      "final_gate_mode": "autonomous",
+      "first_block_by": "decision",
+      "first_block_tick": 5,
+      "gate_ops": [
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 0
+        }
+      ],
+      "mismatches": [],
+      "name": "reordered_packet",
+      "restarts": 0,
+      "time_to_block_ticks": 4
+    },
+    {
+      "audit_records": 5,
+      "by_category": {
+        "stale_response": 2
+      },
+      "counts": {
+        "allowed": 1,
+        "delivered": 3,
+        "dispatched": 1,
+        "dropped_by_link": 0,
+        "fail_open": 0,
+        "false_blocks": 0,
+        "held": 0,
+        "rejected": 2,
+        "scheduled_deliveries": 3,
+        "sent": 1,
+        "undelivered": 0
+      },
+      "deliveries": [
+        {
+          "category": null,
+          "delivery_tick": 1,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "dup",
+          "reason": null,
+          "send_tick": 1,
+          "verdict": "ALLOW"
+        },
+        {
+          "category": "stale_response",
+          "delivery_tick": 2,
+          "dispatched": false,
+          "expected": {
+            "category": "stale_response",
+            "reason": "DUPLICATE_SEQUENCE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.sequence_id",
+          "label": "dup",
+          "reason": "DUPLICATE_SEQUENCE",
+          "send_tick": 1,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "stale_response",
+          "delivery_tick": 4,
+          "dispatched": false,
+          "expected": {
+            "category": "stale_response",
+            "reason": "DUPLICATE_SEQUENCE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.sequence_id",
+          "label": "dup",
+          "reason": "DUPLICATE_SEQUENCE",
+          "send_tick": 1,
+          "verdict": "REJECT"
+        }
+      ],
+      "description": "one message delivered three times is dispatched once",
+      "end_tick": 6,
+      "failure_count": 0,
+      "fault_tick": 2,
+      "final_epoch": 1,
+      "final_gate_mode": "autonomous",
+      "first_block_by": "decision",
+      "first_block_tick": 2,
+      "gate_ops": [
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 0
+        }
+      ],
+      "mismatches": [],
+      "name": "duplicate_packet",
+      "restarts": 0,
+      "time_to_block_ticks": 0
+    },
+    {
+      "audit_records": 9,
+      "by_category": {
+        "hold": 1,
+        "stale_response": 1
+      },
+      "counts": {
+        "allowed": 2,
+        "delivered": 5,
+        "dispatched": 2,
+        "dropped_by_link": 1,
+        "fail_open": 0,
+        "false_blocks": 0,
+        "held": 1,
+        "rejected": 1,
+        "scheduled_deliveries": 5,
+        "sent": 5,
+        "undelivered": 0
+      },
+      "deliveries": [
+        {
+          "category": null,
+          "delivery_tick": 1,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "before_outage",
+          "reason": null,
+          "send_tick": 1,
+          "verdict": "ALLOW"
+        },
+        {
+          "category": null,
+          "delivery_tick": 5,
+          "dispatched": false,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "DROPPED"
+          },
+          "label": "during_outage",
+          "reason": null,
+          "send_tick": 5,
+          "verdict": "DROPPED"
+        },
+        {
+          "category": "hold",
+          "delivery_tick": 14,
+          "dispatched": false,
+          "expected": {
+            "category": "hold",
+            "reason": "GATE_HOLD",
+            "verdict": "HOLD"
+          },
+          "field": "gate.mode",
+          "label": "after_link_up",
+          "reason": "GATE_HOLD",
+          "send_tick": 14,
+          "verdict": "HOLD"
+        },
+        {
+          "category": null,
+          "delivery_tick": 16,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "new_epoch",
+          "reason": null,
+          "send_tick": 16,
+          "verdict": "ALLOW"
+        },
+        {
+          "category": "stale_response",
+          "delivery_tick": 17,
+          "dispatched": false,
+          "expected": {
+            "category": "stale_response",
+            "reason": "STALE_EPOCH",
+            "verdict": "REJECT"
+          },
+          "field": "msg.epoch",
+          "label": "old_epoch",
+          "reason": "STALE_EPOCH",
+          "send_tick": 17,
+          "verdict": "REJECT"
+        }
+      ],
+      "description": "link goes down: messages are lost, the watchdog puts the gate in HOLD; the HOLD persists after the link returns until a new epoch is granted and the operator resumes",
+      "end_tick": 20,
+      "failure_count": 0,
+      "fault_tick": 4,
+      "final_epoch": 2,
+      "final_gate_mode": "autonomous",
+      "first_block_by": "watchdog",
+      "first_block_tick": 11,
+      "gate_ops": [
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 0
+        },
+        {
+          "call": "grant_epoch",
+          "ok": true,
+          "reason": null,
+          "tick": 15
+        },
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 15
+        },
+        {
+          "call": "resume",
+          "ok": true,
+          "reason": null,
+          "tick": 15
+        }
+      ],
+      "mismatches": [],
+      "name": "disconnection",
+      "restarts": 0,
+      "time_to_block_ticks": 7
+    },
+    {
+      "audit_records": 11,
+      "by_category": {
+        "hold": 1,
+        "stale_response": 3
+      },
+      "counts": {
+        "allowed": 3,
+        "delivered": 7,
+        "dispatched": 3,
+        "dropped_by_link": 0,
+        "fail_open": 0,
+        "false_blocks": 0,
+        "held": 1,
+        "rejected": 3,
+        "scheduled_deliveries": 7,
+        "sent": 7,
+        "undelivered": 0
+      },
+      "deliveries": [
+        {
+          "category": null,
+          "delivery_tick": 1,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "s1",
+          "reason": null,
+          "send_tick": 1,
+          "verdict": "ALLOW"
+        },
+        {
+          "category": null,
+          "delivery_tick": 2,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "s2",
+          "reason": null,
+          "send_tick": 2,
+          "verdict": "ALLOW"
+        },
+        {
+          "category": "hold",
+          "delivery_tick": 5,
+          "dispatched": false,
+          "expected": {
+            "category": "hold",
+            "reason": "GATE_HOLD",
+            "verdict": "HOLD"
+          },
+          "field": "gate.mode",
+          "label": "replay_before_resume",
+          "reason": "GATE_HOLD",
+          "send_tick": 5,
+          "verdict": "HOLD"
+        },
+        {
+          "category": "stale_response",
+          "delivery_tick": 7,
+          "dispatched": false,
+          "expected": {
+            "category": "stale_response",
+            "reason": "STALE_EPOCH",
+            "verdict": "REJECT"
+          },
+          "field": "msg.epoch",
+          "label": "replay_s2",
+          "reason": "STALE_EPOCH",
+          "send_tick": 7,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "stale_response",
+          "delivery_tick": 7,
+          "dispatched": false,
+          "expected": {
+            "category": "stale_response",
+            "reason": "STALE_EPOCH",
+            "verdict": "REJECT"
+          },
+          "field": "msg.epoch",
+          "label": "replay_unseen_seq",
+          "reason": "STALE_EPOCH",
+          "send_tick": 7,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "stale_response",
+          "delivery_tick": 8,
+          "dispatched": false,
+          "expected": {
+            "category": "stale_response",
+            "reason": "UNKNOWN_OBSERVATION",
+            "verdict": "REJECT"
+          },
+          "field": "msg.observation_id",
+          "label": "pre_crash_observation",
+          "reason": "UNKNOWN_OBSERVATION",
+          "send_tick": 8,
+          "verdict": "REJECT"
+        },
+        {
+          "category": null,
+          "delivery_tick": 9,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "fresh",
+          "reason": null,
+          "send_tick": 9,
+          "verdict": "ALLOW"
+        }
+      ],
+      "description": "the gate process restarts: it takes a new epoch from the durable store, so pre-crash messages (even with unseen sequence numbers) cannot be replayed",
+      "end_tick": 14,
+      "failure_count": 0,
+      "fault_tick": 5,
+      "final_epoch": 2,
+      "final_gate_mode": "autonomous",
+      "first_block_by": "decision",
+      "first_block_tick": 5,
+      "gate_ops": [
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 0
+        },
+        {
+          "call": "crash_restart",
+          "ok": true,
+          "reason": null,
+          "tick": 5
+        },
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 6
+        },
+        {
+          "call": "resume",
+          "ok": true,
+          "reason": null,
+          "tick": 6
+        }
+      ],
+      "mismatches": [],
+      "name": "process_crash_replay",
+      "restarts": 1,
+      "time_to_block_ticks": 0
+    },
+    {
+      "audit_records": 9,
+      "by_category": {
+        "hold": 1,
+        "stale_response": 1
+      },
+      "counts": {
+        "allowed": 2,
+        "delivered": 4,
+        "dispatched": 2,
+        "dropped_by_link": 0,
+        "fail_open": 0,
+        "false_blocks": 0,
+        "held": 1,
+        "rejected": 1,
+        "scheduled_deliveries": 4,
+        "sent": 4,
+        "undelivered": 0
+      },
+      "deliveries": [
+        {
+          "category": null,
+          "delivery_tick": 1,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "s1",
+          "reason": null,
+          "send_tick": 1,
+          "verdict": "ALLOW"
+        },
+        {
+          "category": "hold",
+          "delivery_tick": 5,
+          "dispatched": false,
+          "expected": {
+            "category": "hold",
+            "reason": "GATE_LOCKED",
+            "verdict": "HOLD"
+          },
+          "field": "gate.mode",
+          "label": "after_crash",
+          "reason": "GATE_LOCKED",
+          "send_tick": 5,
+          "verdict": "HOLD"
+        },
+        {
+          "category": "stale_response",
+          "delivery_tick": 10,
+          "dispatched": false,
+          "expected": {
+            "category": "stale_response",
+            "reason": "STALE_EPOCH",
+            "verdict": "REJECT"
+          },
+          "field": "msg.epoch",
+          "label": "stale_replay",
+          "reason": "STALE_EPOCH",
+          "send_tick": 10,
+          "verdict": "REJECT"
+        },
+        {
+          "category": null,
+          "delivery_tick": 11,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "fresh",
+          "reason": null,
+          "send_tick": 11,
+          "verdict": "ALLOW"
+        }
+      ],
+      "description": "the gate restarts and the epoch store is gone: the gate LOCKS (holds everything) and only an explicit operator reset with an epoch floor reopens it",
+      "end_tick": 20,
+      "failure_count": 0,
+      "fault_tick": 4,
+      "final_epoch": 11,
+      "final_gate_mode": "autonomous",
+      "first_block_by": "decision",
+      "first_block_tick": 5,
+      "gate_ops": [
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 0
+        },
+        {
+          "call": "crash_restart",
+          "ok": true,
+          "reason": "lost",
+          "tick": 4
+        },
+        {
+          "call": "resume",
+          "ok": false,
+          "reason": "INVALID_TRANSITION",
+          "tick": 6
+        },
+        {
+          "call": "grant_epoch",
+          "ok": false,
+          "reason": "GATE_LOCKED",
+          "tick": 6
+        },
+        {
+          "call": "operator_reset",
+          "ok": true,
+          "reason": null,
+          "tick": 8
+        },
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 9
+        },
+        {
+          "call": "resume",
+          "ok": true,
+          "reason": null,
+          "tick": 9
+        }
+      ],
+      "mismatches": [],
+      "name": "process_crash_state_lost",
+      "restarts": 1,
+      "time_to_block_ticks": 1
+    },
+    {
+      "audit_records": 13,
+      "by_category": {
+        "unavailable_command": 10
+      },
+      "counts": {
+        "allowed": 1,
+        "delivered": 11,
+        "dispatched": 1,
+        "dropped_by_link": 0,
+        "fail_open": 0,
+        "false_blocks": 0,
+        "held": 0,
+        "rejected": 10,
+        "scheduled_deliveries": 11,
+        "sent": 11,
+        "undelivered": 0
+      },
+      "deliveries": [
+        {
+          "category": "unavailable_command",
+          "delivery_tick": 1,
+          "dispatched": false,
+          "expected": {
+            "category": "unavailable_command",
+            "reason": "UNKNOWN_SKILL",
+            "verdict": "REJECT"
+          },
+          "field": "msg.command",
+          "label": "skill_0",
+          "reason": "UNKNOWN_SKILL",
+          "send_tick": 1,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "unavailable_command",
+          "delivery_tick": 2,
+          "dispatched": false,
+          "expected": {
+            "category": "unavailable_command",
+            "reason": "UNKNOWN_SKILL",
+            "verdict": "REJECT"
+          },
+          "field": "msg.command",
+          "label": "skill_1",
+          "reason": "UNKNOWN_SKILL",
+          "send_tick": 2,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "unavailable_command",
+          "delivery_tick": 3,
+          "dispatched": false,
+          "expected": {
+            "category": "unavailable_command",
+            "reason": "UNKNOWN_SKILL",
+            "verdict": "REJECT"
+          },
+          "field": "msg.command",
+          "label": "skill_2",
+          "reason": "UNKNOWN_SKILL",
+          "send_tick": 3,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "unavailable_command",
+          "delivery_tick": 4,
+          "dispatched": false,
+          "expected": {
+            "category": "unavailable_command",
+            "reason": "UNKNOWN_SKILL",
+            "verdict": "REJECT"
+          },
+          "field": "msg.command",
+          "label": "skill_3",
+          "reason": "UNKNOWN_SKILL",
+          "send_tick": 4,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "unavailable_command",
+          "delivery_tick": 5,
+          "dispatched": false,
+          "expected": {
+            "category": "unavailable_command",
+            "reason": "UNKNOWN_SKILL",
+            "verdict": "REJECT"
+          },
+          "field": "msg.command",
+          "label": "skill_4",
+          "reason": "UNKNOWN_SKILL",
+          "send_tick": 5,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "unavailable_command",
+          "delivery_tick": 6,
+          "dispatched": false,
+          "expected": {
+            "category": "unavailable_command",
+            "reason": "UNKNOWN_SKILL",
+            "verdict": "REJECT"
+          },
+          "field": "msg.command",
+          "label": "skill_5",
+          "reason": "UNKNOWN_SKILL",
+          "send_tick": 6,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "unavailable_command",
+          "delivery_tick": 7,
+          "dispatched": false,
+          "expected": {
+            "category": "unavailable_command",
+            "reason": "UNKNOWN_SKILL",
+            "verdict": "REJECT"
+          },
+          "field": "msg.command",
+          "label": "skill_6",
+          "reason": "UNKNOWN_SKILL",
+          "send_tick": 7,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "unavailable_command",
+          "delivery_tick": 8,
+          "dispatched": false,
+          "expected": {
+            "category": "unavailable_command",
+            "reason": "UNKNOWN_SKILL",
+            "verdict": "REJECT"
+          },
+          "field": "msg.command",
+          "label": "skill_7",
+          "reason": "UNKNOWN_SKILL",
+          "send_tick": 8,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "unavailable_command",
+          "delivery_tick": 9,
+          "dispatched": false,
+          "expected": {
+            "category": "unavailable_command",
+            "reason": "UNKNOWN_SKILL",
+            "verdict": "REJECT"
+          },
+          "field": "msg.command",
+          "label": "skill_8",
+          "reason": "UNKNOWN_SKILL",
+          "send_tick": 9,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "unavailable_command",
+          "delivery_tick": 10,
+          "dispatched": false,
+          "expected": {
+            "category": "unavailable_command",
+            "reason": "UNKNOWN_SKILL",
+            "verdict": "REJECT"
+          },
+          "field": "msg.command",
+          "label": "skill_9",
+          "reason": "UNKNOWN_SKILL",
+          "send_tick": 10,
+          "verdict": "REJECT"
+        },
+        {
+          "category": null,
+          "delivery_tick": 11,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "valid_after_unknown",
+          "reason": null,
+          "send_tick": 11,
+          "verdict": "ALLOW"
+        }
+      ],
+      "description": "cmd_vel, shell, near-miss spellings and control characters are not on the skill allow-list; none advances the sequence, a valid command afterwards still works",
+      "end_tick": 12,
+      "failure_count": 0,
+      "fault_tick": 1,
+      "final_epoch": 1,
+      "final_gate_mode": "autonomous",
+      "first_block_by": "decision",
+      "first_block_tick": 1,
+      "gate_ops": [
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 0
+        },
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 10
+        }
+      ],
+      "mismatches": [],
+      "name": "unknown_skill",
+      "restarts": 0,
+      "time_to_block_ticks": 0
+    },
+    {
+      "audit_records": 50,
+      "by_category": {
+        "malformed": 21,
+        "model_failure": 25,
+        "unavailable_command": 1
+      },
+      "counts": {
+        "allowed": 1,
+        "delivered": 48,
+        "dispatched": 1,
+        "dropped_by_link": 0,
+        "fail_open": 0,
+        "false_blocks": 0,
+        "held": 0,
+        "rejected": 47,
+        "scheduled_deliveries": 48,
+        "sent": 48,
+        "undelivered": 0
+      },
+      "deliveries": [
+        {
+          "category": "model_failure",
+          "delivery_tick": 1,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "BAD_ARGUMENT_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values[0]",
+          "label": "args_values_as_strings",
+          "reason": "BAD_ARGUMENT_TYPE",
+          "send_tick": 1,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 2,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "NON_FINITE_VALUE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values[0]",
+          "label": "args_nan",
+          "reason": "NON_FINITE_VALUE",
+          "send_tick": 2,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 3,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "NON_FINITE_VALUE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values[0]",
+          "label": "args_inf",
+          "reason": "NON_FINITE_VALUE",
+          "send_tick": 3,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 4,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "NON_FINITE_VALUE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values[0]",
+          "label": "args_neg_inf",
+          "reason": "NON_FINITE_VALUE",
+          "send_tick": 4,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 5,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "OUT_OF_BOUNDS",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values[0]",
+          "label": "args_huge_float",
+          "reason": "OUT_OF_BOUNDS",
+          "send_tick": 5,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 6,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "OUT_OF_BOUNDS",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values[0]",
+          "label": "args_huge_int",
+          "reason": "OUT_OF_BOUNDS",
+          "send_tick": 6,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 7,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "OUT_OF_BOUNDS",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values[0]",
+          "label": "args_neg_huge_int",
+          "reason": "OUT_OF_BOUNDS",
+          "send_tick": 7,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 8,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "BAD_ARGUMENT_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values[0]",
+          "label": "args_bool_value",
+          "reason": "BAD_ARGUMENT_TYPE",
+          "send_tick": 8,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 9,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "BAD_ARGUMENT_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values[0]",
+          "label": "args_none_value",
+          "reason": "BAD_ARGUMENT_TYPE",
+          "send_tick": 9,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 10,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "BAD_ARGUMENT_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values[0]",
+          "label": "args_nested_list_value",
+          "reason": "BAD_ARGUMENT_TYPE",
+          "send_tick": 10,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 11,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "BAD_ARGUMENT_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values[0]",
+          "label": "args_nested_dict_value",
+          "reason": "BAD_ARGUMENT_TYPE",
+          "send_tick": 11,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 12,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "WRONG_DIMENSION",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values",
+          "label": "args_too_short",
+          "reason": "WRONG_DIMENSION",
+          "send_tick": 12,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 13,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "WRONG_DIMENSION",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values",
+          "label": "args_too_long",
+          "reason": "WRONG_DIMENSION",
+          "send_tick": 13,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 14,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "WRONG_DIMENSION",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values",
+          "label": "args_empty_values",
+          "reason": "WRONG_DIMENSION",
+          "send_tick": 14,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 15,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "BAD_ARGUMENT_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values",
+          "label": "args_values_is_object",
+          "reason": "BAD_ARGUMENT_TYPE",
+          "send_tick": 15,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 16,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "BAD_ARGUMENT_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values",
+          "label": "args_values_is_string",
+          "reason": "BAD_ARGUMENT_TYPE",
+          "send_tick": 16,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 17,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "WRONG_UNITS",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.units[0]",
+          "label": "args_wrong_units",
+          "reason": "WRONG_UNITS",
+          "send_tick": 17,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 18,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "BAD_ARGUMENT_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.units",
+          "label": "args_units_is_string",
+          "reason": "BAD_ARGUMENT_TYPE",
+          "send_tick": 18,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 19,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "BAD_ARGUMENT_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.units[0]",
+          "label": "args_units_not_strings",
+          "reason": "BAD_ARGUMENT_TYPE",
+          "send_tick": 19,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 20,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "OUT_OF_BOUNDS",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values[1]",
+          "label": "args_out_of_bounds_lift",
+          "reason": "OUT_OF_BOUNDS",
+          "send_tick": 20,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 21,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "STEP_TOO_LARGE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values[1]",
+          "label": "args_step_too_large",
+          "reason": "STEP_TOO_LARGE",
+          "send_tick": 21,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 22,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "BAD_ARGUMENT_FIELDS",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.gain",
+          "label": "args_extra_args_key",
+          "reason": "BAD_ARGUMENT_FIELDS",
+          "send_tick": 22,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 23,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "BAD_ARGUMENT_FIELDS",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values",
+          "label": "args_missing_values",
+          "reason": "BAD_ARGUMENT_FIELDS",
+          "send_tick": 23,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 24,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "WRONG_ACTION_SPACE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.action_space",
+          "label": "args_wrong_action_space",
+          "reason": "WRONG_ACTION_SPACE",
+          "send_tick": 24,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 25,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "BAD_ARGUMENT_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.action_space",
+          "label": "args_action_space_not_string",
+          "reason": "BAD_ARGUMENT_TYPE",
+          "send_tick": 25,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 26,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "UNKNOWN_FIELD",
+            "verdict": "REJECT"
+          },
+          "field": "msg.cmd_vel",
+          "label": "env_extra_top_level_key",
+          "reason": "UNKNOWN_FIELD",
+          "send_tick": 26,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 27,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "WRONG_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.epoch",
+          "label": "env_epoch_is_object",
+          "reason": "WRONG_TYPE",
+          "send_tick": 27,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 28,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "WRONG_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.sequence_id",
+          "label": "env_sequence_is_list",
+          "reason": "WRONG_TYPE",
+          "send_tick": 28,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 29,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "WRONG_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.source_id",
+          "label": "env_source_is_list",
+          "reason": "WRONG_TYPE",
+          "send_tick": 29,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 30,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "WRONG_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.command",
+          "label": "env_command_is_list",
+          "reason": "WRONG_TYPE",
+          "send_tick": 30,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 31,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "WRONG_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args",
+          "label": "env_args_is_list",
+          "reason": "WRONG_TYPE",
+          "send_tick": 31,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 32,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "WRONG_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args",
+          "label": "env_args_is_string",
+          "reason": "WRONG_TYPE",
+          "send_tick": 32,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 33,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "WRONG_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.simulated",
+          "label": "env_simulated_is_string",
+          "reason": "WRONG_TYPE",
+          "send_tick": 33,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "unavailable_command",
+          "delivery_tick": 34,
+          "dispatched": false,
+          "expected": {
+            "category": "unavailable_command",
+            "reason": "NOT_SIMULATED",
+            "verdict": "REJECT"
+          },
+          "field": "msg.simulated",
+          "label": "env_simulated_false",
+          "reason": "NOT_SIMULATED",
+          "send_tick": 34,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 35,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "UNSUPPORTED_SCHEMA",
+            "verdict": "REJECT"
+          },
+          "field": "msg.schema",
+          "label": "env_wrong_schema",
+          "reason": "UNSUPPORTED_SCHEMA",
+          "send_tick": 35,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 36,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "WRONG_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.sequence_id",
+          "label": "env_bool_sequence",
+          "reason": "WRONG_TYPE",
+          "send_tick": 36,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 37,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "INTEGER_OUT_OF_RANGE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.sequence_id",
+          "label": "env_zero_sequence",
+          "reason": "INTEGER_OUT_OF_RANGE",
+          "send_tick": 37,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 38,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "INTEGER_OUT_OF_RANGE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.sequence_id",
+          "label": "env_huge_sequence",
+          "reason": "INTEGER_OUT_OF_RANGE",
+          "send_tick": 38,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 39,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "WRONG_TYPE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.sequence_id",
+          "label": "env_float_sequence",
+          "reason": "WRONG_TYPE",
+          "send_tick": 39,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 40,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "BAD_IDENTIFIER",
+            "verdict": "REJECT"
+          },
+          "field": "msg.observation_id",
+          "label": "env_bad_identifier",
+          "reason": "BAD_IDENTIFIER",
+          "send_tick": 40,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 41,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "MISSING_FIELD",
+            "verdict": "REJECT"
+          },
+          "field": "msg.expires_tick",
+          "label": "env_missing_expires",
+          "reason": "MISSING_FIELD",
+          "send_tick": 41,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 42,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "MALFORMED_MESSAGE",
+            "verdict": "REJECT"
+          },
+          "field": "msg",
+          "label": "text_not_json",
+          "reason": "MALFORMED_MESSAGE",
+          "send_tick": 42,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 43,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "MALFORMED_MESSAGE",
+            "verdict": "REJECT"
+          },
+          "field": "msg",
+          "label": "text_duplicate_keys",
+          "reason": "MALFORMED_MESSAGE",
+          "send_tick": 43,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 44,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "MALFORMED_MESSAGE",
+            "verdict": "REJECT"
+          },
+          "field": "msg",
+          "label": "text_nan_literal",
+          "reason": "MALFORMED_MESSAGE",
+          "send_tick": 44,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 45,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "MALFORMED_MESSAGE",
+            "verdict": "REJECT"
+          },
+          "field": "msg",
+          "label": "text_top_level_list",
+          "reason": "MALFORMED_MESSAGE",
+          "send_tick": 45,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 46,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "MALFORMED_MESSAGE",
+            "verdict": "REJECT"
+          },
+          "field": "msg",
+          "label": "text_deeply_nested",
+          "reason": "MALFORMED_MESSAGE",
+          "send_tick": 46,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 47,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "MALFORMED_MESSAGE",
+            "verdict": "REJECT"
+          },
+          "field": "msg",
+          "label": "text_oversized",
+          "reason": "MALFORMED_MESSAGE",
+          "send_tick": 47,
+          "verdict": "REJECT"
+        },
+        {
+          "category": null,
+          "delivery_tick": 48,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "valid_after_garbage",
+          "reason": null,
+          "send_tick": 48,
+          "verdict": "ALLOW"
+        }
+      ],
+      "description": "argument and envelope shapes an LLM might emit (wrong types, NaN, huge numbers, extra keys, nested objects, bad JSON); every one is a typed block, none advances state, and a valid command afterwards is still allowed",
+      "end_tick": 49,
+      "failure_count": 0,
+      "fault_tick": 1,
+      "final_epoch": 1,
+      "final_gate_mode": "autonomous",
+      "first_block_by": "decision",
+      "first_block_tick": 1,
+      "gate_ops": [
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 0
+        }
+      ],
+      "mismatches": [],
+      "name": "llm_invalid_args",
+      "restarts": 0,
+      "time_to_block_ticks": 0
+    },
+    {
+      "audit_records": 7,
+      "by_category": {
+        "stale_response": 3
+      },
+      "counts": {
+        "allowed": 2,
+        "delivered": 5,
+        "dispatched": 2,
+        "dropped_by_link": 0,
+        "fail_open": 0,
+        "false_blocks": 0,
+        "held": 0,
+        "rejected": 3,
+        "scheduled_deliveries": 5,
+        "sent": 5,
+        "undelivered": 0
+      },
+      "deliveries": [
+        {
+          "category": null,
+          "delivery_tick": 4,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "age_4",
+          "reason": null,
+          "send_tick": 4,
+          "verdict": "ALLOW"
+        },
+        {
+          "category": "stale_response",
+          "delivery_tick": 5,
+          "dispatched": false,
+          "expected": {
+            "category": "stale_response",
+            "reason": "STALE_OBSERVATION",
+            "verdict": "REJECT"
+          },
+          "field": "msg.observation_id",
+          "label": "age_5_stale",
+          "reason": "STALE_OBSERVATION",
+          "send_tick": 5,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "stale_response",
+          "delivery_tick": 5,
+          "dispatched": false,
+          "expected": {
+            "category": "stale_response",
+            "reason": "UNKNOWN_OBSERVATION",
+            "verdict": "REJECT"
+          },
+          "field": "msg.observation_id",
+          "label": "unknown_obs",
+          "reason": "UNKNOWN_OBSERVATION",
+          "send_tick": 5,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "stale_response",
+          "delivery_tick": 6,
+          "dispatched": false,
+          "expected": {
+            "category": "stale_response",
+            "reason": "EXPIRED",
+            "verdict": "REJECT"
+          },
+          "field": "msg.expires_tick",
+          "label": "expired_msg",
+          "reason": "EXPIRED",
+          "send_tick": 1,
+          "verdict": "REJECT"
+        },
+        {
+          "category": null,
+          "delivery_tick": 6,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "fresh_obs",
+          "reason": null,
+          "send_tick": 6,
+          "verdict": "ALLOW"
+        }
+      ],
+      "description": "observation age is half-open: age 4 passes, age 5 (== ttl) is stale; unknown and expired-message cases are distinct typed reasons",
+      "end_tick": 8,
+      "failure_count": 0,
+      "fault_tick": 5,
+      "final_epoch": 1,
+      "final_gate_mode": "autonomous",
+      "first_block_by": "decision",
+      "first_block_tick": 5,
+      "gate_ops": [
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 0
+        },
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 6
+        }
+      ],
+      "mismatches": [],
+      "name": "expired_observation",
+      "restarts": 0,
+      "time_to_block_ticks": 0
+    },
+    {
+      "audit_records": 15,
+      "by_category": {
+        "hold": 2,
+        "intervention": 2
+      },
+      "counts": {
+        "allowed": 3,
+        "delivered": 7,
+        "dispatched": 3,
+        "dropped_by_link": 0,
+        "fail_open": 0,
+        "false_blocks": 0,
+        "held": 4,
+        "rejected": 0,
+        "scheduled_deliveries": 7,
+        "sent": 7,
+        "undelivered": 0
+      },
+      "deliveries": [
+        {
+          "category": null,
+          "delivery_tick": 1,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "before",
+          "reason": null,
+          "send_tick": 1,
+          "verdict": "ALLOW"
+        },
+        {
+          "category": "intervention",
+          "delivery_tick": 3,
+          "dispatched": false,
+          "expected": {
+            "category": "intervention",
+            "reason": "INTERVENTION_ACTIVE",
+            "verdict": "HOLD"
+          },
+          "field": "gate.mode",
+          "label": "during_1",
+          "reason": "INTERVENTION_ACTIVE",
+          "send_tick": 3,
+          "verdict": "HOLD"
+        },
+        {
+          "category": "intervention",
+          "delivery_tick": 4,
+          "dispatched": false,
+          "expected": {
+            "category": "intervention",
+            "reason": "INTERVENTION_ACTIVE",
+            "verdict": "HOLD"
+          },
+          "field": "gate.mode",
+          "label": "during_2",
+          "reason": "INTERVENTION_ACTIVE",
+          "send_tick": 4,
+          "verdict": "HOLD"
+        },
+        {
+          "category": "hold",
+          "delivery_tick": 7,
+          "dispatched": false,
+          "expected": {
+            "category": "hold",
+            "reason": "GATE_HOLD",
+            "verdict": "HOLD"
+          },
+          "field": "gate.mode",
+          "label": "after_release",
+          "reason": "GATE_HOLD",
+          "send_tick": 7,
+          "verdict": "HOLD"
+        },
+        {
+          "category": null,
+          "delivery_tick": 9,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "after_resume",
+          "reason": null,
+          "send_tick": 9,
+          "verdict": "ALLOW"
+        },
+        {
+          "category": "hold",
+          "delivery_tick": 11,
+          "dispatched": false,
+          "expected": {
+            "category": "hold",
+            "reason": "SAFE_STOP_ACTIVE",
+            "verdict": "HOLD"
+          },
+          "field": "gate.mode",
+          "label": "during_safe_stop",
+          "reason": "SAFE_STOP_ACTIVE",
+          "send_tick": 11,
+          "verdict": "HOLD"
+        },
+        {
+          "category": null,
+          "delivery_tick": 13,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "after_reset",
+          "reason": null,
+          "send_tick": 13,
+          "verdict": "ALLOW"
+        }
+      ],
+      "description": "an operator takes over: commands are held as INTERVENTION_ACTIVE; release leads to HOLD (not autonomous); safe-stop latches until reset; resume is explicit",
+      "end_tick": 14,
+      "failure_count": 0,
+      "fault_tick": 3,
+      "final_epoch": 1,
+      "final_gate_mode": "autonomous",
+      "first_block_by": "decision",
+      "first_block_tick": 3,
+      "gate_ops": [
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 0
+        },
+        {
+          "call": "intervene",
+          "ok": true,
+          "reason": null,
+          "tick": 3
+        },
+        {
+          "call": "release_intervention",
+          "ok": true,
+          "reason": null,
+          "tick": 6
+        },
+        {
+          "call": "resume",
+          "ok": true,
+          "reason": null,
+          "tick": 8
+        },
+        {
+          "call": "safe_stop",
+          "ok": true,
+          "reason": null,
+          "tick": 10
+        },
+        {
+          "call": "resume",
+          "ok": false,
+          "reason": "INVALID_TRANSITION",
+          "tick": 12
+        },
+        {
+          "call": "reset_safe_stop",
+          "ok": true,
+          "reason": null,
+          "tick": 12
+        },
+        {
+          "call": "resume",
+          "ok": true,
+          "reason": null,
+          "tick": 12
+        }
+      ],
+      "mismatches": [],
+      "name": "operator_intervention",
+      "restarts": 0,
+      "time_to_block_ticks": 0
+    },
+    {
+      "audit_records": 8,
+      "by_category": {
+        "model_failure": 4,
+        "provenance": 1
+      },
+      "counts": {
+        "allowed": 1,
+        "delivered": 6,
+        "dispatched": 1,
+        "dropped_by_link": 0,
+        "fail_open": 0,
+        "false_blocks": 0,
+        "held": 0,
+        "rejected": 5,
+        "scheduled_deliveries": 6,
+        "sent": 6,
+        "undelivered": 0
+      },
+      "deliveries": [
+        {
+          "category": "model_failure",
+          "delivery_tick": 1,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "MODEL_NOT_APPROVED",
+            "verdict": "REJECT"
+          },
+          "field": "msg.model_revision",
+          "label": "unapproved_revision",
+          "reason": "MODEL_NOT_APPROVED",
+          "send_tick": 1,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 2,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "MODEL_NOT_APPROVED",
+            "verdict": "REJECT"
+          },
+          "field": "msg.model_id",
+          "label": "unapproved_model",
+          "reason": "MODEL_NOT_APPROVED",
+          "send_tick": 2,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "provenance",
+          "delivery_tick": 3,
+          "dispatched": false,
+          "expected": {
+            "category": "provenance",
+            "reason": "UNAUTHORIZED_SOURCE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.source_id",
+          "label": "rogue_source",
+          "reason": "UNAUTHORIZED_SOURCE",
+          "send_tick": 3,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 4,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "STEP_TOO_LARGE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values[1]",
+          "label": "step_too_large",
+          "reason": "STEP_TOO_LARGE",
+          "send_tick": 4,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "model_failure",
+          "delivery_tick": 5,
+          "dispatched": false,
+          "expected": {
+            "category": "model_failure",
+            "reason": "NON_FINITE_VALUE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.args.values[0]",
+          "label": "nan_values",
+          "reason": "NON_FINITE_VALUE",
+          "send_tick": 5,
+          "verdict": "REJECT"
+        },
+        {
+          "category": null,
+          "delivery_tick": 6,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "valid",
+          "reason": null,
+          "send_tick": 6,
+          "verdict": "ALLOW"
+        }
+      ],
+      "description": "unapproved model or revision, rogue source, out-of-step and NaN proposals are blocked with model_failure/provenance reasons, then a valid proposal is allowed",
+      "end_tick": 8,
+      "failure_count": 0,
+      "fault_tick": 1,
+      "final_epoch": 1,
+      "final_gate_mode": "autonomous",
+      "first_block_by": "decision",
+      "first_block_tick": 1,
+      "gate_ops": [
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 0
+        }
+      ],
+      "mismatches": [],
+      "name": "model_failure",
+      "restarts": 0,
+      "time_to_block_ticks": 0
+    },
+    {
+      "audit_records": 5,
+      "by_category": {
+        "hold": 1
+      },
+      "counts": {
+        "allowed": 1,
+        "delivered": 2,
+        "dispatched": 1,
+        "dropped_by_link": 0,
+        "fail_open": 0,
+        "false_blocks": 0,
+        "held": 1,
+        "rejected": 0,
+        "scheduled_deliveries": 2,
+        "sent": 2,
+        "undelivered": 0
+      },
+      "deliveries": [
+        {
+          "category": null,
+          "delivery_tick": 2,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "last_good",
+          "reason": null,
+          "send_tick": 2,
+          "verdict": "ALLOW"
+        },
+        {
+          "category": "hold",
+          "delivery_tick": 14,
+          "dispatched": false,
+          "expected": {
+            "category": "hold",
+            "reason": "GATE_HOLD",
+            "verdict": "HOLD"
+          },
+          "field": "gate.mode",
+          "label": "after_silence",
+          "reason": "GATE_HOLD",
+          "send_tick": 14,
+          "verdict": "HOLD"
+        }
+      ],
+      "description": "the model stops answering after tick 2: no message arrives, the watchdog HOLDs the gate 8 ticks later and a later message is held",
+      "end_tick": 15,
+      "failure_count": 0,
+      "fault_tick": 2,
+      "final_epoch": 1,
+      "final_gate_mode": "hold",
+      "first_block_by": "watchdog",
+      "first_block_tick": 10,
+      "gate_ops": [
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 0
+        }
+      ],
+      "mismatches": [],
+      "name": "model_silent_watchdog",
+      "restarts": 0,
+      "time_to_block_ticks": 8
+    },
+    {
+      "audit_records": 7,
+      "by_category": {
+        "unavailable_command": 4
+      },
+      "counts": {
+        "allowed": 1,
+        "delivered": 5,
+        "dispatched": 1,
+        "dropped_by_link": 0,
+        "fail_open": 0,
+        "false_blocks": 0,
+        "held": 0,
+        "rejected": 4,
+        "scheduled_deliveries": 5,
+        "sent": 5,
+        "undelivered": 0
+      },
+      "deliveries": [
+        {
+          "category": "unavailable_command",
+          "delivery_tick": 1,
+          "dispatched": false,
+          "expected": {
+            "category": "unavailable_command",
+            "reason": "COMMAND_DISABLED",
+            "verdict": "REJECT"
+          },
+          "field": "msg.command",
+          "label": "disabled_skill",
+          "reason": "COMMAND_DISABLED",
+          "send_tick": 1,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "unavailable_command",
+          "delivery_tick": 2,
+          "dispatched": false,
+          "expected": {
+            "category": "unavailable_command",
+            "reason": "CONTROL_DOMAIN_DENIED",
+            "verdict": "REJECT"
+          },
+          "field": "msg.control_domain",
+          "label": "physical_domain",
+          "reason": "CONTROL_DOMAIN_DENIED",
+          "send_tick": 2,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "unavailable_command",
+          "delivery_tick": 3,
+          "dispatched": false,
+          "expected": {
+            "category": "unavailable_command",
+            "reason": "CONTROL_DOMAIN_DENIED",
+            "verdict": "REJECT"
+          },
+          "field": "msg.control_domain",
+          "label": "serial_port_domain",
+          "reason": "CONTROL_DOMAIN_DENIED",
+          "send_tick": 3,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "unavailable_command",
+          "delivery_tick": 4,
+          "dispatched": false,
+          "expected": {
+            "category": "unavailable_command",
+            "reason": "NOT_SIMULATED",
+            "verdict": "REJECT"
+          },
+          "field": "msg.simulated",
+          "label": "not_simulated",
+          "reason": "NOT_SIMULATED",
+          "send_tick": 4,
+          "verdict": "REJECT"
+        },
+        {
+          "category": null,
+          "delivery_tick": 5,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "hold_ok",
+          "reason": null,
+          "send_tick": 5,
+          "verdict": "ALLOW"
+        }
+      ],
+      "description": "an allow-listed skill that is disabled, and non-simulated control domains, are unavailable_command blocks; only the enabled skill passes",
+      "end_tick": 8,
+      "failure_count": 0,
+      "fault_tick": 1,
+      "final_epoch": 1,
+      "final_gate_mode": "autonomous",
+      "first_block_by": "decision",
+      "first_block_tick": 1,
+      "gate_ops": [
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 0
+        }
+      ],
+      "mismatches": [],
+      "name": "unavailable_command",
+      "restarts": 0,
+      "time_to_block_ticks": 0
+    },
+    {
+      "audit_records": 12,
+      "by_category": {
+        "hold": 1,
+        "malformed": 5,
+        "stale_response": 2
+      },
+      "counts": {
+        "allowed": 2,
+        "delivered": 10,
+        "dispatched": 2,
+        "dropped_by_link": 0,
+        "fail_open": 0,
+        "false_blocks": 0,
+        "held": 1,
+        "rejected": 7,
+        "scheduled_deliveries": 10,
+        "sent": 10,
+        "undelivered": 0
+      },
+      "deliveries": [
+        {
+          "category": "malformed",
+          "delivery_tick": 5,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "UNKNOWN_MODE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.mode",
+          "label": "mode_manual",
+          "reason": "UNKNOWN_MODE",
+          "send_tick": 5,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 5,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "UNKNOWN_MODE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.mode",
+          "label": "mode_upper",
+          "reason": "UNKNOWN_MODE",
+          "send_tick": 5,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 5,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "UNKNOWN_MODE",
+            "verdict": "REJECT"
+          },
+          "field": "msg.mode",
+          "label": "mode_space",
+          "reason": "UNKNOWN_MODE",
+          "send_tick": 5,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "hold",
+          "delivery_tick": 5,
+          "dispatched": false,
+          "expected": {
+            "category": "hold",
+            "reason": "MODE_MISMATCH",
+            "verdict": "HOLD"
+          },
+          "field": "msg.mode",
+          "label": "mode_hold",
+          "reason": "MODE_MISMATCH",
+          "send_tick": 5,
+          "verdict": "HOLD"
+        },
+        {
+          "category": null,
+          "delivery_tick": 5,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "created_eq_now",
+          "reason": null,
+          "send_tick": 5,
+          "verdict": "ALLOW"
+        },
+        {
+          "category": "stale_response",
+          "delivery_tick": 5,
+          "dispatched": false,
+          "expected": {
+            "category": "stale_response",
+            "reason": "FUTURE_TIMESTAMP",
+            "verdict": "REJECT"
+          },
+          "field": "msg.created_tick",
+          "label": "created_future",
+          "reason": "FUTURE_TIMESTAMP",
+          "send_tick": 5,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "stale_response",
+          "delivery_tick": 6,
+          "dispatched": false,
+          "expected": {
+            "category": "stale_response",
+            "reason": "EXPIRED",
+            "verdict": "REJECT"
+          },
+          "field": "msg.expires_tick",
+          "label": "expires_eq_now",
+          "reason": "EXPIRED",
+          "send_tick": 3,
+          "verdict": "REJECT"
+        },
+        {
+          "category": null,
+          "delivery_tick": 6,
+          "dispatched": true,
+          "expected": {
+            "category": null,
+            "reason": null,
+            "verdict": "ALLOW"
+          },
+          "field": "",
+          "label": "expires_now_plus_1",
+          "reason": null,
+          "send_tick": 3,
+          "verdict": "ALLOW"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 7,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "INVALID_EXPIRY",
+            "verdict": "REJECT"
+          },
+          "field": "msg.expires_tick",
+          "label": "expiry_too_long",
+          "reason": "INVALID_EXPIRY",
+          "send_tick": 7,
+          "verdict": "REJECT"
+        },
+        {
+          "category": "malformed",
+          "delivery_tick": 7,
+          "dispatched": false,
+          "expected": {
+            "category": "malformed",
+            "reason": "INVALID_EXPIRY",
+            "verdict": "REJECT"
+          },
+          "field": "msg.expires_tick",
+          "label": "expiry_eq_created",
+          "reason": "INVALID_EXPIRY",
+          "send_tick": 7,
+          "verdict": "REJECT"
+        }
+      ],
+      "description": "unknown and mismatched modes; explicit equal-tick semantics: created==now ok, created==now+1 future, expires==now expired, expires==now+1 ok, bounded expiry",
+      "end_tick": 8,
+      "failure_count": 0,
+      "fault_tick": 5,
+      "final_epoch": 1,
+      "final_gate_mode": "autonomous",
+      "first_block_by": "decision",
+      "first_block_tick": 5,
+      "gate_ops": [
+        {
+          "call": "register_observation",
+          "ok": true,
+          "reason": null,
+          "tick": 0
+        }
+      ],
+      "mismatches": [],
+      "name": "modes_and_boundaries",
+      "restarts": 0,
+      "time_to_block_ticks": 0
+    }
+  ],
+  "totals": {
+    "blocked_by_category": {
+      "hold": 8,
+      "intervention": 2,
+      "malformed": 26,
+      "model_failure": 29,
+      "provenance": 1,
+      "stale_response": 14,
+      "unavailable_command": 15
+    },
+    "deliveries": 121,
+    "dispatched": 25,
+    "fail_open": 0,
+    "failure_count": 0,
+    "false_blocks": 0,
+    "scenarios": 15
+  }
+}
