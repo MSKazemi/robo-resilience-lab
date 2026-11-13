@@ -1,0 +1,175 @@
+{
+  "schema": "recovery-observation/1",
+  "sample_id": "SYNTHETIC-fail-never-ready",
+  "synthetic": true,
+  "label": "SYNTHETIC hand-written fixture in the shape of sanitized kubectl output. Not a measurement from any cluster; all names, UIDs and times are invented.",
+  "namespace": "ros-sim",
+  "selector": "app=talker-sim",
+  "target_uid": "synthetic-pod-a-uid",
+  "kubectl_context": null,
+  "exit_status": 4,
+  "run_error": {
+    "code": "poll_timeout"
+  },
+  "events": null,
+  "probe": null,
+  "baseline_pods": {
+    "items": [
+      {
+        "metadata": {
+          "name": "talker-sim-7d9c5b8f4-aaaaa",
+          "namespace": "ros-sim",
+          "uid": "synthetic-pod-a-uid",
+          "labels": {
+            "app": "talker-sim"
+          },
+          "creationTimestamp": "2025-12-31T23:00:00Z",
+          "ownerReferences": [
+            {
+              "uid": "synthetic-replicaset-uid-1",
+              "controller": true
+            }
+          ]
+        },
+        "status": {
+          "phase": "Running",
+          "conditions": [
+            {
+              "type": "Ready",
+              "status": "True",
+              "lastTransitionTime": "2025-12-31T23:00:05Z"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "target_pod": "talker-sim-7d9c5b8f4-aaaaa",
+  "delete_requested_mono_s": 300.0,
+  "delete_request_wall": "2026-01-01T12:00:00Z",
+  "polls": [
+    {
+      "mono_s": 301.0,
+      "pods": {
+        "items": [
+          {
+            "metadata": {
+              "name": "talker-sim-7d9c5b8f4-aaaaa",
+              "namespace": "ros-sim",
+              "uid": "synthetic-pod-a-uid",
+              "labels": {
+                "app": "talker-sim"
+              },
+              "creationTimestamp": "2025-12-31T23:00:00Z",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ],
+              "deletionTimestamp": "2026-01-01T12:00:30Z"
+            },
+            "status": {
+              "phase": "Running",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "True",
+                  "lastTransitionTime": "2025-12-31T23:00:05Z"
+                }
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "name": "talker-sim-7d9c5b8f4-bbbbb",
+              "namespace": "ros-sim",
+              "uid": "synthetic-pod-b-uid",
+              "labels": {
+                "app": "talker-sim"
+              },
+              "creationTimestamp": "2026-01-01T14:00:01+02:00",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ]
+            },
+            "status": {
+              "phase": "Pending"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "mono_s": 310.0,
+      "pods": {
+        "items": [
+          {
+            "metadata": {
+              "name": "talker-sim-7d9c5b8f4-bbbbb",
+              "namespace": "ros-sim",
+              "uid": "synthetic-pod-b-uid",
+              "labels": {
+                "app": "talker-sim"
+              },
+              "creationTimestamp": "2026-01-01T14:00:01+02:00",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ]
+            },
+            "status": {
+              "phase": "Running",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "False",
+                  "lastTransitionTime": "2026-01-01T12:00:02Z"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "mono_s": 330.0,
+      "pods": {
+        "items": [
+          {
+            "metadata": {
+              "name": "talker-sim-7d9c5b8f4-bbbbb",
+              "namespace": "ros-sim",
+              "uid": "synthetic-pod-b-uid",
+              "labels": {
+                "app": "talker-sim"
+              },
+              "creationTimestamp": "2026-01-01T14:00:01+02:00",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ]
+            },
+            "status": {
+              "phase": "Running",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "False",
+                  "lastTransitionTime": "2026-01-01T12:00:02Z"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
