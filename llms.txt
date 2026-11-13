@@ -89,3 +89,8 @@ This `llms.txt` is an informational navigation aid, not a claim of special index
 - [Model-serving fairness simulation](experiments/model-serving-fairness/README.md): SIMULATION of FIFO, EDF and fair scheduling with a model cache; no GPU.
 - [LeRobot data-quality contract](examples/lerobot-data-quality/README.md): metadata validator for synthetic episodes; no LeRobot conversion.
 - [Agent mobility contract](docs/cloud-robotics/agent-mobility/README.md): mission-state handoff simulation; no robots.
+- [Run manifest contract](examples/run-manifest/README.md): provenance contract, validator and synthetic summaries; no real data.
+- [Action gate](examples/cloud-robotics/action-gate/README.md): fail-closed SIMULATED action gate and fault suite; no hardware.
+- [Fault triage casebook](examples/ros2-fault-triage-casebook/README.md): synthetic DDS/QoS cases with a rule baseline; a regression check, not accuracy.
+- [Skill proposal review](examples/cloud-robotics/skill-proposal-review/README.md): typed simulated skills and a fail-closed reviewer; no model.
+- [Pod recovery measurement](DataAnalysis/README.md): measurement definitions and dry-run scripts; no live run.

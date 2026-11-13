@@ -18,6 +18,10 @@ MODULE_DIRS=(
   examples/ros2-sequence-probe
   examples/lerobot-data-quality
   examples/cloud-robotics/agent-mobility
+  examples/run-manifest
+  examples/cloud-robotics/action-gate
+  examples/ros2-fault-triage-casebook
+  examples/cloud-robotics/skill-proposal-review
   experiments/e02-dds-resilience
   experiments/edge-cloud-placement
   experiments/model-serving-fairness

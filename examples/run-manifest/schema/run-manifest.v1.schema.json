@@ -1,0 +1,1527 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MSKazemi/robo-resilience-lab/examples/run-manifest/schema/run-manifest.v1.schema.json",
+  "title": "Run manifest, contract run-manifest/v1",
+  "description": "Structural documentation of the contract. The executable authority is rm_validate.py, which also checks what JSON Schema cannot express: duplicate keys, NaN/Infinity, ended_utc >= started_utc, warmup < timeout, status vs censored vs failure_count consistency, task_success consistency, array lengths vs dimension, measurement kind vs data_kind, placeholder hashes, secret/address heuristics. Every example in this directory is SYNTHETIC. Vendor extension keys start with 'x_'.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "data_kind",
+    "experiment_id",
+    "arm",
+    "run",
+    "source",
+    "images",
+    "software",
+    "simulator",
+    "hardware",
+    "placement",
+    "network",
+    "qos",
+    "model",
+    "dataset",
+    "code_license",
+    "clocks",
+    "timing",
+    "action_space",
+    "fault_injection",
+    "measurement_source",
+    "outcome",
+    "data_hashes"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "run-manifest/v1"
+    },
+    "data_kind": {
+      "type": "string",
+      "enum": [
+        "synthetic",
+        "simulated",
+        "measured"
+      ]
+    },
+    "experiment_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    },
+    "arm": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[ -~]{1,128}$"
+    },
+    "run": {
+      "type": "object",
+      "required": [
+        "independent_run_id",
+        "group_id",
+        "run_index",
+        "fresh_deployment",
+        "seed",
+        "started_utc",
+        "ended_utc",
+        "warmup",
+        "timeout"
+      ],
+      "properties": {
+        "independent_run_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        },
+        "group_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        },
+        "run_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "fresh_deployment": {
+          "type": "boolean"
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "started_utc": {
+          "type": "string",
+          "pattern": "^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})(\\.[0-9]{1,6})?Z$"
+        },
+        "ended_utc": {
+          "type": "string",
+          "pattern": "^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})(\\.[0-9]{1,6})?Z$"
+        },
+        "warmup": {
+          "type": "object",
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "maximum": 1000000000000.0,
+              "minimum": 0
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "s",
+                "ms",
+                "us",
+                "ns"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        },
+        "timeout": {
+          "type": "object",
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "maximum": 1000000000000.0,
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "s",
+                "ms",
+                "us",
+                "ns"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x_": {}
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "git_sha",
+        "git_dirty"
+      ],
+      "properties": {
+        "git_sha": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "git_dirty": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x_": {}
+      }
+    },
+    "images": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "oci_digest"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+          },
+          "oci_digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        },
+        "additionalProperties": false,
+        "patternProperties": {
+          "^x_": {}
+        }
+      }
+    },
+    "software": {
+      "type": "object",
+      "required": [
+        "ros_distro",
+        "rmw_implementation",
+        "rmw_version",
+        "cni",
+        "kubernetes_version"
+      ],
+      "properties": {
+        "ros_distro": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        },
+        "rmw_implementation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        },
+        "rmw_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[0-9A-Za-z][0-9A-Za-z._+~-]{0,63}$"
+        },
+        "cni": {
+          "type": "object",
+          "required": [
+            "name",
+            "version"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[0-9A-Za-z][0-9A-Za-z._+~-]{0,63}$"
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        },
+        "kubernetes_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[0-9]+\\.[0-9]+(\\.[0-9]+)?([-+][0-9A-Za-z.+-]{1,32})?$"
+        },
+        "container_runtime": {
+          "type": "object",
+          "required": [
+            "name",
+            "version"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[0-9A-Za-z][0-9A-Za-z._+~-]{0,63}$"
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x_": {}
+      }
+    },
+    "simulator": {
+      "type": "object",
+      "required": [
+        "used"
+      ],
+      "properties": {
+        "used": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[0-9A-Za-z][0-9A-Za-z._+~-]{0,63}$"
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x_": {}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "used": {
+                "const": true
+              }
+            },
+            "required": [
+              "used"
+            ]
+          },
+          "then": {
+            "required": [
+              "name",
+              "version"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "used": {
+                "const": false
+              }
+            },
+            "required": [
+              "used"
+            ]
+          },
+          "then": {
+            "properties": {
+              "name": false,
+              "version": false
+            }
+          }
+        }
+      ]
+    },
+    "hardware": {
+      "type": "object",
+      "required": [
+        "cpu",
+        "memory",
+        "gpu",
+        "os"
+      ],
+      "properties": {
+        "cpu": {
+          "type": "object",
+          "required": [
+            "model",
+            "logical_cores",
+            "architecture"
+          ],
+          "properties": {
+            "model": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[ -~]{1,128}$"
+            },
+            "logical_cores": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4096
+            },
+            "architecture": {
+              "type": "string",
+              "enum": [
+                "x86_64",
+                "aarch64",
+                "riscv64",
+                "other"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        },
+        "memory": {
+          "type": "object",
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "maximum": 1000000000000.0,
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "GiB",
+                "MiB"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        },
+        "gpu": {
+          "type": "object",
+          "required": [
+            "present"
+          ],
+          "properties": {
+            "present": {
+              "type": "boolean"
+            },
+            "model": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[ -~]{1,128}$"
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 64
+            },
+            "driver_version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[0-9A-Za-z][0-9A-Za-z._+~-]{0,63}$"
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "present": {
+                    "const": true
+                  }
+                },
+                "required": [
+                  "present"
+                ]
+              },
+              "then": {
+                "required": [
+                  "model",
+                  "count",
+                  "driver_version"
+                ]
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "present": {
+                    "const": false
+                  }
+                },
+                "required": [
+                  "present"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "model": false,
+                  "count": false,
+                  "driver_version": false
+                }
+              }
+            }
+          ]
+        },
+        "os": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[ -~]{1,128}$"
+        },
+        "kernel_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[0-9A-Za-z][0-9A-Za-z._+~-]{0,63}$"
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x_": {}
+      }
+    },
+    "placement": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "required": [
+          "component",
+          "node",
+          "tier"
+        ],
+        "properties": {
+          "component": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+          },
+          "node": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$",
+            "description": "symbolic name, never an address"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "edge",
+              "cloud",
+              "local"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "patternProperties": {
+          "^x_": {}
+        }
+      }
+    },
+    "network": {
+      "type": "object",
+      "required": [
+        "profile",
+        "shaped"
+      ],
+      "properties": {
+        "profile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        },
+        "shaped": {
+          "type": "boolean"
+        },
+        "shaping_tool": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[ -~]{1,128}$"
+        },
+        "one_way_delay": {
+          "type": "object",
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "maximum": 1000000000000.0,
+              "minimum": 0
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "s",
+                "ms",
+                "us",
+                "ns"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        },
+        "jitter": {
+          "type": "object",
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "maximum": 1000000000000.0,
+              "minimum": 0
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "s",
+                "ms",
+                "us",
+                "ns"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        },
+        "loss": {
+          "type": "object",
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "maximum": 1000000000000.0,
+              "minimum": 0
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "fraction",
+                "percent"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          },
+          "description": "ratio: fraction must be <= 1 and percent <= 100 (checked by the validator)"
+        },
+        "bandwidth": {
+          "type": "object",
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "maximum": 1000000000000.0,
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "kbit/s",
+                "Mbit/s",
+                "Gbit/s"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x_": {}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "shaped": {
+                "const": true
+              }
+            },
+            "required": [
+              "shaped"
+            ]
+          },
+          "then": {
+            "required": [
+              "shaping_tool"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "shaped": {
+                "const": false
+              }
+            },
+            "required": [
+              "shaped"
+            ]
+          },
+          "then": {
+            "properties": {
+              "shaping_tool": false,
+              "one_way_delay": false,
+              "jitter": false,
+              "loss": false,
+              "bandwidth": false
+            }
+          }
+        }
+      ]
+    },
+    "qos": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "required": [
+          "topic",
+          "reliability",
+          "durability",
+          "history"
+        ],
+        "properties": {
+          "topic": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^/[A-Za-z0-9_]+(/[A-Za-z0-9_]+){0,15}$"
+          },
+          "reliability": {
+            "type": "string",
+            "enum": [
+              "reliable",
+              "best_effort"
+            ]
+          },
+          "durability": {
+            "type": "string",
+            "enum": [
+              "volatile",
+              "transient_local"
+            ]
+          },
+          "history": {
+            "type": "string",
+            "enum": [
+              "keep_last",
+              "keep_all"
+            ]
+          },
+          "depth": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100000
+          },
+          "deadline": {
+            "type": "object",
+            "required": [
+              "value",
+              "unit"
+            ],
+            "properties": {
+              "value": {
+                "type": "number",
+                "maximum": 1000000000000.0,
+                "exclusiveMinimum": 0
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "s",
+                  "ms",
+                  "us",
+                  "ns"
+                ]
+              }
+            },
+            "additionalProperties": false,
+            "patternProperties": {
+              "^x_": {}
+            }
+          },
+          "lifespan": {
+            "type": "object",
+            "required": [
+              "value",
+              "unit"
+            ],
+            "properties": {
+              "value": {
+                "type": "number",
+                "maximum": 1000000000000.0,
+                "exclusiveMinimum": 0
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "s",
+                  "ms",
+                  "us",
+                  "ns"
+                ]
+              }
+            },
+            "additionalProperties": false,
+            "patternProperties": {
+              "^x_": {}
+            }
+          }
+        },
+        "additionalProperties": false,
+        "patternProperties": {
+          "^x_": {}
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "history": {
+                  "const": "keep_last"
+                }
+              },
+              "required": [
+                "history"
+              ]
+            },
+            "then": {
+              "required": [
+                "depth"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "history": {
+                  "const": "keep_all"
+                }
+              },
+              "required": [
+                "history"
+              ]
+            },
+            "then": {
+              "properties": {
+                "depth": false
+              }
+            }
+          }
+        ]
+      }
+    },
+    "model": {
+      "type": "object",
+      "required": [
+        "used"
+      ],
+      "properties": {
+        "used": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$",
+          "description": "40 lowercase hex commit"
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9.+-]{0,63}$",
+          "description": "SPDX id; non-answers (unknown, none, ...) are rejected by the validator"
+        },
+        "weights_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x_": {}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "used": {
+                "const": true
+              }
+            },
+            "required": [
+              "used"
+            ]
+          },
+          "then": {
+            "required": [
+              "name",
+              "revision",
+              "license"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "used": {
+                "const": false
+              }
+            },
+            "required": [
+              "used"
+            ]
+          },
+          "then": {
+            "properties": {
+              "name": false,
+              "revision": false,
+              "license": false,
+              "weights_sha256": false
+            }
+          }
+        }
+      ]
+    },
+    "dataset": {
+      "type": "object",
+      "required": [
+        "used"
+      ],
+      "properties": {
+        "used": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$",
+          "description": "40 lowercase hex commit"
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9.+-]{0,63}$",
+          "description": "SPDX id; non-answers (unknown, none, ...) are rejected by the validator"
+        },
+        "content_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x_": {}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "used": {
+                "const": true
+              }
+            },
+            "required": [
+              "used"
+            ]
+          },
+          "then": {
+            "required": [
+              "name",
+              "revision",
+              "license"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "used": {
+                "const": false
+              }
+            },
+            "required": [
+              "used"
+            ]
+          },
+          "then": {
+            "properties": {
+              "name": false,
+              "revision": false,
+              "license": false,
+              "content_sha256": false
+            }
+          }
+        }
+      ]
+    },
+    "code_license": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9.+-]{0,63}$"
+    },
+    "clocks": {
+      "type": "object",
+      "required": [
+        "clock_basis",
+        "clock_domain",
+        "simulation_time"
+      ],
+      "properties": {
+        "clock_basis": {
+          "type": "string",
+          "enum": [
+            "wall",
+            "monotonic"
+          ]
+        },
+        "clock_domain": {
+          "type": "string",
+          "enum": [
+            "single_clock",
+            "synchronized",
+            "unsynchronized"
+          ]
+        },
+        "simulation_time": {
+          "type": "boolean"
+        },
+        "sync_method": {
+          "type": "string",
+          "enum": [
+            "ptp",
+            "ntp",
+            "chrony",
+            "gps",
+            "simulation_clock",
+            "other"
+          ]
+        },
+        "estimated_max_offset": {
+          "type": "object",
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "maximum": 1000000000000.0,
+              "minimum": 0
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "s",
+                "ms",
+                "us",
+                "ns"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x_": {}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "clock_domain": {
+                "const": "synchronized"
+              }
+            },
+            "required": [
+              "clock_domain"
+            ]
+          },
+          "then": {
+            "required": [
+              "sync_method",
+              "estimated_max_offset"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "clock_domain": {
+                "enum": [
+                  "single_clock",
+                  "unsynchronized"
+                ]
+              }
+            },
+            "required": [
+              "clock_domain"
+            ]
+          },
+          "then": {
+            "properties": {
+              "sync_method": false,
+              "estimated_max_offset": false
+            }
+          }
+        }
+      ]
+    },
+    "timing": {
+      "type": "object",
+      "required": [
+        "control_rate",
+        "action_age_deadline"
+      ],
+      "properties": {
+        "control_rate": {
+          "type": "object",
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "maximum": 1000000000000.0,
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "Hz"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        },
+        "action_age_deadline": {
+          "type": "object",
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "maximum": 1000000000000.0,
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "s",
+                "ms",
+                "us",
+                "ns"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x_": {}
+      }
+    },
+    "action_space": {
+      "type": "object",
+      "required": [
+        "name",
+        "dimension",
+        "names",
+        "units",
+        "actuation"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        },
+        "dimension": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "names": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+          }
+        },
+        "units": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9/^*._-]{1,16}$"
+          }
+        },
+        "actuation": {
+          "const": "none"
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x_": {}
+      }
+    },
+    "fault_injection": {
+      "type": "object",
+      "required": [
+        "applied"
+      ],
+      "properties": {
+        "applied": {
+          "type": "boolean"
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        },
+        "duration": {
+          "type": "object",
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "maximum": 1000000000000.0,
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "s",
+                "ms",
+                "us",
+                "ns"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x_": {}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "applied": {
+                "const": true
+              }
+            },
+            "required": [
+              "applied"
+            ]
+          },
+          "then": {
+            "required": [
+              "kind",
+              "duration"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "applied": {
+                "const": false
+              }
+            },
+            "required": [
+              "applied"
+            ]
+          },
+          "then": {
+            "properties": {
+              "kind": false,
+              "duration": false
+            }
+          }
+        }
+      ]
+    },
+    "measurement_source": {
+      "type": "object",
+      "required": [
+        "kind",
+        "tool",
+        "tool_version"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "ros2_tracing",
+            "application_log",
+            "simulator_log",
+            "prometheus",
+            "synthetic_generator",
+            "other"
+          ]
+        },
+        "tool": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        },
+        "tool_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[0-9A-Za-z][0-9A-Za-z._+~-]{0,63}$"
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x_": {}
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "required": [
+        "status",
+        "censored",
+        "observed_duration",
+        "failure_count",
+        "task_success"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "failed",
+            "timed_out",
+            "aborted"
+          ]
+        },
+        "censored": {
+          "type": "boolean"
+        },
+        "censor_reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 128
+        },
+        "observed_duration": {
+          "type": "object",
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "maximum": 1000000000000.0,
+              "minimum": 0
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "s",
+                "ms",
+                "us",
+                "ns"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        },
+        "failure_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000000
+        },
+        "task_success": {
+          "type": "object",
+          "required": [
+            "applicable",
+            "value"
+          ],
+          "properties": {
+            "applicable": {
+              "type": "boolean"
+            },
+            "value": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x_": {}
+      }
+    },
+    "data_hashes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "role",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+){0,15}$"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "input",
+              "config",
+              "output"
+            ]
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "additionalProperties": false,
+        "patternProperties": {
+          "^x_": {}
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "patternProperties": {
+    "^x_": {}
+  }
+}

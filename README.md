@@ -240,6 +240,11 @@ These directories hold small, CPU-only, standard-library modules with unit tests
 | [`experiments/model-serving-fairness/`](experiments/model-serving-fairness/README.md) | Simulated FIFO, EDF and fair scheduling with a model cache | `make serving-test` |
 | [`examples/lerobot-data-quality/`](examples/lerobot-data-quality/README.md) | Metadata contract and validator for synthetic episodes; no LeRobot conversion | `make lerobot-dq-test` |
 | [`examples/cloud-robotics/agent-mobility/`](examples/cloud-robotics/agent-mobility/README.md) | Mission-state handoff contract and simulator ([docs](docs/cloud-robotics/agent-mobility/README.md)) | `make agent-mobility-test` |
+| [`examples/run-manifest/`](examples/run-manifest/README.md) | Run-manifest contract, validator and synthetic summaries; no real data | `make run-manifest-test` |
+| [`examples/cloud-robotics/action-gate/`](examples/cloud-robotics/action-gate/README.md) | Fail-closed simulated action gate and deterministic fault suite | `make action-gate-test` |
+| [`examples/ros2-fault-triage-casebook/`](examples/ros2-fault-triage-casebook/README.md) | Synthetic DDS/QoS fault casebook with a rule baseline (a regression check, not accuracy) | `make fault-triage-test` |
+| [`examples/cloud-robotics/skill-proposal-review/`](examples/cloud-robotics/skill-proposal-review/README.md) | Typed simulated skills and a fail-closed proposal reviewer with an injection corpus | `make skill-review-test` |
+| [`DataAnalysis/recovery_metrics.py`](DataAnalysis/README.md) | Pod-recovery measurement definitions; `RH.py` is a dry run unless `--yes`; no live run | `make recovery-test` |
 
 `make offline-checks` runs all of them together with the Markdown link, site and secret checks.
 

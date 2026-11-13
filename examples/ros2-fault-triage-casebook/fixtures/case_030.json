@@ -1,0 +1,77 @@
+{
+  "case_id": "case-030",
+  "case_role": "hard_negative",
+  "cites": ["guide-checklist", "kind-findings"],
+  "evidence": {
+    "discovery": {
+      "mode": "multicast_default",
+      "server_check": null
+    },
+    "pods": {
+      "publisher": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      },
+      "subscriber": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      }
+    },
+    "probe_summary": {
+      "completion": "timeout",
+      "duplicates": 0,
+      "expected_count": 200,
+      "missing": 200,
+      "missing_ranges": [[0, 199]],
+      "ok": false,
+      "publisher_start_events": 1,
+      "received_total": 0,
+      "reordered": 0,
+      "timeout_reason": "first_message",
+      "unique": 0
+    },
+    "ros": {
+      "publisher": {
+        "domain_id": 42,
+        "qos": {
+          "depth": 10,
+          "durability": "volatile",
+          "reliability": "reliable"
+        },
+        "rmw": "rmw_fastrtps_cpp"
+      },
+      "subscriber": {
+        "domain_id": 42,
+        "qos": {
+          "depth": 10,
+          "durability": "volatile",
+          "reliability": "reliable"
+        },
+        "rmw": "rmw_fastrtps_cpp"
+      }
+    },
+    "udp_check": {
+      "multicast": "received",
+      "unicast": "received"
+    }
+  },
+  "expected": {
+    "label": "insufficient_evidence",
+    "rationale": "Multicast and unicast both work and pods, domain, RMW and QoS all match, so none of the known causes fits. Abstain and widen the evidence.",
+    "safe_next_step": "collect_more_evidence",
+    "secondary_labels": []
+  },
+  "incident_family_id": "fam-multicast",
+  "looks_like": "discovery_multicast_blocked",
+  "schema": "rrl.triage-case/1",
+  "source": "SYNTHETIC: hand-authored teaching case; nothing here was observed from a real system",
+  "split": "dev",
+  "symptom": "The listener shows no messages from the talker. Multicast was tested and it works.",
+  "synthetic": true
+}

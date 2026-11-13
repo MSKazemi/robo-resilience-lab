@@ -1,0 +1,608 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MSKazemi/robo-resilience-lab/examples/run-manifest/schema/run-metrics.v1.schema.json",
+  "title": "Per-run metric file, contract run-metrics/v1",
+  "description": "One file per independent run. Every registry metric must have an entry. The executable authority is rm_runfile.py, which also checks status/value/field consistency, ratios, and the cross-check against the manifest (ids, arm, data_kind, manifest sha256, clock requirements, applicability). SYNTHETIC fixtures only.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "data_kind",
+    "independent_run_id",
+    "arm",
+    "manifest_file",
+    "manifest_sha256",
+    "metrics"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "run-metrics/v1"
+    },
+    "data_kind": {
+      "type": "string",
+      "enum": [
+        "synthetic",
+        "simulated",
+        "measured"
+      ]
+    },
+    "independent_run_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    },
+    "arm": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    },
+    "manifest_file": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+){0,15}$"
+    },
+    "manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "metrics": {
+      "type": "object",
+      "required": [
+        "sensor_to_policy_request_ms",
+        "request_serve_response_ms",
+        "validator_delay_ms",
+        "action_age_ms",
+        "buffer_starvation_fraction",
+        "deadline_miss_fraction",
+        "message_gap_max_ms",
+        "message_gap_count",
+        "recovery_time_ms",
+        "failure_count",
+        "task_success"
+      ],
+      "properties": {
+        "sensor_to_policy_request_ms": {
+          "type": "object",
+          "required": [
+            "status",
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "not_computable",
+                "not_applicable"
+              ]
+            },
+            "value": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "unit": {
+              "const": "ms"
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "clock_unsynchronized",
+                "no_samples",
+                "run_aborted_before_window"
+              ]
+            },
+            "censored_lower_bound": {
+              "type": "number",
+              "minimum": 0
+            },
+            "n_samples": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000000
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        },
+        "request_serve_response_ms": {
+          "type": "object",
+          "required": [
+            "status",
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "not_computable",
+                "not_applicable"
+              ]
+            },
+            "value": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "unit": {
+              "const": "ms"
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "clock_unsynchronized",
+                "no_samples",
+                "run_aborted_before_window"
+              ]
+            },
+            "censored_lower_bound": {
+              "type": "number",
+              "minimum": 0
+            },
+            "n_samples": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000000
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        },
+        "validator_delay_ms": {
+          "type": "object",
+          "required": [
+            "status",
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "not_computable",
+                "not_applicable"
+              ]
+            },
+            "value": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "unit": {
+              "const": "ms"
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "clock_unsynchronized",
+                "no_samples",
+                "run_aborted_before_window"
+              ]
+            },
+            "censored_lower_bound": {
+              "type": "number",
+              "minimum": 0
+            },
+            "n_samples": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000000
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        },
+        "action_age_ms": {
+          "type": "object",
+          "required": [
+            "status",
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "not_computable",
+                "not_applicable"
+              ]
+            },
+            "value": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "unit": {
+              "const": "ms"
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "clock_unsynchronized",
+                "no_samples",
+                "run_aborted_before_window"
+              ]
+            },
+            "censored_lower_bound": {
+              "type": "number",
+              "minimum": 0
+            },
+            "n_samples": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000000
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        },
+        "buffer_starvation_fraction": {
+          "type": "object",
+          "required": [
+            "status",
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "not_computable",
+                "not_applicable"
+              ]
+            },
+            "value": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "unit": {
+              "const": "fraction"
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "clock_unsynchronized",
+                "no_samples",
+                "run_aborted_before_window"
+              ]
+            },
+            "censored_lower_bound": {
+              "type": "number",
+              "minimum": 0
+            },
+            "starved_ticks": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000000
+            },
+            "control_ticks": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000000
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        },
+        "deadline_miss_fraction": {
+          "type": "object",
+          "required": [
+            "status",
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "not_computable",
+                "not_applicable"
+              ]
+            },
+            "value": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "unit": {
+              "const": "fraction"
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "clock_unsynchronized",
+                "no_samples",
+                "run_aborted_before_window"
+              ]
+            },
+            "censored_lower_bound": {
+              "type": "number",
+              "minimum": 0
+            },
+            "missed_actions": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000000
+            },
+            "released_actions": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000000
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        },
+        "message_gap_max_ms": {
+          "type": "object",
+          "required": [
+            "status",
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "not_computable",
+                "not_applicable"
+              ]
+            },
+            "value": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "unit": {
+              "const": "ms"
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "clock_unsynchronized",
+                "no_samples",
+                "run_aborted_before_window"
+              ]
+            },
+            "censored_lower_bound": {
+              "type": "number",
+              "minimum": 0
+            },
+            "n_samples": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000000
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        },
+        "message_gap_count": {
+          "type": "object",
+          "required": [
+            "status",
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "not_computable",
+                "not_applicable"
+              ]
+            },
+            "value": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "unit": {
+              "const": "count"
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "clock_unsynchronized",
+                "no_samples",
+                "run_aborted_before_window"
+              ]
+            },
+            "censored_lower_bound": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        },
+        "recovery_time_ms": {
+          "type": "object",
+          "required": [
+            "status",
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "censored",
+                "not_computable",
+                "not_applicable"
+              ]
+            },
+            "value": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "unit": {
+              "const": "ms"
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "clock_unsynchronized",
+                "no_samples",
+                "run_aborted_before_window"
+              ]
+            },
+            "censored_lower_bound": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        },
+        "failure_count": {
+          "type": "object",
+          "required": [
+            "status",
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "not_computable",
+                "not_applicable"
+              ]
+            },
+            "value": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "unit": {
+              "const": "count"
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "clock_unsynchronized",
+                "no_samples",
+                "run_aborted_before_window"
+              ]
+            },
+            "censored_lower_bound": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        },
+        "task_success": {
+          "type": "object",
+          "required": [
+            "status",
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "not_computable",
+                "not_applicable"
+              ]
+            },
+            "value": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "unit": {
+              "const": "boolean"
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "clock_unsynchronized",
+                "no_samples",
+                "run_aborted_before_window"
+              ]
+            },
+            "censored_lower_bound": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false,
+          "patternProperties": {
+            "^x_": {}
+          }
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x_": {}
+      }
+    }
+  },
+  "additionalProperties": false,
+  "patternProperties": {
+    "^x_": {}
+  }
+}

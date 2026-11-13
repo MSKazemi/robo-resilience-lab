@@ -27,10 +27,15 @@
 | [F](#f-model-serving-fairness) | Model-serving fairness and cache placement (E07) | #107, #69, #87 | `simulated` | `experiments/model-serving-fairness/` | `make serving-test` |
 | [G](#g-agent-mobility-e08) | Agent mobility, mission-state handoff (E08) | #104, #110 | `simulated` (offline toy) | `docs/cloud-robotics/agent-mobility/`, `examples/cloud-robotics/agent-mobility/` | `make agent-mobility-test` |
 | [H](#h-observationaction-contract-and-mock-policy-e00) | Observation/action contract and MOCK policy (E00) | #55 | `implemented-offline` (simulated, non-actuating) | `examples/cloud-robotics/mock-policy/` | `python3 -m unittest discover -s examples/cloud-robotics/mock-policy/tests` |
+| [I](#i-run-manifest-and-metrics-contract) | Run manifest and metrics contract | #60 | `implemented-offline` (SYNTHETIC runs) | `examples/run-manifest/` | `make run-manifest-test` |
+| [J](#j-fail-closed-action-gate) | Fail-closed simulated action gate | #59 | `simulated` | `examples/cloud-robotics/action-gate/` | `make action-gate-test` |
+| [K](#k-synthetic-ros-2-fault-triage-casebook) | Synthetic ROS 2 DDS/QoS fault triage casebook (E01 precursor) | #84 | `implemented-offline` (SYNTHETIC cases; teaching baseline) | `examples/ros2-fault-triage-casebook/` | `make fault-triage-test` |
+| [L](#l-skill-proposal-review) | Skill proposal review and injection challenge | #86, #64 | `implemented-offline` (SYNTHETIC corpus; no model) | `examples/cloud-robotics/skill-proposal-review/` | `make skill-review-test` |
+| [M](#m-pod-recovery-measurement) | Pod-recovery measurement definitions and safe scripts | #45 | `implemented-offline` (fixtures; no live run) | `DataAnalysis/recovery_metrics.py`, `RH.py` | `make recovery-test` |
 
-**How the checks were run.** On 2026-11-06 each command named on a card (and the `Makefile` targets above, which run the same `python3 -m unittest` commands) was run from the repository root with Python 3.12, the standard library only, no network and no cluster, and exited 0. Test counts change as tests are added, so they are not recorded here: run the command. Docker, kind and Kubernetes were not used.
+**How the checks were run.** On 2026-11-06 each command named on a card (and the `Makefile` targets above, which run the same `python3 -m unittest` commands) was run from the repository root with Python 3.12, the standard library only, no network and no cluster, and exited 0 (cards I to M on 2026-11-13). Test counts change as tests are added, so they are not recorded here: run the command. Docker, kind and Kubernetes were not used.
 
-**Not in the registry yet (`planned`, no code):** E01 local-classifier incident triage (#74, #75, #84, #94), E04 zero-shot perception placement (#106), E06 SmolVLA simulation evaluation (#95), E09 energy/cost/quality frontier (#70). Their design is in the [experiment portfolio](EXPERIMENT-PORTFOLIO.md). E05 (action freshness versus continuity) has only the simulated precursor in card D.
+**Not in the registry yet (`planned`, no code):** E01 local-classifier incident triage (#74, #75, #94; card K is only a synthetic precursor and no classifier exists), E04 zero-shot perception placement (#106), E06 SmolVLA simulation evaluation (#95), E09 energy/cost/quality frontier (#70). Their design is in the [experiment portfolio](EXPERIMENT-PORTFOLIO.md). E05 (action freshness versus continuity) has only the simulated precursor in card D.
 
 ---
 
@@ -127,6 +132,56 @@
 | Negative results / limits | Every typed rejection (`STALE_ACTION`, `DUPLICATE_SEQUENCE`, `OUT_OF_LIMITS`, `UNAUTHORIZED_SOURCE`, and others) has a positive and a negative test. The allow-list is empty by default, so all actions are rejected until one is configured |
 
 ---
+
+## I. Run manifest and metrics contract
+
+| Field | Value |
+|---|---|
+| Status | `implemented-offline`: a `run-manifest/v1` contract, a validator, a metrics registry and a summary generator, all on SYNTHETIC runs invented by a seeded generator |
+| Where | [`examples/run-manifest/`](../examples/run-manifest/README.md) (`METRICS.md` defines ten metrics with unit, clock scope and censoring rules) |
+| Test command | `make run-manifest-test`. Also `python3 examples/run-manifest/fixture_gen.py --check` and `python3 examples/run-manifest/rm_summary.py --check` |
+| NOT claimed | Any real measurement, power analysis, p95/p99 or interval for proportions. Validation checks shape and internal consistency and cannot know whether a recorded digest or clock statement is true. The IPv4 and credential checks are heuristics, not a secret scanner. Real benchmarking stays gated on #14, #15 and #16 |
+| Negative results / limits | With fewer than 3 independent runs the summary prints `n<3: no statistical claim` and no interval; runs with `data_kind` `measured` are refused. A cell with any censored run withholds its interval |
+
+## J. Fail-closed action gate
+
+| Field | Value |
+|---|---|
+| Status | `simulated`: a gate that decides ALLOW, HOLD or REJECT for a proposed simulated action, plus a deterministic logical-tick fault suite. No hardware, no ROS 2 |
+| Where | [`examples/cloud-robotics/action-gate/`](../examples/cloud-robotics/action-gate/README.md) (`THREAT-MODEL.md`, `reports/fault-suite.simulation.json`) |
+| Test command | `make action-gate-test`. Also `python3 examples/cloud-robotics/action-gate/run_fault_suite.py --check` and `python3 examples/cloud-robotics/action-gate/mutation_check.py` |
+| NOT claimed | Certification, hard real time, motor braking or a physical safe stop, authentication (`source_id` is a label), a real network (faults are scripted events) |
+| Negative results / limits | Every blocked command has a typed reason and `dispatched: false`. A labelled negative-control test shows that restarting from a fresh epoch store would accept a replay |
+
+## K. Synthetic ROS 2 fault triage casebook
+
+| Field | Value |
+|---|---|
+| Status | `implemented-offline`: 31 SYNTHETIC cases over a closed taxonomy, a rule-based baseline that abstains when evidence is thin, and an evaluator. Nothing was observed from ROS 2, DDS or Kubernetes |
+| Where | [`examples/ros2-fault-triage-casebook/`](../examples/ros2-fault-triage-casebook/README.md) |
+| Test command | `make fault-triage-test`. Also `python3 -m triage validate`, `python3 -m triage fixtures --check` and `python3 -m triage evaluate` from that directory |
+| NOT claimed | Accuracy, macro-F1 or any benchmark: the cases and the rules were written together, so the output is a regression check, and classes with fewer than 3 cases print `n/a (n<3)`. Rules that echo documented findings echo one recorded run on one CNI. Deadline, history-depth and subscriber-restart faults are not covered |
+| Negative results / limits | Includes no-fault and insufficient-evidence cases where the correct answer is to abstain, and prompt-injection log cases that must not change a label |
+
+## L. Skill proposal review
+
+| Field | Value |
+|---|---|
+| Status | `implemented-offline`: a closed catalogue of six typed SIMULATED skills, a strict fail-closed reviewer and a 148-case SYNTHETIC injection corpus. No model is called |
+| Where | [`examples/cloud-robotics/skill-proposal-review/`](../examples/cloud-robotics/skill-proposal-review/README.md) |
+| Test command | `make skill-review-test`. Also `python3 examples/cloud-robotics/skill-proposal-review/evaluate.py` and `build_corpus.py --check` |
+| NOT claimed | Any model or hosted-advisor comparison (the #86 benchmark is a written design only), an authorisation (an ACCEPT is not one) or a security guarantee: the corpus was written together with the reviewer, so results cover the enumerated cases only |
+| Negative results / limits | Unauthorized proposals must be rejected, benign look-alikes must be accepted (an over-blocking check), and an advisor opinion must not change a verdict |
+
+## M. Pod recovery measurement
+
+| Field | Value |
+|---|---|
+| Status | `implemented-offline`: measurement definitions and parsing in `recovery_metrics.py`, and `RH.py` / `rehealing.py` as dry-run-by-default scripts, exercised only with recorded or synthetic JSON and a fake clock |
+| Where | [`DataAnalysis/`](../DataAnalysis/README.md) (`recovery_metrics.py`, `RH.py`, `fixtures_recovery/`) |
+| Test command | `make recovery-test` (also runs under `pytest DataAnalysis`). Offline reproduction is in the README of that directory |
+| NOT claimed | A live run (none exists), ROS application recovery (that row is `not_measured` until a message probe exists, #14), or any historical result: the notebooks, dataset and historical CSV are unchanged. Fixture numbers are arithmetic on invented times |
+| Negative results / limits | Missing or ambiguous data fail with a typed error and never produce a duration; values are quantised to the poll interval; a second new pod with the same selector and owner makes the sample `ambiguous_match` |
 
 ## Artifact contract and run card (issue #88)
 
