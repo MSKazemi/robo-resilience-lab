@@ -1,0 +1,618 @@
+{
+  "schema": "recovery-observation/1",
+  "sample_id": "SYNTHETIC-success-multi-pod",
+  "synthetic": true,
+  "label": "SYNTHETIC hand-written fixture in the shape of sanitized kubectl output. Not a measurement from any cluster; all names, UIDs and times are invented.",
+  "namespace": "ros-sim",
+  "selector": "app=talker-sim",
+  "target_uid": "synthetic-pod-a-uid",
+  "kubectl_context": null,
+  "exit_status": 0,
+  "run_error": null,
+  "events": null,
+  "probe": {
+    "schema": "recovery-message-probe/1",
+    "source": "SYNTHETIC hand-written probe record; NOT from a ROS run",
+    "disruption_started_s": 10.0,
+    "first_restored_message_s": 12.5
+  },
+  "baseline_pods": {
+    "items": [
+      {
+        "metadata": {
+          "name": "talker-sim-7d9c5b8f4-aaaaa",
+          "namespace": "ros-sim",
+          "uid": "synthetic-pod-a-uid",
+          "labels": {
+            "app": "talker-sim"
+          },
+          "creationTimestamp": "2025-12-31T23:00:00Z",
+          "ownerReferences": [
+            {
+              "uid": "synthetic-replicaset-uid-1",
+              "controller": true
+            }
+          ]
+        },
+        "status": {
+          "phase": "Running",
+          "conditions": [
+            {
+              "type": "Ready",
+              "status": "True",
+              "lastTransitionTime": "2025-12-31T23:00:05Z"
+            }
+          ]
+        }
+      },
+      {
+        "metadata": {
+          "name": "talker-sim-7d9c5b8f4-ccccc",
+          "namespace": "ros-sim",
+          "uid": "synthetic-pod-c-uid",
+          "labels": {
+            "app": "talker-sim"
+          },
+          "creationTimestamp": "2025-12-31T23:00:00+00:00",
+          "ownerReferences": [
+            {
+              "uid": "synthetic-replicaset-uid-1",
+              "controller": true
+            }
+          ]
+        },
+        "status": {
+          "phase": "Running",
+          "conditions": [
+            {
+              "type": "Ready",
+              "status": "True",
+              "lastTransitionTime": "2025-12-31T23:00:05Z"
+            }
+          ]
+        }
+      },
+      {
+        "metadata": {
+          "name": "talker-sim-7d9c5b8f4-ddddd",
+          "namespace": "ros-sim",
+          "uid": "synthetic-pod-d-uid",
+          "labels": {
+            "app": "talker-sim"
+          },
+          "creationTimestamp": "2025-12-31T23:00:00+00:00",
+          "ownerReferences": [
+            {
+              "uid": "synthetic-replicaset-uid-1",
+              "controller": true
+            }
+          ]
+        },
+        "status": {
+          "phase": "Running",
+          "conditions": [
+            {
+              "type": "Ready",
+              "status": "True",
+              "lastTransitionTime": "2025-12-31T23:00:05Z"
+            }
+          ]
+        }
+      },
+      {
+        "metadata": {
+          "name": "listener-sim-1-xxxxx",
+          "namespace": "ros-sim",
+          "uid": "synthetic-pod-x-uid",
+          "labels": {
+            "app": "listener-sim"
+          },
+          "creationTimestamp": "2025-12-31T23:00:00+00:00",
+          "ownerReferences": [
+            {
+              "uid": "synthetic-replicaset-uid-1",
+              "controller": true
+            }
+          ]
+        },
+        "status": {
+          "phase": "Running",
+          "conditions": [
+            {
+              "type": "Ready",
+              "status": "True",
+              "lastTransitionTime": "2025-12-31T23:00:05Z"
+            }
+          ]
+        }
+      },
+      {
+        "metadata": {
+          "name": "talker-sim-7d9c5b8f4-zzzzz",
+          "namespace": "ros-other",
+          "uid": "synthetic-pod-z-uid",
+          "labels": {
+            "app": "talker-sim"
+          },
+          "creationTimestamp": "2025-12-31T23:00:00+00:00",
+          "ownerReferences": [
+            {
+              "uid": "synthetic-replicaset-uid-1",
+              "controller": true
+            }
+          ]
+        },
+        "status": {
+          "phase": "Running",
+          "conditions": [
+            {
+              "type": "Ready",
+              "status": "True",
+              "lastTransitionTime": "2025-12-31T23:00:05Z"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "target_pod": "talker-sim-7d9c5b8f4-aaaaa",
+  "delete_requested_mono_s": 50.0,
+  "delete_request_wall": "2026-01-01T17:30:00+05:30",
+  "polls": [
+    {
+      "mono_s": 51.0,
+      "pods": {
+        "items": [
+          {
+            "metadata": {
+              "name": "talker-sim-7d9c5b8f4-aaaaa",
+              "namespace": "ros-sim",
+              "uid": "synthetic-pod-a-uid",
+              "labels": {
+                "app": "talker-sim"
+              },
+              "creationTimestamp": "2025-12-31T23:00:00Z",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ],
+              "deletionTimestamp": "2026-01-01T12:00:30Z"
+            },
+            "status": {
+              "phase": "Running",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "True",
+                  "lastTransitionTime": "2025-12-31T23:00:05Z"
+                }
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "name": "talker-sim-7d9c5b8f4-ccccc",
+              "namespace": "ros-sim",
+              "uid": "synthetic-pod-c-uid",
+              "labels": {
+                "app": "talker-sim"
+              },
+              "creationTimestamp": "2025-12-31T23:00:00+00:00",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ]
+            },
+            "status": {
+              "phase": "Running",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "True",
+                  "lastTransitionTime": "2025-12-31T23:00:05Z"
+                }
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "name": "talker-sim-7d9c5b8f4-ddddd",
+              "namespace": "ros-sim",
+              "uid": "synthetic-pod-d-uid",
+              "labels": {
+                "app": "talker-sim"
+              },
+              "creationTimestamp": "2025-12-31T23:00:00+00:00",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ]
+            },
+            "status": {
+              "phase": "Running",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "True",
+                  "lastTransitionTime": "2025-12-31T23:00:05Z"
+                }
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "name": "listener-sim-1-xxxxx",
+              "namespace": "ros-sim",
+              "uid": "synthetic-pod-x-uid",
+              "labels": {
+                "app": "listener-sim"
+              },
+              "creationTimestamp": "2025-12-31T23:00:00+00:00",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ]
+            },
+            "status": {
+              "phase": "Running",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "True",
+                  "lastTransitionTime": "2025-12-31T23:00:05Z"
+                }
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "name": "talker-sim-7d9c5b8f4-zzzzz",
+              "namespace": "ros-other",
+              "uid": "synthetic-pod-z-uid",
+              "labels": {
+                "app": "talker-sim"
+              },
+              "creationTimestamp": "2025-12-31T23:00:00+00:00",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ]
+            },
+            "status": {
+              "phase": "Running",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "True",
+                  "lastTransitionTime": "2025-12-31T23:00:05Z"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "mono_s": 51.5,
+      "pods": {
+        "items": [
+          {
+            "metadata": {
+              "name": "talker-sim-7d9c5b8f4-aaaaa",
+              "namespace": "ros-sim",
+              "uid": "synthetic-pod-a-uid",
+              "labels": {
+                "app": "talker-sim"
+              },
+              "creationTimestamp": "2025-12-31T23:00:00Z",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ],
+              "deletionTimestamp": "2026-01-01T12:00:30Z"
+            },
+            "status": {
+              "phase": "Running",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "True",
+                  "lastTransitionTime": "2025-12-31T23:00:05Z"
+                }
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "name": "talker-sim-7d9c5b8f4-ccccc",
+              "namespace": "ros-sim",
+              "uid": "synthetic-pod-c-uid",
+              "labels": {
+                "app": "talker-sim"
+              },
+              "creationTimestamp": "2025-12-31T23:00:00+00:00",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ]
+            },
+            "status": {
+              "phase": "Running",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "True",
+                  "lastTransitionTime": "2025-12-31T23:00:05Z"
+                }
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "name": "talker-sim-7d9c5b8f4-ddddd",
+              "namespace": "ros-sim",
+              "uid": "synthetic-pod-d-uid",
+              "labels": {
+                "app": "talker-sim"
+              },
+              "creationTimestamp": "2025-12-31T23:00:00+00:00",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ]
+            },
+            "status": {
+              "phase": "Running",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "True",
+                  "lastTransitionTime": "2025-12-31T23:00:05Z"
+                }
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "name": "talker-sim-7d9c5b8f4-eeeee",
+              "namespace": "ros-sim",
+              "uid": "synthetic-pod-e-uid",
+              "labels": {
+                "app": "talker-sim"
+              },
+              "creationTimestamp": "2026-01-01T12:00:01Z",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ]
+            },
+            "status": {
+              "phase": "Pending",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "False",
+                  "lastTransitionTime": "2026-01-01T12:00:01Z"
+                }
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "name": "listener-sim-1-xxxxx",
+              "namespace": "ros-sim",
+              "uid": "synthetic-pod-x-uid",
+              "labels": {
+                "app": "listener-sim"
+              },
+              "creationTimestamp": "2025-12-31T23:00:00+00:00",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ]
+            },
+            "status": {
+              "phase": "Running",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "True",
+                  "lastTransitionTime": "2025-12-31T23:00:05Z"
+                }
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "name": "talker-sim-7d9c5b8f4-zzzzz",
+              "namespace": "ros-other",
+              "uid": "synthetic-pod-z-uid",
+              "labels": {
+                "app": "talker-sim"
+              },
+              "creationTimestamp": "2025-12-31T23:00:00+00:00",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ]
+            },
+            "status": {
+              "phase": "Running",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "True",
+                  "lastTransitionTime": "2025-12-31T23:00:05Z"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "mono_s": 53.25,
+      "pods": {
+        "items": [
+          {
+            "metadata": {
+              "name": "talker-sim-7d9c5b8f4-ccccc",
+              "namespace": "ros-sim",
+              "uid": "synthetic-pod-c-uid",
+              "labels": {
+                "app": "talker-sim"
+              },
+              "creationTimestamp": "2025-12-31T23:00:00+00:00",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ]
+            },
+            "status": {
+              "phase": "Running",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "True",
+                  "lastTransitionTime": "2025-12-31T23:00:05Z"
+                }
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "name": "talker-sim-7d9c5b8f4-ddddd",
+              "namespace": "ros-sim",
+              "uid": "synthetic-pod-d-uid",
+              "labels": {
+                "app": "talker-sim"
+              },
+              "creationTimestamp": "2025-12-31T23:00:00+00:00",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ]
+            },
+            "status": {
+              "phase": "Running",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "True",
+                  "lastTransitionTime": "2025-12-31T23:00:05Z"
+                }
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "name": "talker-sim-7d9c5b8f4-eeeee",
+              "namespace": "ros-sim",
+              "uid": "synthetic-pod-e-uid",
+              "labels": {
+                "app": "talker-sim"
+              },
+              "creationTimestamp": "2026-01-01T12:00:01Z",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ]
+            },
+            "status": {
+              "phase": "Running",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "True",
+                  "lastTransitionTime": "2026-01-01T12:00:03Z"
+                }
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "name": "listener-sim-1-xxxxx",
+              "namespace": "ros-sim",
+              "uid": "synthetic-pod-x-uid",
+              "labels": {
+                "app": "listener-sim"
+              },
+              "creationTimestamp": "2025-12-31T23:00:00+00:00",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ]
+            },
+            "status": {
+              "phase": "Running",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "True",
+                  "lastTransitionTime": "2025-12-31T23:00:05Z"
+                }
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "name": "talker-sim-7d9c5b8f4-zzzzz",
+              "namespace": "ros-other",
+              "uid": "synthetic-pod-z-uid",
+              "labels": {
+                "app": "talker-sim"
+              },
+              "creationTimestamp": "2025-12-31T23:00:00+00:00",
+              "ownerReferences": [
+                {
+                  "uid": "synthetic-replicaset-uid-1",
+                  "controller": true
+                }
+              ]
+            },
+            "status": {
+              "phase": "Running",
+              "conditions": [
+                {
+                  "type": "Ready",
+                  "status": "True",
+                  "lastTransitionTime": "2025-12-31T23:00:05Z"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
