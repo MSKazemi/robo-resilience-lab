@@ -4,6 +4,14 @@
 set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
 
+LAB_SETUP_DIR="${LAB_SETUP_DIR:-/home/vagrant/codes/KubernetesClusterSetup}"
+# shellcheck source=KubernetesClusterSetup/lab_common.sh
+. "$LAB_SETUP_DIR/lab_common.sh" \
+  || { echo "ERROR: cannot load $LAB_SETUP_DIR/lab_common.sh (is the synced folder mounted?)" >&2; exit 1; }
+
+# Preflight: the pinned package versions in versions.sh are built for one Ubuntu release.
+require_ubuntu_codename
+
 # Install system packages using apt
 sudo apt-get update
 sudo apt-get install -y git vim curl bash-completion
@@ -11,11 +19,13 @@ sudo apt-get install -y git vim curl bash-completion
 
 # Disable swap now, and keep it off after reboot (cron @reboot; appended only once).
 sudo swapoff -a
+[ -z "$(swapon --show --noheadings)" ] || die "swap is still enabled after 'swapoff -a'; kubelet requires swap off"
 swap_cron='@reboot /sbin/swapoff -a'
 if ! crontab -l 2>/dev/null | grep -qxF "$swap_cron"; then
   (crontab -l 2>/dev/null || true; echo "$swap_cron") | crontab -
 fi
 
+sudo install -d -m 0755 /etc/modules-load.d /etc/sysctl.d
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf > /dev/null
 overlay
 br_netfilter

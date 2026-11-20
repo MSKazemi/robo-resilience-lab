@@ -46,12 +46,17 @@ We use the following script to configure our network plugin:
 cp.vm.provision "shell", path: "./Network/network_plugin.sh"
 ```
 
-The script only applies the Weave Net DaemonSet manifest with `kubectl` and waits for the `weave-net` DaemonSet to roll out (it does not download CNI binaries or edit node configuration). The `cp.vm.provision` line above is the one used in the `Vagrantfile` (control-plane block).
+The script downloads the Weave Net v2.8.1 DaemonSet manifest, checks its SHA-256 against the value pinned in [`KubernetesClusterSetup/versions.sh`](../KubernetesClusterSetup/versions.sh) and refuses to apply it on a mismatch. The release manifest refers to the floating `weaveworks/weave-kube:latest` and `weaveworks/weave-npc:latest` images, so the script rewrites them to the `2.8.1` release tag (note: when checked on 2026-11-20, Docker Hub's `:latest` was a February 2021 development build pushed after the 2.8.1 release, with different image digests, so this deliberately changes the images the lab deploys). It then applies the manifest with `kubectl`, waits for the `weave-net` DaemonSet to roll out and for the control-plane node to become `Ready`, each with a 300 s limit. It does not download CNI binaries or edit node configuration itself. The `cp.vm.provision` line above is the one used in the `Vagrantfile` (control-plane block). These changes have not been run on a VM; see the verification status in the [cluster setup README](../KubernetesClusterSetup/README.md#pinned-versions-credentials-and-re-provisioning).
 
 #### Weave Net Installation Command
 
+What the script does, by hand (the SHA-256 is the value of `WEAVE_MANIFEST_SHA256` in `versions.sh`):
+
 ```bash
-kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+curl -fsSLo weave.yaml https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+echo "a2410c91152fdead60084a750d5041749e95350c038a9832e7dff71f85b52c9c  weave.yaml" | sha256sum -c -
+sed -E 's#(weaveworks/weave-(kube|npc)):latest#\1:2.8.1#g' weave.yaml > weave-pinned.yaml
+kubectl apply -f weave-pinned.yaml
 kubectl -n kube-system rollout status daemonset/weave-net --timeout=300s
 ```
 
