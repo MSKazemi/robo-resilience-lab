@@ -1,4 +1,4 @@
-"""Shared helpers for the rclpy adapters. NOT RUN in the authoring environment (no ROS there).
+"""Shared helpers for the rclpy adapters (exercised in the 2026-11-20 Jazzy container run).
 
 Importing this module does not import rclpy; the adapters import it lazily inside main().
 """

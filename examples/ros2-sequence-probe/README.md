@@ -8,8 +8,9 @@ benchmark and not a robot control component.
 | Part | Needs ROS? | Status in this change |
 |---|---|---|
 | `seqprobe/` core: message plan, payload format, JSON-lines events, sequence tracker, timeouts, offline analysis, synthetic fault simulation | No (Python standard library) | Unit-tested, see "Tests" |
-| `rclpy_adapters/publisher_node.py`, `subscriber_node.py` | Yes (`rclpy`, `std_msgs`; imported lazily) | **NOT RUN.** Written without a ROS installation; only checked to import without ROS and to reject bad arguments |
-| Running the adapters in the Jazzy image or a kind cluster | Yes | **NOT RUN.** Commands below are documentation only |
+| `rclpy_adapters/publisher_node.py`, `subscriber_node.py` | Yes (`rclpy`, `std_msgs`; imported lazily) | Unit-tested without ROS (argument checks; subscriber shutdown against a fake `rclpy`). Run once in the Jazzy container, below |
+| Running the adapters in the Jazzy image | Yes | **Measured once, one host, one container; not cross-worker** (2026-11-20, [results](RESULTS-2026-11-20-jazzy-container.md)): clean runs `ok`, deliberate stops not `ok` |
+| Running the adapters across containers, nodes or a kind cluster | Yes | **NOT RUN** |
 
 No Kubernetes manifest is included: the Jazzy image does not contain this code, so a pod would need
 either an image rebuild or the files mounted from a ConfigMap. That decision is left to the
@@ -99,8 +100,10 @@ python3 -m unittest discover -s examples/ros2-sequence-probe/tests -t examples/r
 Covered: deterministic plan and payloads, gap, head/tail loss, duplicate, out-of-order, first-message
 / idle / overall timeout, zero or negative count, bad rate and payload size, malformed payloads and
 log lines (with line numbers), clock-semantics mismatch, adapters importing without `rclpy` and
-rejecting bad arguments with exit code 2, and CLI exit codes. These tests exercise the counting
-logic over an in-memory channel. They do **not** test DDS, a network, or Kubernetes.
+rejecting bad arguments with exit code 2, the subscriber writing its `stop` event and exiting 1
+when stopped by SIGINT/SIGTERM or an rclpy context shutdown (against a fake `rclpy` module), and
+CLI exit codes. These tests exercise the counting logic over an in-memory channel. They do **not**
+test DDS, a network, or Kubernetes.
 
 Without ROS you can also generate and analyse **SYNTHETIC** logs (generated timestamps, fixed fake
 delay, `detail.synthetic = true`; nothing is measured):
@@ -112,24 +115,38 @@ python3 -m seqprobe analyze /tmp/demo.jsonl    # exit 0 ok, 1 not ok, 2 bad inpu
 python3 -m seqprobe plan --count 5 --rate-hz 2 # the deterministic send schedule
 ```
 
-## Running the adapters in the Jazzy container (documented, NOT EXECUTED)
+## Running the adapters in the Jazzy container
 
-These commands were not run. They assume the image from `ROS2/Dockerfile` (the Makefile's
-`make demo` tags it `ros2k8s-demo-ros:local`) and exercise **one container with two processes**, the
-same scope as `scripts/test-ros2-image.sh`. A pass would say nothing about cross-container,
-cross-node or Kubernetes DDS delivery.
+**Measured once, one host, one container; not cross-worker.** On 2026-11-20 the adapters ran in
+an image built from `ROS2/Dockerfile` (two apt pins overridden with `--build-arg`, because the
+defaults are no longer in the package index). Two clean runs (`String` and `ByteMultiArray`, 40
+messages) gave `ok`, and three deliberate stops (SIGTERM or SIGINT to the subscriber, SIGTERM to the
+publisher) gave not `ok`, with `analyze` exiting 0 and 1 respectively. Build command, image id,
+package versions, log excerpts and exit codes:
+[RESULTS-2026-11-20-jazzy-container.md](RESULTS-2026-11-20-jazzy-container.md).
+
+These runs use **one container with two processes** and `--network none`, the same scope as
+`scripts/test-ros2-image.sh`. They say nothing about cross-container, cross-node or Kubernetes DDS
+delivery. To repeat them (needs Docker and an image built from `ROS2/Dockerfile`, here called
+`IMAGE`):
 
 ```sh
-docker run --rm -v "$PWD/examples/ros2-sequence-probe:/probe:ro" ros2k8s-demo-ros:local bash -c '
+bash examples/ros2-sequence-probe/run-in-jazzy-container.sh IMAGE OUT_DIR
+```
+
+The script's core, for one clean run (logs end up in `OUT_DIR` on the host):
+
+```sh
+docker run --rm --network none --user "$(id -u):$(id -g)" -e HOME=/tmp \
+  -v "$PWD/examples/ros2-sequence-probe:/probe:ro" -v "$OUT_DIR:/out" IMAGE bash -c '
   source /opt/ros/jazzy/setup.bash
   export ROS_DOMAIN_ID=42 PYTHONDONTWRITEBYTECODE=1
   python3 /probe/rclpy_adapters/subscriber_node.py --run-id r1 --expected-count 20 \
-      --reliability reliable --depth 10 --log-file /tmp/sub.jsonl &
+      --reliability reliable --depth 10 --log-file /out/sub.jsonl &
   sub=$!
   python3 /probe/rclpy_adapters/publisher_node.py --run-id r1 --count 20 --rate-hz 5 \
-      --payload-bytes 64 --reliability reliable --depth 10 --log-file /tmp/pub.jsonl
-  wait "$sub"; rc=$?
-  cat /tmp/sub.jsonl; exit "$rc"'
+      --payload-bytes 64 --reliability reliable --depth 10 --log-file /out/pub.jsonl
+  wait "$sub"'
 ```
 
 Adapter flags: `--run-id` (required), `--topic`, `--node-name`, `--msg-type string|bytes`,
@@ -137,15 +154,18 @@ Adapter flags: `--run-id` (required), `--topic`, `--node-name`, `--msg-type stri
 volatile|transient-local`, `--depth N`, `--log-file PATH|-`. Publisher also: `--count`, `--rate-hz`,
 `--payload-bytes`, `--seed`, `--start-delay-s` (discovery time), `--linger-s`. Subscriber also:
 `--expected-count`, `--first-message-timeout-s`, `--idle-timeout-s`, `--overall-timeout-s`.
-The subscriber exits 0 only for a clean complete run, 1 otherwise, 2 for bad arguments.
+The subscriber exits 0 only for a clean complete run, 1 otherwise (including a stop by SIGINT or
+SIGTERM, which still writes the `stop` event), 2 for bad arguments. The publisher exits 0 when
+stopped by a signal and records `reason: stopped` in its `stop` event.
 
-Untested assumptions in the adapters: the `std_msgs/ByteMultiArray` element handling and the
-`rclpy` calls themselves.
+Not exercised in the container run: best-effort reliability, transient-local durability, the
+`monotonic` and `ros` clocks, and any rate, depth or payload size other than those in the results
+file.
 
 ## Limitations
 
-* Counts messages only. It reports no latency, jitter, throughput or "resilience" figure, and this
-  change contains no measurements.
+* Counts messages only. It reports no latency, jitter, throughput or "resilience" figure. The only
+  recorded run is the single-container one above.
 * Non-actuating: it publishes numbered text on a topic you choose. Do not point it at a topic that
   drives hardware.
 * Loss attribution (network, QoS history depth, discovery delay, subscriber start-up) is up to the

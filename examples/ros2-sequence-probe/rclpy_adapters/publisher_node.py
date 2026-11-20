@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""rclpy publisher adapter for the sequence probe.  NOT RUN here: no ROS 2 in the authoring
-environment. All message scheduling, payload building and logging live in the tested `seqprobe`
-package; this file only creates a node/publisher and passes `publisher.publish` as `send`.
+"""rclpy publisher adapter for the sequence probe. Run in the Jazzy container on 2026-11-20
+(one host, one container, loopback DDS only; see RESULTS-2026-11-20-jazzy-container.md).
+All message scheduling, payload building and logging live in the tested `seqprobe` package; this
+file only creates a node/publisher and passes `publisher.publish` as `send`.
 
 Example (inside the Jazzy image, after sourcing /opt/ros/jazzy/setup.bash):
     python3 rclpy_adapters/publisher_node.py --run-id r1 --count 100 --rate-hz 10 \
