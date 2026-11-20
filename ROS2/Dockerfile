@@ -8,17 +8,17 @@ LABEL org.opencontainers.image.source="https://github.com/MSKazemi/robo-resilien
       org.opencontainers.image.description="ROS 2 Jazzy on Ubuntu 24.04: demo_nodes_cpp, stress-ng and opt-in ros2_pulse telemetry for educational experiments"
 
 ARG DEBIAN_FRONTEND=noninteractive
-# Direct apt package versions observed in successful 2026-10-12 CI build.
+# Direct apt versions, refreshed 2026-11-20 from `apt-cache madison` in this base (noble amd64).
 # Transitive apt dependencies still need a snapshot for fully hermetic rebuilds.
-ARG ROS_DEMO_NODES_CPP_VERSION=0.33.11-1noble.20260920.235420
+ARG ROS_DEMO_NODES_CPP_VERSION=0.33.11-1noble.20261105.092654
 ARG STRESS_NG_VERSION=0.17.06-1build1
+# packages.ros.org keeps only the newest build of a package, so a Jazzy sync breaks the old pin;
+# refresh it then (ROS2/jazzy/README.md). demo_nodes_cpp: build 20260920 -> 20261105, same 0.33.11.
 # Optional ros2_pulse telemetry pilot (issue #52), Apache-2.0. Installed but inert: nothing is
-# preloaded unless a workload sets LD_PRELOAD (see ROS2/jazzy/README.md). Resolved 2026-10-28
-# from the main packages.ros.org noble index. rosdistro jazzy already releases 0.7.0-1, but that
-# build is only in ros2-testing until the next Jazzy sync; move this pin then instead of adding
-# the testing repository to this image.
-ARG ROS2_PULSE_VERSION=0.5.0-1noble.20260914.160740
-# Only hosts the pulse-export venv below (Ubuntu noble-updates version, 2026-10-28).
+# preloaded unless a workload sets LD_PRELOAD (see ROS2/jazzy/README.md). By 2026-11-20 the main
+# index had replaced 0.5.0 with 0.7.0-1; same library path, environment variables and pulse-check.
+ARG ROS2_PULSE_VERSION=0.7.0-1noble.20261105.090619
+# Only hosts the pulse-export venv below (Ubuntu noble-updates version, re-checked 2026-11-20).
 ARG PYTHON3_VENV_VERSION=3.12.3-0ubuntu2.1
 RUN set -eux; \
     apt-get update; \
