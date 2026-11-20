@@ -17,6 +17,7 @@ vm_ip_w2 = "192.168.56.12"
 # The "small" profile is NOT validated end to end; kubeadm itself needs at least
 # 2 vCPUs and 2 GB RAM per node, and the monitoring stack needs more headroom.
 require "rbconfig"
+require "securerandom"
 
 lab_profiles = {
   "default" => { cp_mem: 18240, cp_cpus: 14, worker_mem: 6096, worker_cpus: 2 },
@@ -58,17 +59,42 @@ if host_cpu.match?(/arm|aarch64/) && ENV["LAB_ALLOW_ARM"].to_s.strip != "1" &&
   MSG
 end
 
+# --- Worker join credential (issue #43) ------------------------------------------------
+# A fresh kubeadm bootstrap token is generated in memory every time Vagrant loads this file.
+# It reaches the guests only as an environment variable of the control-plane and worker
+# provisioners, is hidden from Vagrant's output and logs (`sensitive`), and is never written
+# to the synced folder. The control plane registers it with a short TTL
+# (LAB_BOOTSTRAP_TOKEN_TTL, default 1h). Consequence: provision the control plane and the
+# workers in the same command (`vagrant up`, or `vagrant provision controlplane worker1`).
+token_chars = [*"a".."z", *"0".."9"]
+lab_token_part = ->(n) { Array.new(n) { token_chars[SecureRandom.random_number(token_chars.size)] }.join }
+lab_bootstrap_token = "#{lab_token_part.call(6)}.#{lab_token_part.call(16)}"
+lab_token_ttl = ENV.fetch("LAB_BOOTSTRAP_TOKEN_TTL", "1h").strip
+unless lab_token_ttl.match?(/\A[1-9][0-9]*[smh]\z/)
+  abort "LAB_BOOTSTRAP_TOKEN_TTL must look like 30m or 1h (got '#{lab_token_ttl}')."
+end
+lab_join_env = {
+  "LAB_BOOTSTRAP_TOKEN" => lab_bootstrap_token,
+  "LAB_BOOTSTRAP_TOKEN_TTL" => lab_token_ttl,
+  "LAB_CONTROL_PLANE_IP" => vm_ip_cp,
+}
+
+# /etc/hosts entries for all nodes, added once (re-provisioning does not duplicate them).
+lab_hosts = { vm_name_cp => vm_ip_cp, vm_name_w1 => vm_ip_w1, vm_name_w2 => vm_ip_w2 }
+lab_hosts_script = lab_hosts.map { |name, ip|
+  "grep -qxF '#{ip} #{name}' /etc/hosts || echo '#{ip} #{name}' >> /etc/hosts"
+}.join("\n")
 
 Vagrant.configure("2") do |config|
+  config.vagrant.sensitive = [lab_bootstrap_token]
   config.vm.box = lab_box
   config.vm.synced_folder "./", "/home/vagrant/codes/"
+  # Pinned versions for all provisioning scripts: KubernetesClusterSetup/versions.sh
   config.vm.provision "shell", path: "./KubernetesClusterSetup/provision_all.sh"
   config.vm.provision "shell", path: "./KubernetesClusterSetup/CRI_DockerEng_containerd.sh"
   config.vm.provision "shell", path: "./KubernetesClusterSetup/kubeadm_kubelet_kubectl.sh"
 
-  config.vm.provision "shell", inline: "echo '#{vm_ip_cp} #{vm_name_cp}' | sudo tee -a /etc/hosts"
-  config.vm.provision "shell", inline: "echo '#{vm_ip_w1} #{vm_name_w1}' | sudo tee -a /etc/hosts"
-  config.vm.provision "shell", inline: "echo '#{vm_ip_w2} #{vm_name_w2}' | sudo tee -a /etc/hosts"
+  config.vm.provision "shell", inline: "set -eu\n#{lab_hosts_script}"
 
 
   # Control Plane Configuration
@@ -81,23 +107,11 @@ Vagrant.configure("2") do |config|
       vb.cpus = cp_cpus # This sets the number of CPUs for the VM
     end
 
-    # cluster setup
-    cp.vm.provision "shell", path: "./KubernetesClusterSetup/create_cluster.sh"
-    
-    # Inline shell to perform a check or another sleep
-    cp.vm.provision "shell", inline: <<-SHELL
-      echo "Waiting for the cluster setup to stabilize..."
-      sleep 20
-    SHELL
-
+    # Cluster setup. Readiness is checked inside the scripts with bounded timeouts
+    # (API server /readyz, node Ready, Weave Net rollout) instead of fixed sleeps.
+    cp.vm.provision "shell", path: "./KubernetesClusterSetup/create_cluster.sh",
+      env: lab_join_env, sensitive: true
     cp.vm.provision "shell", path: "./Network/network_plugin.sh"
-    
-    # Inline shell to perform a check or another sleep
-    cp.vm.provision "shell", inline: <<-SHELL
-      echo "Waiting for the network plugin setup to stabilize..."
-      sleep 20
-    SHELL
-    
     cp.vm.provision "shell", path: "./MonitoringSystem/monitoring.sh"
   end
 
@@ -110,7 +124,8 @@ Vagrant.configure("2") do |config|
       vb.memory = worker_mem.to_s # This sets the amount of memory for the VM
       vb.cpus = worker_cpus # This sets the number of CPUs for the VM
     end
-    w1.vm.provision "shell", inline: "bash /home/vagrant/codes/join-command.sh"
+    w1.vm.provision "shell", path: "./KubernetesClusterSetup/join_worker.sh",
+      env: lab_join_env, sensitive: true
   end
 
 
@@ -123,7 +138,8 @@ Vagrant.configure("2") do |config|
       vb.memory = worker_mem.to_s # This sets the amount of memory for the VM
       vb.cpus = worker_cpus # This sets the number of CPUs for the VM
     end
-    w2.vm.provision "shell", inline: "bash /home/vagrant/codes/join-command.sh"
+    w2.vm.provision "shell", path: "./KubernetesClusterSetup/join_worker.sh",
+      env: lab_join_env, sensitive: true
   end
 
 
