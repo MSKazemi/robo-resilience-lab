@@ -1,0 +1,74 @@
+{
+  "schema_version": "run-metrics/v1",
+  "data_kind": "synthetic",
+  "independent_run_id": "syn-edge-cloud-lossy-r03",
+  "arm": "edge-cloud-lossy",
+  "manifest_file": "manifests/valid/syn-edge-cloud-lossy-r03.json",
+  "manifest_sha256": "58b2a892352437dede5e9fba6f19f7bbe2a40b6d70649f714df9360c540faf32",
+  "metrics": {
+    "sensor_to_policy_request_ms": {
+      "status": "ok",
+      "value": 17.981,
+      "unit": "ms",
+      "n_samples": 450
+    },
+    "request_serve_response_ms": {
+      "status": "ok",
+      "value": 89.68,
+      "unit": "ms",
+      "n_samples": 450
+    },
+    "validator_delay_ms": {
+      "status": "ok",
+      "value": 1.742,
+      "unit": "ms",
+      "n_samples": 450
+    },
+    "action_age_ms": {
+      "status": "ok",
+      "value": 146.803,
+      "unit": "ms",
+      "n_samples": 450
+    },
+    "buffer_starvation_fraction": {
+      "status": "ok",
+      "value": 0.057778,
+      "unit": "fraction",
+      "starved_ticks": 26,
+      "control_ticks": 450
+    },
+    "deadline_miss_fraction": {
+      "status": "ok",
+      "value": 0.120283,
+      "unit": "fraction",
+      "missed_actions": 51,
+      "released_actions": 424
+    },
+    "message_gap_max_ms": {
+      "status": "ok",
+      "value": 840.564,
+      "unit": "ms",
+      "n_samples": 450
+    },
+    "message_gap_count": {
+      "status": "ok",
+      "value": 6,
+      "unit": "count"
+    },
+    "recovery_time_ms": {
+      "status": "ok",
+      "value": 6510.01,
+      "unit": "ms"
+    },
+    "failure_count": {
+      "status": "ok",
+      "value": 2,
+      "unit": "count"
+    },
+    "task_success": {
+      "status": "ok",
+      "value": false,
+      "unit": "boolean"
+    }
+  }
+}
