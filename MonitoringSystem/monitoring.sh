@@ -1,8 +1,27 @@
 #!/bin/bash
-# Install metrics-server, Kubernetes Dashboard, Helm and kube-prometheus-stack.
-# Safe to re-run (apply / upgrade --install). The dashboard token is written to a
-# 0600 file in the vagrant home directory and is NOT printed to the console.
+# Install metrics-server, the Headlamp web UI (read-only login identity),
+# Helm and a pinned kube-prometheus-stack chart on the Vagrant control plane.
+# Safe to re-run (apply / upgrade --install).
+#
+# Security defaults (issue #4):
+#   * Headlamp replaces the archived Kubernetes Dashboard. Its Service is
+#     ClusterIP only; reach it with `kubectl port-forward`.
+#   * No cluster-admin account is created and NO token is written to a file or
+#     printed. Log in with a short-lived token created on demand, see
+#     MonitoringSystem/README.md ("Headlamp web UI").
+#   * The legacy Dashboard v2.7.0 manifest is installed only when
+#     INSTALL_LEGACY_DASHBOARD=1 is set; it no longer creates admin-user.
+#
+# Static checks only: this script has not been run end to end since the
+# Headlamp change. See "Verification status" in MonitoringSystem/README.md.
 set -euo pipefail
+
+MONITORING_DIR=/home/vagrant/codes/MonitoringSystem
+# kube-prometheus-stack chart version. 92.16.1 is the version the values file was
+# checked against with `helm template` (see the README). The newest release on
+# 2026-11-20 is 93.4.1, a new major version; it is NOT pinned here because the
+# values file has not been re-checked against it.
+KPS_CHART_VERSION="${KPS_CHART_VERSION:-92.16.1}"
 
 echo "Installing monitoring tools"
 
@@ -11,26 +30,26 @@ echo "Installing monitoring tools"
 echo "Installing Metrics Server"
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 
-# Install Kubernetes Dashboard
-echo "Installing Kubernetes Dashboard"
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+# Install Headlamp (pinned image digest, ClusterIP Service, no cluster-admin)
+echo "Installing Headlamp web UI"
+kubectl apply -f "$MONITORING_DIR/headlamp/headlamp.yaml"
+kubectl apply -f "$MONITORING_DIR/headlamp/viewer-rbac.yaml"
+if ! kubectl -n headlamp rollout status deployment/headlamp --timeout=5m; then
+  echo "WARNING: the Headlamp deployment did not become ready; check 'kubectl -n headlamp describe pod'" >&2
+fi
 
-echo "Creating admin-user for dashboard"
-kubectl apply -f /home/vagrant/codes/MonitoringSystem/admin-user.yaml
+# Legacy, opt-in only: the upstream Kubernetes Dashboard project is archived.
+if [ "${INSTALL_LEGACY_DASHBOARD:-0}" = "1" ]; then
+  echo "INSTALL_LEGACY_DASHBOARD=1: installing the LEGACY Kubernetes Dashboard v2.7.0 (archived upstream)"
+  kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+fi
 
-# Dashboard token: wait until the service-account token controller populates it,
-# then store it with restrictive permissions. Never echo it to the provisioning log.
-TOKEN_FILE=/home/vagrant/dashboard-token
-echo "Waiting for the dashboard token to be populated"
-for _ in $(seq 1 30); do
-  token_b64="$(kubectl -n kubernetes-dashboard get secret admin-user -o jsonpath='{.data.token}' 2>/dev/null || true)"
-  [ -n "$token_b64" ] && break
-  sleep 2
-done
-[ -n "${token_b64:-}" ] || { echo 'ERROR: dashboard token was not populated' >&2; exit 1; }
-(umask 077 && printf '%s' "$token_b64" | base64 -d > "$TOKEN_FILE")
-chown vagrant:vagrant "$TOKEN_FILE"
-echo "Dashboard token saved to $TOKEN_FILE (readable only by the vagrant user)."
+# Earlier versions of this script stored a cluster-admin token here. Do not
+# delete it silently; tell the operator how to revoke it.
+if [ -e /home/vagrant/dashboard-token ]; then
+  echo "NOTICE: /home/vagrant/dashboard-token from an earlier run still exists and holds a cluster-admin token." >&2
+  echo "        Revoke and remove it: kubectl delete -f $MONITORING_DIR/admin-user.yaml && rm /home/vagrant/dashboard-token" >&2
+fi
 
 # Install Helm (signing key and apt source as documented by Helm)
 echo "Installing Helm"
@@ -42,7 +61,7 @@ sudo apt-get install -y helm
 
 # Persistent Volumes for Prometheus and Grafana
 echo "Creating Persistent Volume for Prometheus and Grafana"
-kubectl apply -f /home/vagrant/codes/MonitoringSystem/pv.yaml
+kubectl apply -f "$MONITORING_DIR/pv.yaml"
 
 # Install Prometheus
 echo "Prometheus"
@@ -64,8 +83,17 @@ done
 echo "Creating namespace for Prometheus"
 kubectl create namespace prometheus --dry-run=client -o yaml | kubectl apply -f -
 
-echo "Installing Prometheus"
+echo "Installing Prometheus (kube-prometheus-stack chart $KPS_CHART_VERSION)"
 helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
+  --version "$KPS_CHART_VERSION" \
   -n prometheus \
-  --values /home/vagrant/codes/MonitoringSystem/kube-prometheus-stack-values.yaml \
+  --values "$MONITORING_DIR/kube-prometheus-stack-values.yaml" \
   --wait --timeout 15m
+
+cat <<'EOF'
+Monitoring tools installed. Open Headlamp (no token is stored anywhere):
+  1. On the host:  vagrant ssh controlplane -- -L 8080:127.0.0.1:8080
+  2. In that VM shell:  kubectl -n headlamp port-forward svc/headlamp 8080:80
+  3. In a second VM shell:  kubectl -n headlamp create token headlamp-viewer --duration=30m
+  4. Browse http://127.0.0.1:8080 on the host and paste the token at the login prompt.
+EOF

@@ -1,0 +1,82 @@
+# Read-only login identity for Headlamp (issue #4). NOT DEPLOYED BY THE AUTHOR:
+# checked statically only (kubeconform strict, Kubernetes 1.29 schemas).
+#
+# Binds the built-in "view" ClusterRole. Per the Kubernetes RBAC documentation
+# (user-facing roles), "view" allows read-only access to most objects in all
+# namespaces, does NOT allow viewing Secrets, and does not allow viewing
+# Roles or RoleBindings. No write access, no cluster-admin. A second, small
+# read-only ClusterRole below adds nodes, PersistentVolumes and StorageClasses.
+#
+# There is deliberately NO long-lived token Secret here
+# (type kubernetes.io/service-account-token). Create a short-lived token on
+# demand and paste it into the Headlamp login prompt; never write it to a file:
+#
+#   kubectl -n headlamp create token headlamp-viewer --duration=30m
+#
+# Apply:  kubectl apply -f MonitoringSystem/headlamp/viewer-rbac.yaml
+# Remove: kubectl delete -f MonitoringSystem/headlamp/viewer-rbac.yaml
+#   (tokens already issued stop working once the ServiceAccount is deleted)
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: headlamp-viewer
+  namespace: headlamp
+  labels:
+    app.kubernetes.io/name: headlamp
+    app.kubernetes.io/component: viewer-identity
+    app.kubernetes.io/part-of: robo-resilience-lab
+# Only used as a bearer-token identity, never mounted into a pod.
+automountServiceAccountToken: false
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: headlamp-viewer
+  labels:
+    app.kubernetes.io/name: headlamp
+    app.kubernetes.io/component: viewer-identity
+    app.kubernetes.io/part-of: robo-resilience-lab
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+  - kind: ServiceAccount
+    name: headlamp-viewer
+    namespace: headlamp
+---
+# "view" covers namespaced objects only. This adds read access to a few
+# cluster-scoped, non-secret objects the lab UI shows (nodes, volumes, storage
+# classes). Read verbs only; delete this pair to fall back to plain "view".
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: headlamp-viewer-cluster-read
+  labels:
+    app.kubernetes.io/name: headlamp
+    app.kubernetes.io/component: viewer-identity
+    app.kubernetes.io/part-of: robo-resilience-lab
+rules:
+  - apiGroups: [""]
+    resources: ["nodes", "persistentvolumes"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: headlamp-viewer-cluster-read
+  labels:
+    app.kubernetes.io/name: headlamp
+    app.kubernetes.io/component: viewer-identity
+    app.kubernetes.io/part-of: robo-resilience-lab
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: headlamp-viewer-cluster-read
+subjects:
+  - kind: ServiceAccount
+    name: headlamp-viewer
+    namespace: headlamp

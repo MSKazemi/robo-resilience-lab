@@ -1,0 +1,153 @@
+# Headlamp web UI for the lab, as plain manifests (replaces the archived
+# Kubernetes Dashboard, issue #4). NOT DEPLOYED BY THE AUTHOR: these files were
+# checked statically only (kubeconform strict, Kubernetes 1.29 schemas).
+#
+# Pins (looked up 2026-11-20):
+#   Headlamp v0.46.0, the latest stable release of kubernetes-sigs/headlamp
+#   (published 2026-10-15; Helm chart headlamp-helm-0.46.0, appVersion 0.46.0).
+#   Image pinned by the digest of its multi-arch OCI index on ghcr.io.
+#   The container arguments, port 4466, probes, user 100:101 and the /tmp
+#   emptyDir follow the upstream chart template
+#   (charts/headlamp/templates/deployment.yaml at tag headlamp-helm-0.46.0).
+#
+# Least-privilege design (differs from the chart defaults on purpose):
+#   * The chart binds its ServiceAccount to cluster-admin by default
+#     (clusterRoleBinding.clusterRoleName: cluster-admin). Here the pod's
+#     ServiceAccount has NO RoleBinding or ClusterRoleBinding at all.
+#     Headlamp in-cluster mode asks each user for a token and sends API
+#     requests with that token, so what a user can see is decided by the
+#     token, not by the pod. Read-only access: viewer-rbac.yaml.
+#   * Service type ClusterIP only. Reach it with `kubectl port-forward`
+#     (see MonitoringSystem/README.md). No NodePort, LoadBalancer or Ingress.
+#   * The namespace enforces the "restricted" Pod Security Standard.
+#
+# Apply:  kubectl apply -f MonitoringSystem/headlamp/headlamp.yaml
+# Remove: kubectl delete -f MonitoringSystem/headlamp/headlamp.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: headlamp
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+---
+# Identity of the Headlamp pod. Deliberately bound to no Role/ClusterRole.
+# The token is still mounted because in-cluster mode reads the API server
+# address and CA bundle from the standard service-account mount.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: headlamp
+  namespace: headlamp
+  labels:
+    app.kubernetes.io/name: headlamp
+    app.kubernetes.io/part-of: robo-resilience-lab
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: headlamp
+  namespace: headlamp
+  labels:
+    app.kubernetes.io/name: headlamp
+    app.kubernetes.io/version: "0.46.0"
+    app.kubernetes.io/part-of: robo-resilience-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: headlamp
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: headlamp
+        app.kubernetes.io/version: "0.46.0"
+    spec:
+      serviceAccountName: headlamp
+      automountServiceAccountToken: true
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 100
+        runAsGroup: 101
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: headlamp
+          # ghcr.io/headlamp-k8s/headlamp:v0.46.0 (OCI image index digest)
+          image: ghcr.io/headlamp-k8s/headlamp:v0.46.0@sha256:8a0ef97527544baa2b35825940ddf4db6e2d09c30cd5aa31fd269ff604cc8b75
+          imagePullPolicy: IfNotPresent
+          args:
+            - "-in-cluster"
+            - "-in-cluster-context-name=main"
+            - "-plugins-dir=/headlamp/plugins"
+            # Headlamp session lifetime in seconds (chart default 86400 = 24 h).
+            # Shortened to 1 h to match the short-lived login tokens.
+            - "-session-ttl=3600"
+          ports:
+            - name: http
+              containerPort: 4466
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            periodSeconds: 10
+            timeoutSeconds: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            periodSeconds: 10
+            timeoutSeconds: 1
+            failureThreshold: 3
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 100
+            runAsGroup: 101
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          # Sizing is a lab guess, not a measured figure.
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            # The chart adds the same writable /tmp when readOnlyRootFilesystem is on.
+            - name: headlamp-tmp
+              mountPath: /tmp
+      volumes:
+        - name: headlamp-tmp
+          emptyDir:
+            sizeLimit: 64Mi
+---
+# ClusterIP only: not reachable from outside the cluster without port-forward.
+apiVersion: v1
+kind: Service
+metadata:
+  name: headlamp
+  namespace: headlamp
+  labels:
+    app.kubernetes.io/name: headlamp
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: headlamp
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      protocol: TCP
