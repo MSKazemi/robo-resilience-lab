@@ -89,7 +89,7 @@ These are mismatches found by reading the files. They are listed so they can be 
 3. **Monitoring defaults are broad.** `MonitoringSystem/monitoring.sh:53,55` runs `chmod -R 777`, line 23 appends the Dashboard token to a file named `token` in the current directory, and `MonitoringSystem/admin-user.yaml:25` binds `cluster-admin`. `MonitoringSystem/README.md` does not say so; treat the monitoring scripts as a lab convenience, not a safe default.
 4. **Published image is older than the source.** The digest in `ROS2/jazzy/README.md` ("First verified published image") was built from commit `475988a` and, per that README, contains no `ros2_pulse`. Do not use it to describe the current Dockerfile.
 5. **Glossary is stale on one point.** `docs/GLOSSARY.md` ("Support States") still says `cross-worker verified` is "Not achieved yet", while `docs/KIND-DEMO.md` ("Support states") records it for the kind profile.
-6. **Old repository name in places.** `docs/KIND-DEMO.md` uses the older name `Vagrant-Kubernetes-ROS2-Deployment` in its clone commands and issue links.
+6. **Old repository name (fixed 2026-11-20).** `docs/KIND-DEMO.md` cloned the older name `Vagrant-Kubernetes-ROS2-Deployment`, which now resolves to a separate archived snapshot, not to this repository; its clone commands and links now use `robo-resilience-lab`.
 7. **Monitoring chart is unpinned** (section 4), so a rerun can install a different chart version than any earlier run.
 
 ## 8. How the claims on this page were checked

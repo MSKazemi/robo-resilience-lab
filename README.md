@@ -5,7 +5,7 @@
 ![Vagrant](https://img.shields.io/badge/Vagrant-2.4.1-1868F2?logo=vagrant&logoColor=white)
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
 
-**Vagrant-Kubernetes-ROS2-Deployment** is an open-source **ROS 2 on Kubernetes** educational lab. It uses **Vagrant and VirtualBox** to provision a local three-node Kubernetes cluster, with examples for ROS 2 DDS communication, workload scaling, Prometheus/Grafana monitoring, and Python/Jupyter metrics analysis.
+**robo-resilience-lab** (formerly `Vagrant-Kubernetes-ROS2-Deployment`) is an open-source **ROS 2 on Kubernetes** educational lab. It uses **Vagrant and VirtualBox** to provision a local three-node Kubernetes cluster, with examples for ROS 2 DDS communication, workload scaling, Prometheus/Grafana monitoring, and Python/Jupyter metrics analysis.
 
 **Who it is for:** ROS 2 and robotics developers, cloud-native engineers, students, and researchers exploring containerized robotics without a paid cloud account. **Why use it:** infrastructure scripts, ROS 2 container examples, monitoring configuration, and historical sample metrics are in one repository.
 

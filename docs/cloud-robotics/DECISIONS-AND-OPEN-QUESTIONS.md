@@ -4,7 +4,7 @@
 
 ## D-01 Program naming (proposed)
 
-**Recommended visible research track:** **Cloud Robotics + AI/LLM Lab**; optional **RobotOps Lab** shorthand for deploy/observe/benchmark teaching. Keep existing canonical repository name until [#22](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/22) is deliberately decided. Repo slug proposal `ros2-kubernetes-lab` improves ROS/Kubernetes discoverability; adding AI only to the display/tagline avoids overpromising that the legacy code already supports it.
+**Recommended visible research track:** **Cloud Robotics + AI/LLM Lab**; optional **RobotOps Lab** shorthand for deploy/observe/benchmark teaching. Keep existing canonical repository name until [#22](https://github.com/MSKazemi/robo-resilience-lab/issues/22) is deliberately decided. Repo slug proposal `ros2-kubernetes-lab` improves ROS/Kubernetes discoverability; adding AI only to the display/tagline avoids overpromising that the legacy code already supports it.
 
 **Alternatives:** `cloud-robotics-lab` (broad, less exact ROS/Kubernetes search intent), `robotops-lab` (memorable but ambiguous); use dual branding carefully, do not fork overlapping repos prematurely.
 

@@ -15,9 +15,9 @@
 Existing software includes Vagrant VM provisioning, historical stress/HPA examples, monitoring configs, sample analysis data, Jazzy image and same-container message test, and newcomer/agent contribution guides. These are valuable assets, but current code **does not** provide a validated modern multi-worker ROS 2 demo. The old `Vagrantfile` requests approximately 30 GB VM memory and 18 vCPUs. Public About text and `CITATION.cff` describe the historical Foxy setup and require careful, truthful updates when functionality changes.
 
 **Do these first, not in parallel with large feature expansion:**
-1. [#7](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/7) supported ROS image lifecycle; [#15](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/15) maintained CNI and explicit discovery.
-2. [#14](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/14) unattended talker/listener communication **between distinct workers**, with test proof; [#16](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/16) documented, measured low-resource kind/k3d entry point.
-3. [#6](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/6) safety, pinning, CI; plus manifests and documentation validation.
+1. [#7](https://github.com/MSKazemi/robo-resilience-lab/issues/7) supported ROS image lifecycle; [#15](https://github.com/MSKazemi/robo-resilience-lab/issues/15) maintained CNI and explicit discovery.
+2. [#14](https://github.com/MSKazemi/robo-resilience-lab/issues/14) unattended talker/listener communication **between distinct workers**, with test proof; [#16](https://github.com/MSKazemi/robo-resilience-lab/issues/16) documented, measured low-resource kind/k3d entry point.
+3. [#6](https://github.com/MSKazemi/robo-resilience-lab/issues/6) safety, pinning, CI; plus manifests and documentation validation.
 
 Only publicize a one-command modern Kubernetes quickstart or publish a verified release when those tests pass. Preserve legacy material separately.
 
@@ -88,9 +88,9 @@ Track **outcomes**, segmented by audience: successful installs / attempted insta
 
 ## Proposed next edits and tracking
 
-- Complete existing issues [#7](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/7), [#14](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/14), [#15](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/15), [#16](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/16), [#6](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/6) first; avoid duplicate tickets.
-- Extend [benchmark #18](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/18) with study protocols after demo verification; coordinate docs [#19](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/19), release [#20](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/20), outreach [#21](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/21), and naming [#22](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/22).
+- Complete existing issues [#7](https://github.com/MSKazemi/robo-resilience-lab/issues/7), [#14](https://github.com/MSKazemi/robo-resilience-lab/issues/14), [#15](https://github.com/MSKazemi/robo-resilience-lab/issues/15), [#16](https://github.com/MSKazemi/robo-resilience-lab/issues/16), [#6](https://github.com/MSKazemi/robo-resilience-lab/issues/6) first; avoid duplicate tickets.
+- Extend [benchmark #18](https://github.com/MSKazemi/robo-resilience-lab/issues/18) with study protocols after demo verification; coordinate docs [#19](https://github.com/MSKazemi/robo-resilience-lab/issues/19), release [#20](https://github.com/MSKazemi/robo-resilience-lab/issues/20), outreach [#21](https://github.com/MSKazemi/robo-resilience-lab/issues/21), and naming [#22](https://github.com/MSKazemi/robo-resilience-lab/issues/22).
 - Defer branding claims of **Cloud-Native Robotics Lab** until functionality is real. Maintain the searchable proposed repository name **ROS 2 Kubernetes Lab**; broader brand is a *vision*, not a currently validated feature.
 - Public documentation should include only broadly useful engineering plans and references, never private ideation, unpublished commercial discussions, credentials, personal data or partner-sensitive materials.
 
-**Strategy-tracking issue:** [#42](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/42).
+**Strategy-tracking issue:** [#42](https://github.com/MSKazemi/robo-resilience-lab/issues/42).

@@ -1,4 +1,4 @@
-# Contributing to Vagrant-Kubernetes-ROS2-Deployment
+# Contributing to robo-resilience-lab
 
 Welcome! Contributions from robotics engineers, Kubernetes users, students, researchers, writers and first-time GitHub contributors are appreciated.
 

@@ -1,14 +1,14 @@
 # Lightweight kind demo: ROS 2 talker/listener across two Kubernetes workers
 
-**Scope:** an educational lab profile that runs a three-node Kubernetes cluster as Docker containers ([kind](https://kind.sigs.k8s.io/)), starts a ROS 2 Jazzy talker and listener **on two different workers**, and checks with a script that messages cross between them. It is not a production or safety-critical platform, and it does **not** replace or validate the historical [Vagrant/kubeadm cluster](../README.md). Issues: [#14](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/14) (self-starting, cross-worker demo) and [#16](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/16) (lightweight profile).
+**Scope:** an educational lab profile that runs a three-node Kubernetes cluster as Docker containers ([kind](https://kind.sigs.k8s.io/)), starts a ROS 2 Jazzy talker and listener **on two different workers**, and checks with a script that messages cross between them. It is not a production or safety-critical platform, and it does **not** replace or validate the historical [Vagrant/kubeadm cluster](../README.md). Issues: [#14](https://github.com/MSKazemi/robo-resilience-lab/issues/14) (self-starting, cross-worker demo) and [#16](https://github.com/MSKazemi/robo-resilience-lab/issues/16) (lightweight profile).
 
 All numbers below were **measured once on one host** (see [Measured on this host](#measured-on-this-host)). They are not guarantees for other machines, and no claim is made about 8 GB hosts.
 
 ## Quick start
 
 ```bash
-git clone https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment.git
-cd Vagrant-Kubernetes-ROS2-Deployment
+git clone https://github.com/MSKazemi/robo-resilience-lab.git
+cd robo-resilience-lab
 make help      # prerequisites and targets
 make demo      # build the image, create the kind cluster, deploy discovery server + talker + listener
 make verify    # exit code 0 only if messages crossed between two different workers

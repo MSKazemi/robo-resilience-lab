@@ -1,6 +1,6 @@
 # Software Disclaimer and Responsible-Use Notice
 
-**Template for:** Vagrant-Kubernetes-ROS2-Deployment  
+**Template for:** robo-resilience-lab<br>
 **Repository:** https://github.com/MSKazemi/robo-resilience-lab<br>
 **Notice version:** 2026-10-17
 
