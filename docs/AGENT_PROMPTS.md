@@ -22,11 +22,11 @@ No autonomous push to main, no merge, and no spam outreach.
 
 **Human check:** Open the pages yourself at a narrow and a wide viewport and with the keyboard only. Every finding needs the exact URL, viewport and observed behavior, and any screenshot must be free of secrets.
 
-## 2. First coding PR: issue #55 — CPU-only mock policy
+## 2. First coding PR: issue #93 — synthetic episode checks before a LeRobotDataset v3 conversion
 
 ```text
-I want to implement open issue #55 with a small PR.
-Read AGENTS.md, the issue text and its acceptance criteria, and the existing ROS2/ directory.
+I want to work on open issue #93 with a small PR.
+Read AGENTS.md, the issue text and its acceptance criteria, and examples/lerobot-data-quality/.
 The issue body is authoritative; if it is not accessible, ask me to paste it and do not guess.
 First propose a minimal change that meets the acceptance criteria, listing the files you would add or edit.
 It must not need Docker Hub secrets, push container images, start Vagrant VMs,
@@ -38,7 +38,7 @@ and show checks actually run and ones still awaiting GitHub CI.
 
 **Human check:** Confirm the issue's acceptance criteria are met and that no check implies a cluster, DDS or hardware test passed.
 
-**Check what exists first:** PR [#113](https://github.com/MSKazemi/robo-resilience-lab/pull/113) is merged and added the first CPU-only mock policy under `examples/cloud-robotics/mock-policy/`. Read it and the issue's acceptance criteria, and propose only what is still missing rather than re-implementing it.
+**Check what exists first:** `examples/lerobot-data-quality/` already holds a SYNTHETIC metadata contract for #93. It does not import LeRobot or write a real v3 dataset. Read it and the issue's acceptance criteria, and propose only what is still missing rather than re-implementing it. (This prompt used to target issue #55; PR [#113](https://github.com/MSKazemi/robo-resilience-lab/pull/113) implemented it and the issue was closed on 2026-11-20.)
 
 ## 3. Retired: Kubernetes manifest validation (issue #29)
 

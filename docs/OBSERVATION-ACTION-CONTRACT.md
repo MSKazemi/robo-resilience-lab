@@ -31,4 +31,5 @@ Missing or mistyped fields, a missing camera, a camera name whose key does not m
 
 - Reference, file list and the full table of reasons: [examples/cloud-robotics/mock-policy/README.md](../examples/cloud-robotics/mock-policy/README.md).
 - Good first changes: add one more negative test, or a new rejection reason with a test that fails without it. Weaken a check on purpose and confirm a test fails before you restore it.
-- Not covered yet: a ROS 2 Jazzy adapter (waits for a verified fixture/topic mapping), fault injection and safe-stop semantics in simulation (issue #59), and any cross-worker evidence (issues #14, #15, #16).
+- Next step after this contract: a fail-closed **simulated** action gate with a deterministic fault suite is in [examples/cloud-robotics/action-gate/](../examples/cloud-robotics/action-gate/README.md) (issue #59).
+- Not covered yet: a ROS 2 Jazzy adapter (waits for a verified fixture/topic mapping) and any cross-worker evidence for this contract (issues #14, #15, #16).

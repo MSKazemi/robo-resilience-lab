@@ -16,7 +16,7 @@ Suggested starting points (only if still open):
 |---|---|---|
 | [#89](https://github.com/MSKazemi/robo-resilience-lab/issues/89) | Student scenario usability, accessibility and search audit | A browser, basic HTML/accessibility knowledge |
 | [#77](https://github.com/MSKazemi/robo-resilience-lab/issues/77) | Offline CI checks for Jev JSON fixtures and Markdown links | Python or GitHub Actions; wait until draft PR [#76](https://github.com/MSKazemi/robo-resilience-lab/pull/76) has landed |
-| [#55](https://github.com/MSKazemi/robo-resilience-lab/issues/55) | CPU-only simulated ROS 2 observation/action contract and mock policy | Beginner coding; check the issue for the tools it needs. A first simulated version exists, see [the contract guide](OBSERVATION-ACTION-CONTRACT.md); extend it rather than duplicating |
+| [#93](https://github.com/MSKazemi/robo-resilience-lab/issues/93) | Synthetic ROS 2 episodes checked before a LeRobotDataset v3 conversion | Beginner Python. A SYNTHETIC metadata contract already exists in [`examples/lerobot-data-quality/`](../examples/lerobot-data-quality/README.md) (it does not write or reload a real v3 dataset); extend it rather than duplicating |
 
 Issues change quickly. Before you start, read the live issue and check its linked pull requests, so you do not duplicate work that is already open or merged. The lab's first community contributions (the glossary, the quickstart cleanup and the monitoring screenshots) are listed in [CONTRIBUTORS.md](../CONTRIBUTORS.md).
 
@@ -33,7 +33,7 @@ git switch -c docs/issue-NNN-short-description
 git status --short
 ```
 
-Choose a branch name that matches **your** issue. The repository is named `robo-resilience-lab`; older links and clones may still use previous names (`robo-resilience-lab`, `Vagrant-Kubernetes-ROS2-Deployment`).
+Choose a branch name that matches **your** issue. The repository is named `robo-resilience-lab`; older links and clones may still use previous names. `ros2-kubernetes-lab` still redirects here. `Vagrant-Kubernetes-ROS2-Deployment` does **not**: that name now belongs to a separate, archived repository, so update any remote or link that still uses it.
 
 If you have write access to the original repository or use a connected cloud agent, you can work in its own feature branch instead of forking. In either case, **never make your contribution directly on `main`**.
 
