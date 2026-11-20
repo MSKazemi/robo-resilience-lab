@@ -35,7 +35,7 @@ GitHub's own documentation identifies repository **name, description, topics, an
 
 ### Repository name
 
-**Proposed eventual slug:** `robo-resilience-lab` (tracked in [#22](https://github.com/MSKazemi/robo-resilience-lab/issues/22)). This audit makes **no repository rename**. Avoid creating competing canonical URLs before the change decision is made and a migration plan exists.
+**Proposed eventual slug:** `ros2-kubernetes-lab` (the repository was later renamed, and is now `robo-resilience-lab`; tracked in [#22](https://github.com/MSKazemi/robo-resilience-lab/issues/22)). This audit makes **no repository rename**. Avoid creating competing canonical URLs before the change decision is made and a migration plan exists.
 
 ## Copy/paste GitHub About metadata (requires repository settings access)
 

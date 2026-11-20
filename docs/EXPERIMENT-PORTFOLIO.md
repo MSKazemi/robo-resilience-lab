@@ -23,6 +23,8 @@
 
 Some experiments have an offline, CPU-only building block with unit tests. Each runs on **SYNTHETIC** fixtures or produces **SIMULATION** output, so none of them answers the falsifiable question in its row; they exist so a later measured run has a tested harness. Per-module status, commands and exclusions are in [EXPERIMENT-STATUS.md](EXPERIMENT-STATUS.md).
 
+- E00: [`examples/cloud-robotics/mock-policy/`](../examples/cloud-robotics/mock-policy/README.md) (typed observation/action contract and MOCK policy, #55), [`examples/cloud-robotics/action-gate/`](../examples/cloud-robotics/action-gate/README.md) (fail-closed simulated gate and fault suite, #59) and [`examples/run-manifest/`](../examples/run-manifest/README.md) (run-manifest contract and validator, #60).
+- E01 precursor: [`examples/ros2-fault-triage-casebook/`](../examples/ros2-fault-triage-casebook/README.md) (SYNTHETIC casebook and rule baseline B0 only, #84; no lexical or Hugging Face arm).
 - E02: [`experiments/e02-dds-resilience/`](../experiments/e02-dds-resilience/README.md) (scenario matrix and trace analysis) and [`examples/ros2-sequence-probe/`](../examples/ros2-sequence-probe/README.md) (the sequence-ID probe whose logs it reads).
 - E03 precursor: [`examples/lerobot-data-quality/`](../examples/lerobot-data-quality/README.md) (metadata contract only; no LeRobotDataset v3 conversion).
 - E05 related: [`experiments/edge-cloud-placement/`](../experiments/edge-cloud-placement/README.md) (simulated placement policies).
@@ -69,14 +71,14 @@ results/
 
 This is a **suggested future layout**. Do **not** create all folders or empty modules now; implement one experiment at a time. Retain existing `DataAnalysis/`, `site/scenarios/data/experiments.json`, `scripts/` and `integrations/huggingface/` changes when reviewed; avoid duplicating the dataset registry or source-of-truth schema.
 
-### Proposed operator command contract (for implementation PRs; THESE COMMANDS ARE NOT AVAILABLE YET)
+### Proposed operator command contract (for implementation PRs; except the kind targets, THESE COMMANDS ARE NOT AVAILABLE YET)
 
 ```bash
 # After E00 implementation, expected example interface:
 python3 -m experiments.e00_mock_contract --seed 2026 --out results/local/e00
 python3 -m experiments.common.validate results/local/e00/manifest.json
 
-# After G1 / PR #97 review, expected kind interface:
+# Available since PR #97 merged (2026-10-31); see docs/KIND-DEMO.md:
 make demo
 make verify
 make clean
@@ -125,7 +127,7 @@ No command in this block should be added to README as a real command until imple
 
 **Baselines:** stable topology; restart; one deliberately incompatible/disconnected scenario. Alternative discovery/Zenoh bridge only after G1 and with distinct transport experimental arms (#48).
 
-**Acceptance:** A [GitHub Actions run for PR #97](https://github.com/MSKazemi/ros2-kubernetes-lab/actions/runs/40587051848) has already shown successful cross-worker messages, a negative discovery failure, restoration and deterministic cleanup on one kind/amd64 host. Review and merge are still pending, and repeat/restart/other RMW or K8s profiles remain experiments, not demonstrated generality. **Issues:** #14/#15/#16/#18; pending PR #97.
+**Acceptance:** A [GitHub Actions run for PR #97](https://github.com/MSKazemi/robo-resilience-lab/actions/runs/40587051848) has already shown successful cross-worker messages, a negative discovery failure, restoration and deterministic cleanup on one kind/amd64 host. PR #97 was merged on 2026-10-31 ([KIND-DEMO.md](KIND-DEMO.md)); repeat/restart/other RMW or K8s profiles remain experiments, not demonstrated generality. **Issues:** #14/#15/#16/#18 (all still open); PR #97 (merged).
 
 ## E03 — LeRobotDataset v3 sensor/actor conversion
 

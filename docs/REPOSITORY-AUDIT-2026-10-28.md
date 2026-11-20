@@ -2,6 +2,8 @@
 
 > **Scope and method.** Inspected repository metadata, the complete default-branch path tree, root/ROS 2/Kubernetes/monitoring/analysis/website/agent documentation, representative implementation files and CI workflows; fetched the body of **all 65 open issues** and reviewed the **11 open PRs**, their changed-file lists and GitHub mergeability metadata. **Not a code execution or end-to-end cluster audit:** the environment used for this review did not run Docker, Vagrant, the cluster, model inference or website browser checks. GitHub status is a dated snapshot; recheck before acting.
 >
+> **Link maintenance (2026-11-20):** links now use the current repository name `robo-resilience-lab`; the audit text, PR states and recommendations are unchanged and describe 28 October 2026. For current PR and issue states use GitHub.
+>
 > **Public repository hygiene:** document public technical research only. No personal information, unpublished content, credentials or provider-sensitive data.
 
 ## Executive judgment
@@ -26,7 +28,7 @@ The strongest asset is not a single model or animated website: it is the **poten
 
 ## Issues: every open issue classified once (65 total)
 
-Use this as a **triage register**, not a substitute for the issue bodies or GitHub status. Issue links are `https://github.com/MSKazemi/ros2-kubernetes-lab/issues/<number>`.
+Use this as a **triage register**, not a substitute for the issue bodies or GitHub status. Issue links are `https://github.com/MSKazemi/robo-resilience-lab/issues/<number>`.
 
 | Workstream | Open issue IDs (reviewed) | Decision / triage |
 | --- | --- | --- |
@@ -58,17 +60,17 @@ Use this as a **triage register**, not a substitute for the issue bodies or GitH
 
 | PR | Observed state | Recommendation |
 | --- | --- | --- |
-| [#97](https://github.com/MSKazemi/ros2-kubernetes-lab/pull/97) kind demo | Ready/clean; [GitHub Actions run 40587051848](https://github.com/MSKazemi/ros2-kubernetes-lab/actions/runs/40587051848) passed `make demo`, `make verify`, negative discovery fault, restoration and `make clean` | **Highest code review priority.** CI logs show talker on `ros2k8s-demo-worker`, listener on `ros2k8s-demo-worker2`, delivered ROS messages, verifier failing on deliberately broken discovery, then delivery restored. This supports **one isolated kind/amd64 PR configuration**, not Vagrant or real robotics/AI; human review/merge and broader security/resource requirements still pending |
-| [#91](https://github.com/MSKazemi/ros2-kubernetes-lab/pull/91) stale docs | Ready/clean | Review and incorporate early; normalizes README status and gitignore. May conflict later with #72/#76/#101/#105 README hunks |
-| [#36](https://github.com/MSKazemi/ros2-kubernetes-lab/pull/36) monitoring alt text | Ready/clean | Small focused accessibility fix, verify screenshots and links |
-| [#50](https://github.com/MSKazemi/ros2-kubernetes-lab/pull/50) academic/industry strategy | Ready/clean | Preserve as reference; avoid turning into a rival roadmap |
-| [#51](https://github.com/MSKazemi/ros2-kubernetes-lab/pull/51) earlier audit | Ready/clean | Preserve dated evidence; superseded program priorities are in newer audit |
-| [#72](https://github.com/MSKazemi/ros2-kubernetes-lab/pull/72) AI/LLM/cloud robotics docs | Ready/clean | Valuable substantive research guidance; merge/rebase after doc path and cross-link checks; remove duplicate roadmap authority |
-| [#76](https://github.com/MSKazemi/ros2-kubernetes-lab/pull/76) Jev guide | **Draft**/clean | Finish fixtures and scope review; do not present Jev as live |
-| [#101](https://github.com/MSKazemi/ros2-kubernetes-lab/pull/101) HF scenario pages/Space | **Draft**/clean | Reconcile with #105 on `site/scenarios/index.html`, sitemap and Pages workflow; preserve status=null evidence contract |
-| [#105](https://github.com/MSKazemi/ros2-kubernetes-lab/pull/105) HF model explorer / RoboLattice RFC | **Draft**/clean | Reconcile model catalog with #101 and decide whether the working brand is distinct from established ROS 2 K8s Lab; no rename yet |
-| [#41](https://github.com/MSKazemi/ros2-kubernetes-lab/pull/41) community docs | Ready but GitHub reports **mergeable=false/dirty** | Rebase and resolve conflicting `SECURITY.md` / contributing edits before reconsidering; do not replace existing policy blindly |
-| [#102](https://github.com/MSKazemi/ros2-kubernetes-lab/pull/102) misleading RAG-tutor title | Ready, `unstable` checks; changed-file list shows **only `DataAnalysis/backup.py`** | **Block merge.** Does not implement issue #65 or its read-only RAG goal; the patch also ends with an incomplete `json.dump(result_range` call (Python syntax error). A REQUEST_CHANGES review was submitted on 2026-10-28. Require a corrected scoped PR and verified tests; do not let `Closes #65` stand unreviewed |
+| [#97](https://github.com/MSKazemi/robo-resilience-lab/pull/97) kind demo | Ready/clean; [GitHub Actions run 40587051848](https://github.com/MSKazemi/robo-resilience-lab/actions/runs/40587051848) passed `make demo`, `make verify`, negative discovery fault, restoration and `make clean` | **Highest code review priority.** CI logs show talker on `ros2k8s-demo-worker`, listener on `ros2k8s-demo-worker2`, delivered ROS messages, verifier failing on deliberately broken discovery, then delivery restored. This supports **one isolated kind/amd64 PR configuration**, not Vagrant or real robotics/AI; human review/merge and broader security/resource requirements still pending |
+| [#91](https://github.com/MSKazemi/robo-resilience-lab/pull/91) stale docs | Ready/clean | Review and incorporate early; normalizes README status and gitignore. May conflict later with #72/#76/#101/#105 README hunks |
+| [#36](https://github.com/MSKazemi/robo-resilience-lab/pull/36) monitoring alt text | Ready/clean | Small focused accessibility fix, verify screenshots and links |
+| [#50](https://github.com/MSKazemi/robo-resilience-lab/pull/50) academic/industry strategy | Ready/clean | Preserve as reference; avoid turning into a rival roadmap |
+| [#51](https://github.com/MSKazemi/robo-resilience-lab/pull/51) earlier audit | Ready/clean | Preserve dated evidence; superseded program priorities are in newer audit |
+| [#72](https://github.com/MSKazemi/robo-resilience-lab/pull/72) AI/LLM/cloud robotics docs | Ready/clean | Valuable substantive research guidance; merge/rebase after doc path and cross-link checks; remove duplicate roadmap authority |
+| [#76](https://github.com/MSKazemi/robo-resilience-lab/pull/76) Jev guide | **Draft**/clean | Finish fixtures and scope review; do not present Jev as live |
+| [#101](https://github.com/MSKazemi/robo-resilience-lab/pull/101) HF scenario pages/Space | **Draft**/clean | Reconcile with #105 on `site/scenarios/index.html`, sitemap and Pages workflow; preserve status=null evidence contract |
+| [#105](https://github.com/MSKazemi/robo-resilience-lab/pull/105) HF model explorer / RoboLattice RFC | **Draft**/clean | Reconcile model catalog with #101 and decide whether the working brand is distinct from established ROS 2 K8s Lab; no rename yet |
+| [#41](https://github.com/MSKazemi/robo-resilience-lab/pull/41) community docs | Ready but GitHub reports **mergeable=false/dirty** | Rebase and resolve conflicting `SECURITY.md` / contributing edits before reconsidering; do not replace existing policy blindly |
+| #102 (link removed: no longer resolves on GitHub, HTTP 404 on 2026-11-20) misleading RAG-tutor title | Ready, `unstable` checks; changed-file list shows **only `DataAnalysis/backup.py`** | **Block merge.** Does not implement issue #65 or its read-only RAG goal; the patch also ends with an incomplete `json.dump(result_range` call (Python syntax error). A REQUEST_CHANGES review was submitted on 2026-10-28. Require a corrected scoped PR and verified tests; do not let `Closes #65` stand unreviewed |
 
 PR 'clean' is only a mergeability metadata signal and does **not** establish tests, content accuracy, ethical clearance or merge approval.
 
@@ -92,7 +94,7 @@ PR 'clean' is only a mergeability metadata signal and does **not** establish tes
 
 ## Immediate reviewer checklist
 
-- [x] Inspect #97 successful kind CI cross-worker output and deliberately failing negative verifier ([run 40587051848](https://github.com/MSKazemi/ros2-kubernetes-lab/actions/runs/40587051848)); **still [ ] review/merge PR after human approval** and verify other operating environments separately.
+- [x] Inspect #97 successful kind CI cross-worker output and deliberately failing negative verifier ([run 40587051848](https://github.com/MSKazemi/robo-resilience-lab/actions/runs/40587051848)); **still [ ] review/merge PR after human approval** and verify other operating environments separately.
 - [ ] Reject/rework #102 mismatch with #65.
 - [ ] Review/land #91, #36 and dated #50/#51 individually; rebase #41.
 - [ ] Choose one main HF website track for #101/#105 and reconcile paths before merge.

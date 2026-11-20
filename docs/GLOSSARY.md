@@ -30,7 +30,7 @@ These labels describe how far a part of this repository has actually been verifi
 
 * **legacy**: Historical, unverified in the latest review, and based on end-of-life or archived components (ROS 2 Foxy, Kubernetes 1.29, Weave Net, the Vagrant VMs and the original `ROS2/ros_dep_*.yaml` manifests).
 * **container tested**: The ROS 2 Jazzy / Ubuntu 24.04 image builds and passes a talker/listener check inside a single container. This does not test Kubernetes or networking between nodes.
-* **cross-worker verified**: A talker and listener on different Kubernetes workers exchange messages in a repeatable test. Achieved only for the kind profile on kindnetd ([`docs/KIND-DEMO.md`](./KIND-DEMO.md), [DDS guide](./ROS2-KUBERNETES-DDS-GUIDE.md#support-states-and-evidence)); not achieved for the historical Vagrant/Weave Net cluster.
+* **cross-worker verified**: A talker and listener on different Kubernetes workers exchange messages in a repeatable test. Achieved only for the kind profile on kindnetd: recorded on one host on 2026-10-27 and in [GitHub Actions run 40587051848](https://github.com/MSKazemi/robo-resilience-lab/actions/runs/40587051848) ([`docs/KIND-DEMO.md`](./KIND-DEMO.md), [DDS guide](./ROS2-KUBERNETES-DDS-GUIDE.md#support-states-and-evidence)). Not achieved for the historical Vagrant/Weave Net cluster.
 
 ## Experiment Status Labels
 

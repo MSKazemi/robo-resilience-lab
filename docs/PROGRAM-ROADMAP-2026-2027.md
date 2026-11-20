@@ -1,6 +1,6 @@
 # Integrated cloud–edge robotics and Hugging Face program (2026–2027)
 
-> **Status:** proposed canonical **coordination** plan as of 2026-10-28, not a release announcement. Current live issue/PR states supersede dated statements. Research must be simulation-first, read-only by default, opt-in for hosted models, and reproducible. No physical actuators are to be controlled by an unvalidated AI policy. This document coordinates existing issues rather than creating a competing epic. Reviewed in conjunction with [the repository audit](REPOSITORY-AUDIT-2026-10-28.md), [experiment portfolio](EXPERIMENT-PORTFOLIO.md), [the scenario evidence policy](scenario-lab/RESULTS-PUBLICATION.md), [AGENTS.md](../AGENTS.md).
+> **Status:** proposed canonical **coordination** plan as of 2026-10-28, not a release announcement. Current live issue/PR states supersede dated statements; dated *Status 2026-11-20* notes below record PR states read with `gh api` on that day. Research must be simulation-first, read-only by default, opt-in for hosted models, and reproducible. No physical actuators are to be controlled by an unvalidated AI policy. This document coordinates existing issues rather than creating a competing epic. Reviewed in conjunction with [the repository audit](REPOSITORY-AUDIT-2026-10-28.md), [experiment portfolio](EXPERIMENT-PORTFOLIO.md), [the scenario evidence policy](scenario-lab/RESULTS-PUBLICATION.md), [AGENTS.md](../AGENTS.md).
 
 ## One-sentence north star
 
@@ -85,9 +85,9 @@ The LeRobot remote-inference contract is **version-sensitive**: the upstream doc
 
 ### M0: Foundation / first reproducible experiment (proposed weeks 1–3)
 
-1. Human-review PR #97, #91, #36 and conflicting #41; block unrelated #102. Do not auto-merge.
-2. Publish a current reference/support-state table: **Legacy Vagrant**, **Jazzy image-local**, **kind cross-worker verified by PR #97's GitHub Actions (not merged into main)**, **HF model inference pending**.
-3. Make #55's synthetic typed observation/action contract **only for simulation**; implement #59 reject-on-expiry/out-of-bounds/replay; add #60 minimal manifest schema and deterministic test in CI.
+1. Human-review PR #97, #91, #36 and conflicting #41; block unrelated #102. Do not auto-merge. *Status 2026-11-20:* #91 and #36 merged on 2026-10-29 and #97 on 2026-10-31; #41 is still open; #102 no longer resolves on GitHub (HTTP 404).
+2. Publish a current reference/support-state table: **Legacy Vagrant**, **Jazzy image-local**, **kind cross-worker verified by PR #97's GitHub Actions (not merged into main)**, **HF model inference pending**. *Status 2026-11-20:* PR #97 is merged; the table is in the [DDS guide](ROS2-KUBERNETES-DDS-GUIDE.md#support-states-and-evidence) and [KIND-DEMO.md](KIND-DEMO.md#support-states). HF model inference is still not implemented.
+3. Make #55's synthetic typed observation/action contract **only for simulation**; implement #59 reject-on-expiry/out-of-bounds/replay; add #60 minimal manifest schema and deterministic test in CI. *Status 2026-11-20:* offline, SIMULATED/SYNTHETIC modules are merged for all three: [`mock-policy/`](../examples/cloud-robotics/mock-policy/README.md) (PR #113; issue #55 closed), [`action-gate/`](../examples/cloud-robotics/action-gate/README.md) (PR #128) and [`run-manifest/`](../examples/run-manifest/README.md) (PR #127). Issues #59 and #60 stay open. Only the mock-policy tests have their own CI workflow on `main`; adding the other two to the offline CI runner is proposed in open PR #142.
 4. Record one CPU-only offline run, from fixtures through evaluation. Publish results only if reproducible and reviewed.
 
 **Gate:** Outside contributor can run the fixture and reproduce deterministic decisions on a CPU laptop with one documented command.
@@ -118,8 +118,8 @@ Invite students to repeat the experiment on a different machine/network. Add gra
 
 | Profile | Purpose | Hardware/cost | State |
 | --- | --- | --- | --- |
-| CPU-only fixture/contract | Entry path, CI, data formats, safety, incident classifier | Ordinary Linux/macOS laptop; no GPU/robot/cloud | **To implement** (#55/#59/#60) |
-| Local kind multi-worker ROS 2 | Real ROS 2 DDS/cluster verification, scheduling, fault injection | Linux host with Docker and enough cores/RAM; document measured requirements | **Open PR #97**: [CI run](https://github.com/MSKazemi/ros2-kubernetes-lab/actions/runs/40587051848) verified two-worker talker/listener and a negative fault/restore on hosted amd64 kind; human merge and other profiles remain unverified |
+| CPU-only fixture/contract | Entry path, CI, data formats, safety, incident classifier | Ordinary Linux/macOS laptop; no GPU/robot/cloud | **Implemented offline** for #55/#59/#60 (PRs #113, #128, #127; SYNTHETIC/SIMULATED, no measured results). Incident classifier: only a SYNTHETIC casebook with a rule baseline (PR #129, issue #84) |
+| Local kind multi-worker ROS 2 | Real ROS 2 DDS/cluster verification, scheduling, fault injection | Linux host with Docker and enough cores/RAM; document measured requirements | **Merged** (PR #97, 2026-10-31; [KIND-DEMO.md](KIND-DEMO.md)): a [CI run](https://github.com/MSKazemi/robo-resilience-lab/actions/runs/40587051848) on the PR branch verified two-worker talker/listener and a negative fault/restore on hosted amd64 kind; other profiles, CNIs and hosts remain unverified |
 | Historical Vagrant | Reproduce archived Kubernetes/Foxy experiments if desired | ~30GB VM RAM and 18 vCPU in present configuration | **Legacy**, security caveats |
 | Opt-in GPU policy/simulation | SmolVLA/remote inference/GPU scheduling | Local/workstation or separately authorized cloud GPU, explicit cost disclosure | **Research proposal** |
 | Static web/HF Space | Scientific overview, approved metadata/results | No GPU needed | Site exists; HF Space **proposed** |

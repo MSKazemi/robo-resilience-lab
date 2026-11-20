@@ -44,6 +44,12 @@ This table maps the P0/P1 items in section 3 to what files in the repository rec
 | #18 reproducible benchmarks | Offline harnesses labelled SYNTHETIC or SIMULATION exist (see the registry). Historical data under `DataAnalysis/dataset/` is unchanged | Any measured Jazzy/Kubernetes benchmark |
 | #19 versioned docs | [Version matrix](VERSION-MATRIX.md), [registry](EXPERIMENT-STATUS.md) and the local link check `scripts/check-markdown-links.py` | A built or published versioned docs site |
 
+**Changes since this snapshot (2026-11-20, read from merged PRs and files; nothing was re-run):**
+
+- **#6:** PR #124 removed `chmod -R 777` from `MonitoringSystem/monitoring.sh` (the volume directories are now group 2000, mode 0775) and stopped printing the Dashboard token; it is written to a mode-0600 file. It also added a read-only `MonitoringSystem/admin-user-readonly.yaml`. `admin-user.yaml` still binds `cluster-admin`, now with a warning. The line numbers in the #6 row above are out of date. PR #123 made the cluster setup scripts re-runnable; no cluster was run for it.
+- **#14:** the kind workflow has run on GitHub. [Run 40587051848](https://github.com/MSKazemi/robo-resilience-lab/actions/runs/40587051848) (PR #97 branch, 2026-10-27) passed `make demo`, `make verify`, `make verify-negative` and `make clean` on a hosted amd64 runner.
+- **#18 / #45:** PR #131 added `DataAnalysis/recovery_metrics.py`, which computes each pod-recovery measurement under its own definition instead of one mixed number. No new measurement was recorded.
+
 ## 3. Workstreams and ownership
 
 Issue reference table; all numbers below are in the [current repository](https://github.com/MSKazemi/robo-resilience-lab).
