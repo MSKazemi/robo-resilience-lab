@@ -1,0 +1,77 @@
+{
+  "case_id": "case-010",
+  "case_role": "positive",
+  "cites": ["guide-checklist"],
+  "evidence": {
+    "discovery": {
+      "mode": "multicast_default",
+      "server_check": null
+    },
+    "pods": {
+      "publisher": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      },
+      "subscriber": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      }
+    },
+    "probe_summary": {
+      "completion": "timeout",
+      "duplicates": 0,
+      "expected_count": 200,
+      "missing": 200,
+      "missing_ranges": [[0, 199]],
+      "ok": false,
+      "publisher_start_events": 1,
+      "received_total": 0,
+      "reordered": 0,
+      "timeout_reason": "first_message",
+      "unique": 0
+    },
+    "ros": {
+      "publisher": {
+        "domain_id": 42,
+        "qos": {
+          "depth": 10,
+          "durability": "volatile",
+          "reliability": "reliable"
+        },
+        "rmw": "rmw_fastrtps_cpp"
+      },
+      "subscriber": {
+        "domain_id": 43,
+        "qos": {
+          "depth": 10,
+          "durability": "volatile",
+          "reliability": "reliable"
+        },
+        "rmw": "rmw_fastrtps_cpp"
+      }
+    },
+    "udp_check": {
+      "multicast": "received",
+      "unicast": "received"
+    }
+  },
+  "expected": {
+    "label": "domain_id_mismatch",
+    "rationale": "Default discovery, multicast works, and the two endpoints are on different domains (42 and 43), so they cannot see each other.",
+    "safe_next_step": "compare_domain_and_discovery_settings",
+    "secondary_labels": []
+  },
+  "incident_family_id": "fam-domain",
+  "looks_like": null,
+  "schema": "rrl.triage-case/1",
+  "source": "SYNTHETIC: hand-authored teaching case; nothing here was observed from a real system",
+  "split": "dev",
+  "symptom": "The listener shows no messages from the talker.",
+  "synthetic": true
+}

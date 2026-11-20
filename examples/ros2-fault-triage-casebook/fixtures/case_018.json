@@ -1,0 +1,49 @@
+{
+  "case_id": "case-018",
+  "case_role": "hard_negative",
+  "cites": ["probe-verdict", "e02-validation"],
+  "evidence": {
+    "pods": {
+      "publisher": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      },
+      "subscriber": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      }
+    },
+    "probe_summary": {
+      "completion": "timeout",
+      "duplicates": 0,
+      "expected_count": 200,
+      "missing": 40,
+      "missing_ranges": [[60, 99]],
+      "ok": false,
+      "publisher_start_events": 1,
+      "received_total": 160,
+      "reordered": 0,
+      "timeout_reason": "overall",
+      "unique": 160
+    }
+  },
+  "expected": {
+    "label": "insufficient_evidence",
+    "rationale": "The same gap, but no marker or event says why. Loss, a restart or a partition would all look like this; abstain and look for events.",
+    "safe_next_step": "collect_more_evidence",
+    "secondary_labels": []
+  },
+  "incident_family_id": "fam-partition",
+  "looks_like": "network_partition",
+  "schema": "rrl.triage-case/1",
+  "source": "SYNTHETIC: hand-authored teaching case; nothing here was observed from a real system",
+  "split": "dev",
+  "symptom": "Ids 60 to 99 are missing; everything else arrived.",
+  "synthetic": true
+}

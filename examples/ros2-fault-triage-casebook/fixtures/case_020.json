@@ -1,0 +1,69 @@
+{
+  "case_id": "case-020",
+  "case_role": "hard_negative",
+  "cites": ["probe-verdict", "e02-validation"],
+  "evidence": {
+    "pods": {
+      "publisher": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      },
+      "subscriber": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      }
+    },
+    "probe_summary": {
+      "completion": "complete",
+      "duplicates": 30,
+      "expected_count": 200,
+      "missing": 0,
+      "missing_ranges": [],
+      "ok": false,
+      "publisher_start_events": 1,
+      "received_total": 230,
+      "reordered": 0,
+      "timeout_reason": null,
+      "unique": 200
+    },
+    "ros": {
+      "publisher": {
+        "domain_id": 42,
+        "qos": {
+          "depth": 10,
+          "durability": "volatile",
+          "reliability": "reliable"
+        },
+        "rmw": "rmw_fastrtps_cpp"
+      },
+      "subscriber": {
+        "domain_id": 42,
+        "qos": {
+          "depth": 10,
+          "durability": "volatile",
+          "reliability": "reliable"
+        },
+        "rmw": "rmw_fastrtps_cpp"
+      }
+    }
+  },
+  "expected": {
+    "label": "insufficient_evidence",
+    "rationale": "Duplicates with a single publisher start: retransmission, a replayed log or something else. The bundle does not say which. Abstain.",
+    "safe_next_step": "collect_more_evidence",
+    "secondary_labels": []
+  },
+  "incident_family_id": "fam-restart",
+  "looks_like": "publisher_restart",
+  "schema": "rrl.triage-case/1",
+  "source": "SYNTHETIC: hand-authored teaching case; nothing here was observed from a real system",
+  "split": "holdout",
+  "symptom": "The listener saw some ids twice.",
+  "synthetic": true
+}

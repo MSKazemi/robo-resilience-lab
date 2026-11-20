@@ -1,0 +1,49 @@
+{
+  "case_id": "case-016",
+  "case_role": "hard_negative",
+  "cites": ["guide-checklist", "probe-verdict"],
+  "evidence": {
+    "pods": {
+      "publisher": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      },
+      "subscriber": {
+        "last_termination": "OOMKilled",
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 1
+      }
+    },
+    "probe_summary": {
+      "completion": "complete",
+      "duplicates": 0,
+      "expected_count": 200,
+      "missing": 0,
+      "missing_ranges": [],
+      "ok": true,
+      "publisher_start_events": 1,
+      "received_total": 200,
+      "reordered": 0,
+      "timeout_reason": null,
+      "unique": 200
+    }
+  },
+  "expected": {
+    "label": "no_fault",
+    "rationale": "One past restart, the pod is Ready now and all messages arrived once. History alone is not an active fault.",
+    "safe_next_step": "no_action",
+    "secondary_labels": []
+  },
+  "incident_family_id": "fam-pod",
+  "looks_like": "pod_not_running",
+  "schema": "rrl.triage-case/1",
+  "source": "SYNTHETIC: hand-authored teaching case; nothing here was observed from a real system",
+  "split": "dev",
+  "symptom": "The subscriber pod was OOMKilled earlier today.",
+  "synthetic": true
+}

@@ -1,0 +1,49 @@
+{
+  "case_id": "case-019",
+  "case_role": "positive",
+  "cites": ["probe-schema", "probe-verdict"],
+  "evidence": {
+    "pods": {
+      "publisher": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      },
+      "subscriber": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      }
+    },
+    "probe_summary": {
+      "completion": "complete",
+      "duplicates": 50,
+      "expected_count": 200,
+      "missing": 0,
+      "missing_ranges": [],
+      "ok": false,
+      "publisher_start_events": 2,
+      "received_total": 250,
+      "reordered": 0,
+      "timeout_reason": null,
+      "unique": 200
+    }
+  },
+  "expected": {
+    "label": "publisher_restart",
+    "rationale": "The publisher logged two start events under one run id and sequence ids 0 to 49 repeated, so it started over.",
+    "safe_next_step": "check_publisher_start_events",
+    "secondary_labels": []
+  },
+  "incident_family_id": "fam-restart",
+  "looks_like": null,
+  "schema": "rrl.triage-case/1",
+  "source": "SYNTHETIC: hand-authored teaching case; nothing here was observed from a real system",
+  "split": "holdout",
+  "symptom": "The listener saw ids 0 to 49 twice.",
+  "synthetic": true
+}

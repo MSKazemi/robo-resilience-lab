@@ -1,0 +1,50 @@
+{
+  "case_id": "case-017",
+  "case_role": "positive",
+  "cites": ["e02-validation", "e02-matrix", "probe-verdict"],
+  "evidence": {
+    "fault_markers": ["partition_begin", "partition_end"],
+    "pods": {
+      "publisher": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      },
+      "subscriber": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      }
+    },
+    "probe_summary": {
+      "completion": "timeout",
+      "duplicates": 0,
+      "expected_count": 200,
+      "missing": 40,
+      "missing_ranges": [[60, 99]],
+      "ok": false,
+      "publisher_start_events": 1,
+      "received_total": 160,
+      "reordered": 0,
+      "timeout_reason": "overall",
+      "unique": 160
+    }
+  },
+  "expected": {
+    "label": "network_partition",
+    "rationale": "A contiguous gap that lines up with partition_begin and partition_end markers, and delivery resumed after it.",
+    "safe_next_step": "check_fault_markers_and_network_events",
+    "secondary_labels": []
+  },
+  "incident_family_id": "fam-partition",
+  "looks_like": null,
+  "schema": "rrl.triage-case/1",
+  "source": "SYNTHETIC: hand-authored teaching case; nothing here was observed from a real system",
+  "split": "dev",
+  "symptom": "Ids 60 to 99 are missing; everything else arrived.",
+  "synthetic": true
+}

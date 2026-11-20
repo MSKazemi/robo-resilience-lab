@@ -1,0 +1,49 @@
+{
+  "case_id": "case-015",
+  "case_role": "positive",
+  "cites": ["guide-checklist"],
+  "evidence": {
+    "pods": {
+      "publisher": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      },
+      "subscriber": {
+        "last_termination": "OOMKilled",
+        "phase": "Running",
+        "ready": false,
+        "reason": "CrashLoopBackOff",
+        "restarts": 7
+      }
+    },
+    "probe_summary": {
+      "completion": "timeout",
+      "duplicates": 0,
+      "expected_count": 200,
+      "missing": 200,
+      "missing_ranges": [[0, 199]],
+      "ok": false,
+      "publisher_start_events": 1,
+      "received_total": 0,
+      "reordered": 0,
+      "timeout_reason": "first_message",
+      "unique": 0
+    }
+  },
+  "expected": {
+    "label": "pod_not_running",
+    "rationale": "The subscriber is crash-looping after being OOMKilled seven times; fix the pod before judging DDS settings.",
+    "safe_next_step": "inspect_pod_status_and_events",
+    "secondary_labels": []
+  },
+  "incident_family_id": "fam-pod",
+  "looks_like": null,
+  "schema": "rrl.triage-case/1",
+  "source": "SYNTHETIC: hand-authored teaching case; nothing here was observed from a real system",
+  "split": "dev",
+  "symptom": "The listener shows no messages from the talker.",
+  "synthetic": true
+}

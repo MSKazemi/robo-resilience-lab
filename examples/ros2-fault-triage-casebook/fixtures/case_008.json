@@ -1,0 +1,73 @@
+{
+  "case_id": "case-008",
+  "case_role": "positive",
+  "cites": ["kind-findings", "guide-checklist"],
+  "evidence": {
+    "discovery": {
+      "mode": "discovery_server",
+      "server_check": "unreachable"
+    },
+    "pods": {
+      "publisher": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      },
+      "subscriber": {
+        "last_termination": null,
+        "phase": "Running",
+        "ready": true,
+        "reason": null,
+        "restarts": 0
+      }
+    },
+    "probe_summary": {
+      "completion": "timeout",
+      "duplicates": 0,
+      "expected_count": 200,
+      "missing": 200,
+      "missing_ranges": [[0, 199]],
+      "ok": false,
+      "publisher_start_events": 1,
+      "received_total": 0,
+      "reordered": 0,
+      "timeout_reason": "first_message",
+      "unique": 0
+    },
+    "ros": {
+      "publisher": {
+        "domain_id": 42,
+        "qos": {
+          "depth": 10,
+          "durability": "volatile",
+          "reliability": "reliable"
+        },
+        "rmw": "rmw_fastrtps_cpp"
+      },
+      "subscriber": {
+        "domain_id": 42,
+        "qos": {
+          "depth": 10,
+          "durability": "volatile",
+          "reliability": "reliable"
+        },
+        "rmw": "rmw_fastrtps_cpp"
+      }
+    }
+  },
+  "expected": {
+    "label": "discovery_server_unreachable",
+    "rationale": "Readiness says nothing about DDS. The configured Discovery Server does not answer, which is the repository's own negative-test pattern.",
+    "safe_next_step": "check_discovery_server_reachability",
+    "secondary_labels": []
+  },
+  "incident_family_id": "fam-discovery-server",
+  "looks_like": null,
+  "schema": "rrl.triage-case/1",
+  "source": "SYNTHETIC: hand-authored teaching case; nothing here was observed from a real system",
+  "split": "dev",
+  "symptom": "Both pods are Running and Ready on different workers, but the listener hears nothing.",
+  "synthetic": true
+}
