@@ -1,0 +1,207 @@
+{
+  "schema_version": "run-manifest/v1",
+  "data_kind": "measured",
+  "experiment_id": "kind-cross-worker-baseline",
+  "arm": "kindnetd-fastdds-discovery-server",
+  "description": "One make verify run of the kind talker/listener demo on main e45de7a, one host; see README.md in this folder",
+  "run": {
+    "independent_run_id": "kind-main-e45de7a-r01",
+    "group_id": "kind-main-2026-11-20",
+    "run_index": 1,
+    "fresh_deployment": true,
+    "seed": 0,
+    "started_utc": "2026-11-20T01:26:28Z",
+    "ended_utc": "2026-11-20T01:31:47Z",
+    "warmup": {
+      "value": 0,
+      "unit": "s"
+    },
+    "timeout": {
+      "value": 120,
+      "unit": "s"
+    }
+  },
+  "source": {
+    "git_sha": "e45de7ae462fb3be63966339be65362a53275b7b",
+    "git_dirty": false
+  },
+  "images": [
+    {
+      "name": "ros2k8s-demo-ros-local",
+      "oci_digest": "sha256:b8f1c8b7c098cc8c6032530ef338f6590348e730335f55e56bca739b954bbb74"
+    },
+    {
+      "name": "ros-jazzy-ros-base-noble",
+      "oci_digest": "sha256:8eed0a4669bbf43ee331878a4c39bd8ebddea8e3312a58b4fae8edb14526b617"
+    },
+    {
+      "name": "kindest-node-v1.37.0",
+      "oci_digest": "sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5"
+    }
+  ],
+  "software": {
+    "ros_distro": "jazzy",
+    "rmw_implementation": "rmw_fastrtps_cpp",
+    "rmw_version": "8.4.4-1noble.20260911.100940",
+    "cni": {
+      "name": "kindnetd",
+      "version": "v20260820-69b56db7"
+    },
+    "kubernetes_version": "1.37.0",
+    "container_runtime": {
+      "name": "containerd",
+      "version": "2.3.4"
+    }
+  },
+  "simulator": {
+    "used": false
+  },
+  "hardware": {
+    "cpu": {
+      "model": "AMD Ryzen 5 PRO 4650U with Radeon Graphics",
+      "logical_cores": 12,
+      "architecture": "x86_64"
+    },
+    "memory": {
+      "value": 30.57,
+      "unit": "GiB"
+    },
+    "gpu": {
+      "present": true,
+      "model": "AMD Renoir integrated Radeon (not used by this run)",
+      "count": 1,
+      "driver_version": "7.0.0-43-generic"
+    },
+    "os": "Ubuntu 24.04.5 LTS host; kind node containers Debian GNU/Linux 13",
+    "kernel_version": "7.0.0-43-generic"
+  },
+  "placement": [
+    {
+      "component": "talker",
+      "node": "ros2k8s-demo-worker",
+      "tier": "local"
+    },
+    {
+      "component": "listener",
+      "node": "ros2k8s-demo-worker2",
+      "tier": "local"
+    },
+    {
+      "component": "discovery-server",
+      "node": "ros2k8s-demo-worker",
+      "tier": "local"
+    }
+  ],
+  "network": {
+    "profile": "kind-kindnetd-default",
+    "shaped": false
+  },
+  "qos": [
+    {
+      "topic": "/chatter",
+      "reliability": "reliable",
+      "durability": "volatile",
+      "history": "keep_last",
+      "depth": 10
+    }
+  ],
+  "model": {
+    "used": false
+  },
+  "dataset": {
+    "used": false
+  },
+  "code_license": "Apache-2.0",
+  "clocks": {
+    "clock_basis": "wall",
+    "clock_domain": "single_clock",
+    "simulation_time": false
+  },
+  "timing": {
+    "control_rate": {
+      "value": 1,
+      "unit": "Hz"
+    },
+    "action_age_deadline": {
+      "value": 120,
+      "unit": "s"
+    }
+  },
+  "action_space": {
+    "name": "chatter-counter-not-an-action",
+    "dimension": 1,
+    "names": [
+      "hello_world_counter"
+    ],
+    "units": [
+      "count"
+    ],
+    "actuation": "none"
+  },
+  "fault_injection": {
+    "applied": false
+  },
+  "measurement_source": {
+    "kind": "application_log",
+    "tool": "scripts-verify-ros2.sh",
+    "tool_version": "e45de7a"
+  },
+  "outcome": {
+    "status": "completed",
+    "censored": false,
+    "censor_reason": null,
+    "observed_duration": {
+      "value": 5,
+      "unit": "s"
+    },
+    "failure_count": 0,
+    "task_success": {
+      "applicable": true,
+      "value": true
+    }
+  },
+  "data_hashes": [
+    {
+      "path": "kind/ros2k8s-demo.yaml",
+      "role": "config",
+      "sha256": "a5896ce7346004d7f0dbe6a827081ef11ce99d0f36adef7fbe15425636d02373"
+    },
+    {
+      "path": "ROS2/jazzy/talker-listener.yaml",
+      "role": "config",
+      "sha256": "aec28c74b93f60843f508c9fd87eceefb138835d59baae9e5526a2873c192805"
+    },
+    {
+      "path": "ROS2/Dockerfile",
+      "role": "input",
+      "sha256": "a541f26371ebad87405cec17a903684e6580d96177b68c493548469eb98d536e"
+    },
+    {
+      "path": "scripts/verify-ros2.sh",
+      "role": "input",
+      "sha256": "d022fe060c90198f885a41ea2ee22216c3a79804036f7facda8f295ba2501b60"
+    },
+    {
+      "path": "kind/runs/2026-11-20-main-e45de7a/verify.txt",
+      "role": "output",
+      "sha256": "d8c8fd9017bfc41560548a950b5a3be67e7d8c97decbd26d5ca3f264ccca5555"
+    },
+    {
+      "path": "kind/runs/2026-11-20-main-e45de7a/verify-negative.txt",
+      "role": "output",
+      "sha256": "544ecdedbdb66b5f8e968672f40f03c507fdfca501fc8efafd95e67f0cca51b0"
+    }
+  ],
+  "x_notes": {
+    "run_window": "started_utc/ended_utc span kind create cluster to just before make clean; observed_duration is the make verify wall time only",
+    "timeout": "VERIFY_TIMEOUT default, applied per waiting stage of scripts/verify-ros2.sh, not a total budget",
+    "warmup": "no warmup configured; make verify ran right after the rollouts finished",
+    "image_digest": "local docker image ID of a locally built image, never pushed; not a registry digest; a later rebuild gave a different ID",
+    "image_build_args": "ROS_DEMO_NODES_CPP_VERSION=0.33.11-1noble.20261105.092654 ROS2_PULSE_VERSION=0.7.0-1noble.20261105.090619",
+    "contract_gaps": "timing.action_age_deadline and action_space are required by v1 but do not apply to a chatter demo; filled with the verify stage timeout and the message counter",
+    "qos": "reliable and volatile observed with ros2 topic info -v on a rebuilt image; keep_last depth 10 is from the upstream demo source, not observed",
+    "control_rate": "talker publish period, from 1 s spacing of listener log timestamps",
+    "gpu_driver": "in-kernel amdgpu driver, reported as the kernel version",
+    "negative_test": "make verify-negative exit 0 on the same cluster; see verify-negative.txt"
+  }
+}
