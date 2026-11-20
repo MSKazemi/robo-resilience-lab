@@ -7,7 +7,13 @@
   - [Overview](#overview)
   - [Key Components of the Monitoring System](#key-components-of-the-monitoring-system)
     - [Metrics Server](#metrics-server)
-    - [Kubernetes Dashboard](#kubernetes-dashboard)
+    - [Headlamp web UI](#headlamp-web-ui)
+      - [Install Headlamp](#install-headlamp)
+      - [Open Headlamp with a port-forward](#open-headlamp-with-a-port-forward)
+      - [Log in with a short-lived read-only token](#log-in-with-a-short-lived-read-only-token)
+      - [Revoke the old cluster-admin token](#revoke-the-old-cluster-admin-token)
+      - [Smoke check after deployment](#smoke-check-after-deployment)
+    - [Kubernetes Dashboard (legacy, deprecated)](#kubernetes-dashboard-legacy-deprecated)
       - [Dashboard Access and Security](#dashboard-access-and-security)
     - [Prometheus and Grafana](#prometheus-and-grafana)
       - [Helm Installation](#helm-installation)
@@ -18,6 +24,7 @@
         - [Verifying the Installation](#verifying-the-installation)
         - [Access Prometheus](#access-prometheus)
       - [Grafana](#grafana)
+  - [Verification status](#verification-status)
   - [Access URLs and Credentials](#access-urls-and-credentials)
 
 
@@ -43,35 +50,128 @@ vagrant ssh controlplane
 kubectl apply -f https://raw.githubusercontent.com/techiescamp/kubeadm-scripts/main/manifests/metrics-server.yaml
 ```
 
-### Kubernetes Dashboard
+### Headlamp web UI
 
-The Kubernetes Dashboard offers a web-based Kubernetes user interface. It allows users to manage applications running in the cluster and troubleshoot them, as well as manage the cluster itself. Installation is performed through `kubectl apply -f` from the Kubernetes official repository.
+[Headlamp](https://github.com/kubernetes-sigs/headlamp) (a Kubernetes SIG UI project) replaces the archived Kubernetes Dashboard as the lab's web UI ([issue #4](https://github.com/MSKazemi/robo-resilience-lab/issues/4)).
 
-```shell
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
-```
+> **Not deployed yet.** The Headlamp manifests have only been checked statically (`kubeconform` strict against the Kubernetes 1.29 schemas, see [Verification status](#verification-status)). Nobody has started them on the Vagrant cluster or on kind, opened the UI, or logged in. Treat the steps below as the intended procedure until a run is recorded.
 
-https://github.com/kubernetes/dashboard
-https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
+What is installed, from [`headlamp/headlamp.yaml`](./headlamp/headlamp.yaml) and [`headlamp/viewer-rbac.yaml`](./headlamp/viewer-rbac.yaml):
 
-#### Dashboard Access and Security
+| Item | Setting | Why |
+|---|---|---|
+| Version | Headlamp **v0.46.0** (latest stable release on 2026-11-20; matches Helm chart `headlamp` 0.46.0) | Reproducible |
+| Image | `ghcr.io/headlamp-k8s/headlamp:v0.46.0@sha256:8a0ef975…8b75` (digest of the multi-arch index) | A moved tag cannot change what runs |
+| Exposure | `Service` type **ClusterIP**, port 80 → container port 4466 | Not reachable from the lab network; use `kubectl port-forward` |
+| Pod identity | ServiceAccount `headlamp` with **no** RoleBinding or ClusterRoleBinding | The upstream chart binds `cluster-admin` by default; this lab does not |
+| Login identity | ServiceAccount `headlamp-viewer`, bound to the built-in `view` ClusterRole plus a small read-only ClusterRole for nodes, PersistentVolumes and StorageClasses | Read-only. `view` cannot read Secrets, Roles or RoleBindings, and cannot change anything |
+| Tokens | **No** token Secret. Tokens come from `kubectl create token --duration` | Short-lived, never written to disk by the lab |
+| Pod hardening | Namespace enforces the `restricted` Pod Security Standard; non-root user 100:101, read-only root filesystem, all capabilities dropped, `RuntimeDefault` seccomp, CPU/memory limits | Least privilege for the pod itself |
+| Session | `-session-ttl=3600` (1 hour; the chart default is 24 hours) | Matches the short token lifetime |
 
-After installing the Kubernetes Dashboard, an `admin-user` service account is created and bound to the built-in `cluster-admin` role (see `admin-user.yaml`). A token for it is written by `monitoring.sh` to `/home/vagrant/dashboard-token` inside the `controlplane` VM (mode `0600`, owned by the `vagrant` user). It is not written to `./MonitoringSystem/token` or to `vagrant.log` any more. To read it, run this inside the VM:
+Headlamp runs in in-cluster mode: the UI asks each user for a token and sends the API requests with it, so the token decides what a user can see. The pod still mounts its own (unprivileged) service-account token, because in-cluster mode reads the API server address and CA bundle from that mount.
+
+The manifests follow the upstream Helm chart template (`charts/headlamp/templates/deployment.yaml` at tag `headlamp-helm-0.46.0`) for arguments, port, probes and user ID. They are plain YAML instead of a Helm release so that the repository's static validators can check them and so that no chart default (such as the `cluster-admin` binding) is pulled in unseen.
+
+#### Install Headlamp
+
+`monitoring.sh` applies both files during Vagrant provisioning. To apply them by hand on the control plane:
 
 ```shell
 vagrant ssh controlplane
-cat /home/vagrant/dashboard-token
+kubectl apply -f /home/vagrant/codes/MonitoringSystem/headlamp/headlamp.yaml
+kubectl apply -f /home/vagrant/codes/MonitoringSystem/headlamp/viewer-rbac.yaml
+kubectl -n headlamp rollout status deployment/headlamp --timeout=5m
 ```
 
-You can also retrieve the token with `kubectl` from the control plane (the token is printed to your terminal, so do not paste it anywhere public):
+To remove it, run `kubectl delete -f` on the same two files.
+
+#### Open Headlamp with a port-forward
+
+`kubectl port-forward` listens on `127.0.0.1` by default. Keep it that way: do **not** add `--address 0.0.0.0`, and do not change the Service to `NodePort` or `LoadBalancer`.
+
+On the Vagrant lab, `kubectl` runs inside the `controlplane` VM, so carry the port to the host with an SSH tunnel:
 
 ```shell
-kubectl -n kubernetes-dashboard get secret admin-user -o go-template='{{.data.token | base64decode}}'
+# On the host: open a shell on the control plane and forward host port 8080 to it
+vagrant ssh controlplane -- -L 8080:127.0.0.1:8080
+
+# Inside that VM shell
+kubectl -n headlamp port-forward svc/headlamp 8080:80
 ```
 
-Open the site in your browser: https://192.168.56.10:30664/#/login (this URL assumes the dashboard Service was exposed on NodePort 30664; the upstream v2.7.0 manifest that `monitoring.sh` applies creates a `ClusterIP` Service, so this port is not set by the repository's scripts).
+Then browse to <http://127.0.0.1:8080> on the host. If `kubectl` runs on your own machine (for example against a kind cluster), only the `port-forward` line is needed.
 
-> **Security warning:** `admin-user` has full cluster-admin rights. For read-only browsing use `MonitoringSystem/admin-user-readonly.yaml` (binds the built-in `view` role; it cannot read Secrets or change anything). The lab dashboard should not be exposed beyond a trusted network.
+#### Log in with a short-lived read-only token
+
+Create a token when you need it and paste it into the Headlamp login prompt. Run this in a second shell on the control plane:
+
+```shell
+kubectl -n headlamp create token headlamp-viewer --duration=30m
+```
+
+- The token is printed to your terminal only. **Do not** redirect it to a file, commit it, or paste it into an issue or chat.
+- It is a bound token (TokenRequest API) and expires after the requested duration. The API server may cap the duration (`--service-account-max-token-expiration`). Create a new one when it expires.
+- Deleting the `headlamp-viewer` ServiceAccount (`kubectl delete -f .../viewer-rbac.yaml`) invalidates every token issued for it.
+- Pages for objects the `view` role does not cover (for example Secrets) show a "forbidden" message. That is expected.
+
+There is no admin login for the UI. Do administrative work with `kubectl` on the control plane. If you really need a write-capable UI identity for a short experiment, create a separate ServiceAccount bound to the built-in `edit` ClusterRole through a `RoleBinding` in one namespace, use a short `--duration`, and delete it afterwards. Do not bind `cluster-admin`.
+
+#### Revoke the old cluster-admin token
+
+Clusters provisioned by earlier versions of `monitoring.sh` have an `admin-user` ServiceAccount bound to `cluster-admin`, a long-lived token Secret, and a copy of that token in `/home/vagrant/dashboard-token`. `monitoring.sh` now prints a notice if that file still exists. To revoke it:
+
+```shell
+vagrant ssh controlplane
+kubectl delete -f /home/vagrant/codes/MonitoringSystem/admin-user.yaml
+rm /home/vagrant/dashboard-token
+```
+
+#### Smoke check after deployment
+
+These are the checks to run and record once the manifests are deployed. **None of them has been run yet.**
+
+```shell
+kubectl -n headlamp get deployment,pods,service
+kubectl -n headlamp get service headlamp -o jsonpath='{.spec.type}{"\n"}'   # expect ClusterIP
+# With the port-forward from above running:
+curl -fsS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8080/        # expect 200
+# Least privilege of the login identity (expect yes, then no, no, no):
+kubectl auth can-i list pods -A --as=system:serviceaccount:headlamp:headlamp-viewer
+kubectl auth can-i get secrets -A --as=system:serviceaccount:headlamp:headlamp-viewer
+kubectl auth can-i delete pods -A --as=system:serviceaccount:headlamp:headlamp-viewer
+kubectl auth can-i '*' '*' --as=system:serviceaccount:headlamp:headlamp-viewer
+# The pod's own identity should have no rights (expect no):
+kubectl auth can-i list pods -A --as=system:serviceaccount:headlamp:headlamp
+```
+
+Then log in with a token from the previous step and confirm that the workloads page lists the lab pods.
+
+### Kubernetes Dashboard (legacy, deprecated)
+
+> **Deprecated.** The upstream [Kubernetes Dashboard](https://github.com/kubernetes/dashboard) repository is archived, and the `v2.7.0` manifest used here is old. Use [Headlamp](#headlamp-web-ui) instead. This section is kept as a record of the original lab setup.
+
+`monitoring.sh` no longer installs the Dashboard by default, no longer applies `admin-user.yaml` and no longer writes a token file. It installs the `v2.7.0` manifest only when you opt in:
+
+```shell
+vagrant ssh controlplane
+sudo INSTALL_LEGACY_DASHBOARD=1 bash /home/vagrant/codes/MonitoringSystem/monitoring.sh
+# or apply only the Dashboard manifest:
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+```
+
+Upstream documentation: https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
+
+#### Dashboard Access and Security
+
+Originally an `admin-user` ServiceAccount bound to `cluster-admin` (`admin-user.yaml`) was created and its long-lived token was saved to `/home/vagrant/dashboard-token`. Both are now legacy: the files are kept for reference and so that old installs can be [revoked](#revoke-the-old-cluster-admin-token). If you use the legacy Dashboard, log in with the same short-lived read-only token as Headlamp and reach it through a port-forward (the v2.7.0 manifest creates a `ClusterIP` Service; the old NodePort `30664` URL was never set by the repository's scripts):
+
+```shell
+kubectl -n kubernetes-dashboard port-forward svc/kubernetes-dashboard 8443:443
+kubectl -n headlamp create token headlamp-viewer --duration=30m
+```
+
+> **Security warning:** do not apply `admin-user.yaml`; its token gives full control of the cluster. `admin-user-readonly.yaml` (built-in `view` role) is superseded by `headlamp/viewer-rbac.yaml`, which grants the same `view` role (plus read access to nodes, PersistentVolumes and StorageClasses) without a long-lived token Secret.
 
 ### Prometheus and Grafana
 
@@ -174,7 +274,9 @@ The Grafana screenshots below show node metrics, per-pod network traffic, and Ku
 
 ## Verification status
 
-What was actually run (Helm v4.3.1, kubeconform v0.8.0, kind v0.33.0 with Kubernetes 1.37 node image, chart `prometheus-community/kube-prometheus-stack` **92.16.1**, app v0.94.2):
+**Headlamp manifests (this change, issue #4):** static checks only. `headlamp/headlamp.yaml` and `headlamp/viewer-rbac.yaml` pass `python3 scripts/validate-k8s-manifests.py` (kubeconform v0.8.0, strict, Kubernetes 1.29 schemas) and `tests/test_manifests.py` (pinned image, resource limits, no privileged or host-namespace settings). `monitoring.sh` passes `bash -n`. They have **not** been deployed to any cluster, the UI has not been opened, no login was tried and none of the [smoke checks](#smoke-check-after-deployment) has been run. The Headlamp version and image digest were read from the GitHub releases of `kubernetes-sigs/headlamp` and the `ghcr.io` registry on 2026-11-20.
+
+**kube-prometheus-stack chart (earlier run).** What was actually run (Helm v4.3.1, kubeconform v0.8.0, kind v0.33.0 with Kubernetes 1.37 node image, chart `prometheus-community/kube-prometheus-stack` **92.16.1**, app v0.94.2):
 
 - `helm template` of the chart with `kube-prometheus-stack-values.yaml` succeeds. The rendered Prometheus and Alertmanager objects now carry the 10Gi `local-storage` claim template (before the fix they had no storage at all).
 - `kubeconform -strict` on the rendered output: 78 valid, 0 invalid; 50 CRD-kinds skipped (no schema) with `-ignore-missing-schemas`.
@@ -183,11 +285,12 @@ What was actually run (Helm v4.3.1, kubeconform v0.8.0, kind v0.33.0 with Kubern
 - Fixed during testing: the pinned admission certgen image (an ingress-nginx image from 2022) rejects the `--secret-type` flag that chart 92.x passes, so the install hung at the admission hook. The chart's own image (`jkroepke/kube-webhook-certgen:1.11.0`) is now pinned in the values file.
 - Not verified on the lab's Kubernetes 1.29 cluster. The chart declares `kubeVersion >=1.25.0-0`.
 
-Note that `monitoring.sh` does not pin the chart version. To reproduce the tested chart version, add `--version 92.16.1` to its `helm upgrade --install` line.
+`monitoring.sh` now pins the chart to `--version 92.16.1`, the version checked above (override with `KPS_CHART_VERSION=<version>`). The newest release on 2026-11-20 is 93.4.1, a new major version; it is not pinned because the values file has not been re-checked against it. The pinned `monitoring.sh` itself has not been re-run.
 
 ## Access URLs and Credentials
 
-- **Kubernetes Dashboard**: https://192.168.56.10:30664/#/login (port not set by the repository's scripts; see the Dashboard section). Token: `/home/vagrant/dashboard-token` inside the controlplane VM.
+- **Headlamp**: <http://127.0.0.1:8080> on the host, through `kubectl port-forward` and an SSH tunnel (ClusterIP only, see [Open Headlamp](#open-headlamp-with-a-port-forward)). Login: a short-lived token from `kubectl -n headlamp create token headlamp-viewer --duration=30m`; no token is stored.
+- **Kubernetes Dashboard (legacy, deprecated)**: not installed by default; see the [legacy section](#kubernetes-dashboard-legacy-deprecated).
 - **Prometheus**: `http://<node-ip>:30090` (NodePort from the values file; no login, use port-forward on untrusted networks)
 - **Grafana**: `http://<node-ip>:30000` (default login `admin` / `prom-operator` unless overridden; change it)
 

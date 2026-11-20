@@ -1,3 +1,8 @@
+# LEGACY (issue #4): read-only identity for the archived Kubernetes Dashboard.
+# Superseded by MonitoringSystem/headlamp/viewer-rbac.yaml, which grants the
+# same "view" role WITHOUT a long-lived token Secret (use `kubectl create token`
+# with --duration instead). monitoring.sh does not apply this file.
+#
 # Least-privilege alternative to admin-user.yaml (read-only dashboard access).
 #
 # Binds the built-in "view" ClusterRole: read most objects in every namespace,

@@ -1,11 +1,14 @@
 # =====================================================================
+# LEGACY / DEPRECATED (issue #4). monitoring.sh no longer applies this file.
+# It is kept only as a record of the original lab setup and so that earlier
+# installs can be revoked with: kubectl delete -f MonitoringSystem/admin-user.yaml
+#
 # WARNING: this admin-user binds the built-in cluster-admin ClusterRole.
 # Its token gives FULL control of the cluster (read/write every namespace,
-# read every Secret, create privileged pods). Anyone who can reach the
-# dashboard login page and obtain this token owns the cluster.
-# It is kept because monitoring.sh applies it and the lab relies on it.
-# For read-only dashboard browsing use admin-user-readonly.yaml instead.
-# Do not expose the dashboard beyond a trusted lab network.
+# read every Secret, create privileged pods). The Secret below is a
+# long-lived token that does not expire. Anyone who obtains it owns the cluster.
+# Do not apply it. For the UI use MonitoringSystem/headlamp/ and a short-lived
+# read-only token (kubectl -n headlamp create token headlamp-viewer --duration=30m).
 # =====================================================================
 # admin-user Service Account
 apiVersion: v1
