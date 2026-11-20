@@ -16,6 +16,7 @@
 - [Getting started](https://mskazemi.com/robo-resilience-lab/docs/getting-started.html): the tested Jazzy container path and the historical Vagrant path.
 - [Architecture](https://mskazemi.com/robo-resilience-lab/docs/architecture.html): the layers from VMs to DDS to monitoring.
 - [Learning paths](https://mskazemi.com/robo-resilience-lab/docs/lab-paths.html): routes for students, engineers and researchers.
+- [Offline research modules](https://mskazemi.com/robo-resilience-lab/docs/offline-modules.html): seven Python standard-library modules that run without a cluster (run manifest and metrics contract, simulated action gate, skill-proposal review, DDS/QoS fault triage casebook, ROS 2 sequence probe, observation/action contract with a mock policy, pod recovery metrics). All data are synthetic or simulated; none is a measurement or benchmark.
 - [Contribute](https://mskazemi.com/robo-resilience-lab/docs/contribute.html): how to pick an issue and open a pull request.
 
 ## Roadmap (a 90-day proposal, not a promise)

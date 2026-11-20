@@ -10,6 +10,7 @@
 <a href="./getting-started.html">Getting started</a>
 <a href="./architecture.html">Architecture</a>
 <a href="./lab-paths.html">Learning paths</a>
+<a href="./offline-modules.html">Offline modules</a>
 <a href="./contribute.html">Contribute</a></nav><div class="aside-divider"></div><p class="aside-note">Educational &amp; research lab. Historical Vagrant profile and Jazzy container verification have different support boundaries.</p></aside>
 <main class="doc-content" id="main" tabindex="-1"><div class="doc-crumbs"><a href="../">Lab</a><span>/</span><a href="./">Docs</a><span>/</span>Field guide</div><div class="doc-kicker" style="margin-top:29px">FIELD GUIDE</div><h1>Documentation</h1><p class="lead">A practical starting point for studying robotics workloads, middleware discovery and Kubernetes infrastructure—without mistaking historical examples for validated modern deployments.</p>
 <div class="doc-badges"><span class="doc-badge">JAZZY / IMAGE-LOCAL TEST</span><span class="doc-badge legacy">FOXY + K8S 1.29 / HISTORICAL</span><span class="doc-badge legacy">CROSS-WORKER DDS / PLANNED</span></div>
@@ -18,6 +19,7 @@
 <a class="doc-tile" href="./architecture.html"><span class="eyebrow">02 / SYSTEMS</span><strong>Architecture</strong><span>See how VMs, Kubernetes workers, middleware and observability fit together.</span></a>
 <a class="doc-tile" href="./lab-paths.html"><span class="eyebrow">03 / LEARN</span><strong>Learning paths</strong><span>Suggested educational, research and engineering exercises with evidence gates.</span></a>
 <a class="doc-tile" href="../scenarios/"><span class="eyebrow">05 / RESEARCH</span><strong>Interactive scenario lab</strong><span>Four synthetic ROS 2, Jev and cloud–edge research blueprints with methods, results status and student collaboration issues.</span></a>
+<a class="doc-tile" href="./offline-modules.html"><span class="eyebrow">06 / OFFLINE</span><strong>Offline research modules</strong><span>Seven Python-only modules with run commands: run manifests, action gate, skill review, fault triage casebook, sequence probe, mock policy and pod recovery metrics.</span></a>
 <a class="doc-tile" href="./contribute.html"><span class="eyebrow">04 / BUILD TOGETHER</span><strong>Contributing</strong><span>Find a focused issue and use Claude Code or Codex responsibly if you choose.</span></a>
 </div>
 <h2 id="status">What has been verified?</h2>
@@ -25,6 +27,7 @@
 <tr><td>ROS 2 Jazzy container</td><td>Automated image build and talker/listener test inside one container</td><td>Cross-pod, cross-worker or cluster deployment success</td></tr>
 <tr><td>Historical Vagrant profile</td><td>Three configured VMs, older Kubernetes 1.29 and Weave Net</td><td>A fresh installation on modern hosts is guaranteed</td></tr>
 <tr><td>Original ROS workload YAML</td><td>Includes <code>stress-ng</code> workload and HPA example</td><td>Automatically starting ROS 2 talker/listener</td></tr>
+<tr><td><a href="./offline-modules.html">Offline research modules</a></td><td>Standard-library unit tests and deterministic checks on synthetic or simulated fixtures</td><td>Any ROS 2, DDS, cluster, model or robot behaviour; any measured result</td></tr>
 <tr><td>Monitoring + analysis</td><td>Historical Prometheus/Grafana setup and metrics notebooks</td><td>Current/live benchmark measurements</td></tr>
 </tbody></table></div>
 <div class="doc-callout warning"><h3>Important compatibility boundary</h3><p>ROS 2 Foxy is end-of-life, the Vagrant cluster uses historical Kubernetes 1.29 / Weave Net, and modern cross-worker DDS delivery is not established. Do not use this lab to control safety-critical robots. Read the <a href="https://github.com/MSKazemi/robo-resilience-lab/blob/main/SAFETY.md">safety notes</a> before running privileged scripts.</p></div>
