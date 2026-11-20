@@ -33,7 +33,7 @@
 <meta name="twitter:title" content="ROS 2 Agent Skill Safety | Jev + LLM Research Lab">
 <meta name="twitter:description" content="Proposal, not benchmarked: simulator-only ROS 2 agent skill screening with deterministic allowlists, prompt-injection cases and optional Jev advice.">
 <meta name="twitter:image" content="https://mskazemi.com/robo-resilience-lab/assets/social-card.png">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","name":"ROS 2 Agent Skill Safety | Jev + LLM Research Lab","headline":"ROS 2 Agent Skill Safety | Jev + LLM Research Lab","description":"Explore safe, simulator-only ROS 2 agent skill screening: LLM proposals, Jev advisory decisions, deterministic allowlists, prompt-injection cases and research tasks.","url":"https://mskazemi.com/robo-resilience-lab/scenarios/robot-agent-safety.html","isAccessibleForFree":true,"dateModified":"2026-10-29","author":{"@type":"Person","name":"Mohsen Seyedkazemi Ardebili"},"about":[{"@type":"Thing","name":"ROS 2"},{"@type":"Thing","name":"Kubernetes"},{"@type":"Thing","name":"Cloud robotics"},{"@type":"Thing","name":"Jev structured decision models"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Lab","item":"https://mskazemi.com/robo-resilience-lab/"},{"@type":"ListItem","position":2,"name":"Research scenarios","item":"https://mskazemi.com/robo-resilience-lab/scenarios/"},{"@type":"ListItem","position":3,"name":"Agent skill screening","item":"https://mskazemi.com/robo-resilience-lab/scenarios/robot-agent-safety.html"}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","name":"ROS 2 Agent Skill Safety | Jev + LLM Research Lab","headline":"ROS 2 Agent Skill Safety | Jev + LLM Research Lab","description":"Explore safe, simulator-only ROS 2 agent skill screening: LLM proposals, Jev advisory decisions, deterministic allowlists, prompt-injection cases and research tasks.","url":"https://mskazemi.com/robo-resilience-lab/scenarios/robot-agent-safety.html","isAccessibleForFree":true,"dateModified":"2026-11-20","author":{"@type":"Person","name":"Mohsen Seyedkazemi Ardebili"},"about":[{"@type":"Thing","name":"ROS 2"},{"@type":"Thing","name":"Kubernetes"},{"@type":"Thing","name":"Cloud robotics"},{"@type":"Thing","name":"Jev structured decision models"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Lab","item":"https://mskazemi.com/robo-resilience-lab/"},{"@type":"ListItem","position":2,"name":"Research scenarios","item":"https://mskazemi.com/robo-resilience-lab/scenarios/"},{"@type":"ListItem","position":3,"name":"Agent skill screening","item":"https://mskazemi.com/robo-resilience-lab/scenarios/robot-agent-safety.html"}]}]}</script>
 </head><body>
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="docs-nav"><div class="sc-shell docs-nav-inner">
@@ -118,10 +118,10 @@
 <section class="sc-section" id="explain" aria-labelledby="xp-title"><div class="sc-shell">
 <span class="sc-overline">Interactive explanation</span>
 <h2 id="xp-title">Step through four agent proposals and see which are rejected</h2>
-<p class="sc-intro">An AI agent proposes a robot skill. Fixed rules decide whether it may run, in a simulator only. Pick a proposal and step through the gate. Three of the four are rejected, each for a different reason, and none of the rejections depends on what a model says. The skill catalog and reason codes are proposals for this study, not an implemented API.</p>
+<p class="sc-intro">An AI agent proposes a robot skill. Fixed rules decide whether it may run, in a simulator only. Pick a proposal and step through the gate. Three of the four are rejected, each for a different reason, and none of the rejections depends on what a model says. The skill catalog and reason codes in this storyboard are hand-written proposals. Two runnable, offline modules now implement related checks under their own names; see <a href="#xp-run">Run it offline</a>.</p>
 <div class="xp" data-xp id="xp-player" role="group" aria-labelledby="xp-title" data-scenario="s3">
 <ul class="xp-badges" aria-label="Status of this explanation">
-<li class="xp-badge xp-badge--status">Status: planned</li>
+<li class="xp-badge xp-badge--status">Status: synthetic offline modules</li>
 <li class="xp-badge xp-badge--sim">Storyboard: illustrative, hand-authored</li>
 <li class="xp-badge xp-badge--na">Measured results: N/A (not run)</li>
 <li class="xp-badge">No model call, no simulator, no robot</li>
@@ -267,7 +267,7 @@ flag: AUTHORITY_CLAIM_IN_UNTRUSTED_TEXT</pre>
 </div>
 <div class="xp-grid">
 <section class="xp-card xp-card--wide" aria-labelledby="xp-rej"><h3 id="xp-rej">What gets rejected, and why</h3>
-<p>Each row is a negative case in the storyboard above. Reason names are proposals for this study, not an implemented interface, unless the simulator source below defines them.</p>
+<p>Each row is a negative case in the storyboard above. Reason names are proposals for this study, not an implemented interface. The merged skill-proposal reviewer uses its own codes and catalogue: in its synthetic corpus an uncatalogued <code>set_velocity</code> skill is rejected as <code>UNKNOWN_SKILL</code> (case <code>vel-01</code>), injected text in an extra field is rejected as <code>UNKNOWN_FIELD</code> (<code>inj-01</code>), and injected text inside <code>rationale</code> is kept as inert data, not flagged, while the human-approval step still applies (<code>hum-04</code>).</p>
 <div class="xp-tablewrap"><table class="xp-table"><caption>Rejections in the storyboard</caption><thead><tr><th scope="col">Case</th><th scope="col">Stopped at</th><th scope="col">Reason</th><th scope="col">What it guards against</th></tr></thead><tbody>
 <tr><th scope="row"><a href="#xp-case-raw-velocity" data-xp-pick="xp-case-raw-velocity">Raw velocity command</a></th><td>Policy gate</td><td>SKILL_NOT_ALLOWLISTED (proposed code)</td><td>Raw topic publishing, including velocity.</td></tr>
 <tr><th scope="row"><a href="#xp-case-injected-authority" data-xp-pick="xp-case-injected-authority">Injected authority claim</a></th><td>Policy gate</td><td>SKILL_NOT_ALLOWLISTED, plus AUTHORITY_CLAIM_IN_UNTRUSTED_TEXT (proposed codes)</td><td>Permission claimed by text, and a model&#x27;s reassurance.</td></tr>
@@ -282,7 +282,7 @@ flag: AUTHORITY_CLAIM_IN_UNTRUSTED_TEXT</pre>
 </ol><p class="xp-note">The registry primary metric is unauthorized-proposal recall. It has no value yet. The reason codes on this page are proposals. See also the <a href="#experiment">experiment blueprint</a> on this page.</p></section>
 <section class="xp-card" aria-labelledby="xp-metrics"><h3 id="xp-metrics">Measured values</h3>
 <div class="xp-tablewrap"><table class="xp-table"><caption>Every value is N/A until a reviewed run exists</caption><thead><tr><th scope="col">Metric</th><th scope="col">Value</th><th scope="col">Why</th></tr></thead><tbody>
-<tr><th scope="row">Unauthorized-proposal recall (registry primary metric)</th><td><span class="xp-na">N/A</span></td><td>No fixtures or gate exist yet.</td></tr>
+<tr><th scope="row">Unauthorized-proposal recall (registry primary metric)</th><td><span class="xp-na">N/A</span></td><td>No reviewed experiment run. The reviewer&#x27;s self-check on its own hand-written corpus (below) is a regression check, not this metric.</td></tr>
 <tr><th scope="row">False-block rate on valid proposals</th><td><span class="xp-na">N/A</span></td><td>Not run.</td></tr>
 <tr><th scope="row">Semantic-error detection by an advisory screen</th><td><span class="xp-na">N/A</span></td><td>Not run.</td></tr>
 <tr><th scope="row">Reviewer load and abstentions</th><td><span class="xp-na">N/A</span></td><td>Not run.</td></tr>
@@ -293,8 +293,19 @@ flag: AUTHORITY_CLAIM_IN_UNTRUSTED_TEXT</pre>
 <li><a href="https://github.com/MSKazemi/robo-resilience-lab/tree/main/examples/cloud-robotics/mock-policy/"><code>examples/cloud-robotics/mock-policy/</code></a><br>Closest existing code: a fail-closed, standard-library-only action validator with typed rejection reasons and positive and negative tests. It validates joint-action messages, not skills.</li>
 <li><a href="https://github.com/MSKazemi/robo-resilience-lab/blob/main/SAFETY.md"><code>SAFETY.md</code></a><br>Project safety boundaries.</li>
 <li><a href="https://github.com/MSKazemi/robo-resilience-lab/blob/main/docs/cloud-robotics/AGENTIC-LLM-RESEARCH.md"><code>docs/cloud-robotics/AGENTIC-LLM-RESEARCH.md</code></a><br>Background notes on agentic LLM research.</li>
-<li>Skill catalog, proposal fixtures and the skill-gate validator: not created yet. Tracked in issue #86. <a href="https://github.com/MSKazemi/robo-resilience-lab/issues/86">Issue #86</a></li>
+<li><a href="https://github.com/MSKazemi/robo-resilience-lab/tree/main/examples/cloud-robotics/skill-proposal-review/"><code>examples/cloud-robotics/skill-proposal-review/</code></a><br>Closed catalogue of six simulated skills, a strict-JSON proposal reviewer (ACCEPT, REJECT or NEEDS_HUMAN with typed reason codes) and a synthetic injection corpus. Issues #64 and #86.</li>
+<li><a href="https://github.com/MSKazemi/robo-resilience-lab/tree/main/examples/cloud-robotics/action-gate/"><code>examples/cloud-robotics/action-gate/</code></a><br>Fail-closed ALLOW, HOLD or REJECT gate in front of a simulated, non-actuating sink, with a scripted fault suite and a threat model. Issue #59. The reviewer does not import the gate; they are separate layers.</li>
+<li>Still not built: any LLM, Jev or hosted-advisor run, a simulator executor, a human-approval interface and the measured comparison asked for in issue #86. <a href="https://github.com/MSKazemi/robo-resilience-lab/issues/86">Issue #86</a></li>
 </ul></section>
+<section class="xp-card xp-card--wide" aria-labelledby="xp-run"><h3 id="xp-run">Run it offline</h3>
+<p>From the repository root. Standard library only, CPU only, no network, a few seconds. Commands are copied from the module READMEs.</p>
+<pre class="sc-code"><code>python3 examples/cloud-robotics/skill-proposal-review/evaluate.py
+python3 examples/cloud-robotics/skill-proposal-review/evaluate.py --case inj-01
+python3 -m unittest discover -s examples/cloud-robotics/skill-proposal-review/tests -t examples/cloud-robotics/skill-proposal-review
+python3 examples/cloud-robotics/action-gate/run_fault_suite.py --check
+python3 -m unittest discover -s examples/cloud-robotics/action-gate/tests -t examples/cloud-robotics/action-gate</code></pre>
+<p class="xp-note">Commands checked on 2026-11-20 at commit <code>e45de7a</code> with Python 3.12.3. <code>evaluate.py</code> printed <code>RESULT: PASS</code> (134 of 134 unauthorized fixtures rejected, 0 false accepts, 9 of 9 benign look-alikes accepted) and exited 0; the fault suite printed <code>scenarios=15</code>, <code>fail_open=0</code> and matched the committed report. These numbers cover only the enumerated synthetic cases.</p>
+<p class="xp-note"><strong>What this does not show:</strong> no language model, Jev or hosted advisor was called, and the corpus is small and written by the same author as the reviewer, so a pass says nothing about inputs nobody wrote down. Nothing reaches a simulator, ROS 2, Kubernetes or a robot. <code>ACCEPT</code> is not an authorisation to execute, and neither module is a safety certification, real-time control or authentication.</p></section>
 </div>
 <p class="xp-note">Illustration only. The steps are fixed text written by hand. This page runs no model, sends no network request, publishes no ROS 2 message and moves no robot. Use the Pause decorative motion button near the top of the page to stop all motion; the player never starts by itself.</p>
 </div></section>

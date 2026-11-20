@@ -1,6 +1,6 @@
 {
   "schema_version": "scenario-results-v0",
-  "last_reviewed_utc": "2026-10-27T00:00:00Z",
+  "last_reviewed_utc": "2026-11-20T00:00:00Z",
   "policy": "All results are null until verifiable raw evidence and an immutable run manifest pass human review.",
   "experiments": [
     {
@@ -14,7 +14,7 @@
       "result": null,
       "evidence_url": null,
       "run_manifest_sha256": null,
-      "notes": "Synthetic casebook and offline comparator planned; no Jev measurements.",
+      "notes": "Synthetic casebook (31 cases) and rule baseline merged in examples/ros2-fault-triage-casebook; its 31/31 self-check is circular. No Jev or macro-F1 measurement.",
       "run_count": 0,
       "source_commit": null,
       "raw_data_url": null,
@@ -34,7 +34,7 @@
       "result": null,
       "evidence_url": null,
       "run_manifest_sha256": null,
-      "notes": "Live action-freshness benchmark depends on verified simulator and network.",
+      "notes": "Deterministic SIMULATION in experiments/edge-cloud-placement with placeholder parameters. Live action-freshness benchmark not run; depends on verified simulator and network.",
       "run_count": 0,
       "source_commit": null,
       "raw_data_url": null,
@@ -54,7 +54,7 @@
       "result": null,
       "evidence_url": null,
       "run_manifest_sha256": null,
-      "notes": "Deterministic policy must remain authoritative; no unsafe simulator actions.",
+      "notes": "Synthetic corpus and deterministic reviewer (examples/cloud-robotics/skill-proposal-review) plus action gate (examples/cloud-robotics/action-gate) merged; the deterministic policy stays authoritative. No model or advisor run.",
       "run_count": 0,
       "source_commit": null,
       "raw_data_url": null,
@@ -74,7 +74,7 @@
       "result": null,
       "evidence_url": null,
       "run_manifest_sha256": null,
-      "notes": "Synthetic robot/task contract and schedule baselines planned.",
+      "notes": "SIMULATED serving-queue fairness model in experiments/model-serving-fairness covers part of this track; capability-aware assignment not built.",
       "run_count": 0,
       "source_commit": null,
       "raw_data_url": null,
