@@ -1,0 +1,42 @@
+##### phase 1/3: baseline must PASS
+== 1/4 cluster reachable and Deployments rolled out (context kind-ros2k8s-demo, timeout 120s)
+== 2/4 pods Ready
+== 3/4 placement
+POD                NODE                         NAME
+talker             ros2k8s-demo-worker          talker-79db666498-6qhvq
+listener           ros2k8s-demo-worker2         listener-6789f67db8-x8b45
+discovery-server   ros2k8s-demo-worker          discovery-server-79d9cd87bb-s4qph
+== 4/4 message delivery across nodes (ros2k8s-demo-worker -> ros2k8s-demo-worker2)
+listener heard 'Hello World: 20' .. 'Hello World: 24' (counter advanced by 4)
+  listener log: [INFO] [1795138084.143177808] [listener]: I heard: [Hello World: 22]
+  listener log: [INFO] [1795138085.143249673] [listener]: I heard: [Hello World: 23]
+  listener log: [INFO] [1795138086.143003810] [listener]: I heard: [Hello World: 24]
+PASS: ROS 2 messages crossed from ros2k8s-demo-worker to ros2k8s-demo-worker2
+##### phase 2/3: break delivery (listener ROS_DISCOVERY_SERVER=127.0.0.1:11811) -> verification must FAIL
+  | == 1/4 cluster reachable and Deployments rolled out (context kind-ros2k8s-demo, timeout 45s)
+  | == 2/4 pods Ready
+  | == 3/4 placement
+  | talker             ros2k8s-demo-worker          talker-79db666498-6qhvq
+  | listener           ros2k8s-demo-worker2         listener-749d978494-dnrff
+  | discovery-server   ros2k8s-demo-worker          discovery-server-79d9cd87bb-s4qph
+  | == 4/4 message delivery across nodes (ros2k8s-demo-worker -> ros2k8s-demo-worker2)
+  | ERROR: FAIL delivery: listener (ros2k8s-demo-worker2) logged no 'I heard' message from the talker (ros2k8s-demo-worker) within 45s
+  | ===== DIAGNOSTICS (context=kind-ros2k8s-demo namespace=ros) =====
+  | ===== END DIAGNOSTICS =====
+negative test: verification exited with status 1 (non-zero), at the message-delivery check, as required
+##### phase 3/3: restore -> verification must PASS again
+-- restoring listener to the cluster ROS_DISCOVERY_SERVER
+== 1/4 cluster reachable and Deployments rolled out (context kind-ros2k8s-demo, timeout 120s)
+== 2/4 pods Ready
+== 3/4 placement
+POD                NODE                         NAME
+talker             ros2k8s-demo-worker          talker-79db666498-6qhvq
+listener           ros2k8s-demo-worker2         listener-6789f67db8-hmgwp
+discovery-server   ros2k8s-demo-worker          discovery-server-79d9cd87bb-s4qph
+== 4/4 message delivery across nodes (ros2k8s-demo-worker -> ros2k8s-demo-worker2)
+listener heard 'Hello World: 78' .. 'Hello World: 82' (counter advanced by 4)
+  listener log: [INFO] [1795138142.143200196] [listener]: I heard: [Hello World: 80]
+  listener log: [INFO] [1795138143.143380054] [listener]: I heard: [Hello World: 81]
+  listener log: [INFO] [1795138144.143064369] [listener]: I heard: [Hello World: 82]
+PASS: ROS 2 messages crossed from ros2k8s-demo-worker to ros2k8s-demo-worker2
+PASS: negative test (broken delivery was detected with exit status 1, then recovered)

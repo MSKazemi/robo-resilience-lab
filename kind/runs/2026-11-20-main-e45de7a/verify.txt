@@ -1,0 +1,13 @@
+== 1/4 cluster reachable and Deployments rolled out (context kind-ros2k8s-demo, timeout 120s)
+== 2/4 pods Ready
+== 3/4 placement
+POD                NODE                         NAME
+talker             ros2k8s-demo-worker          talker-79db666498-6qhvq
+listener           ros2k8s-demo-worker2         listener-6789f67db8-x8b45
+discovery-server   ros2k8s-demo-worker          discovery-server-79d9cd87bb-s4qph
+== 4/4 message delivery across nodes (ros2k8s-demo-worker -> ros2k8s-demo-worker2)
+listener heard 'Hello World: 9' .. 'Hello World: 13' (counter advanced by 4)
+  listener log: [INFO] [1795138073.143158179] [listener]: I heard: [Hello World: 11]
+  listener log: [INFO] [1795138074.143263609] [listener]: I heard: [Hello World: 12]
+  listener log: [INFO] [1795138075.143182125] [listener]: I heard: [Hello World: 13]
+PASS: ROS 2 messages crossed from ros2k8s-demo-worker to ros2k8s-demo-worker2
