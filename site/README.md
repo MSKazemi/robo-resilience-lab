@@ -8,7 +8,7 @@ The static website for **ROS 2 Kubernetes Lab**, designed as an honest, accessib
 
 - **Landing page:** `site/index.html` — original branding, hero diagram, illustrative robotics art, project features, learning paths, setup tabs, technical roadmap and community entry points.
 - **Visual identity:** `site/BRAND.md` — color tokens, logo assets, quotes, type, animation and truthful marketing rules.
-- **Five HTML documentation pages:** `site/docs/` — hub, getting started, architecture, learning paths and contributing.
+- **Six HTML documentation pages:** `site/docs/` — hub, getting started, architecture, learning paths, offline research modules and contributing. The offline modules page summarises each Python-only module in `examples/` and `DataAnalysis/` with its run command and what it does not claim; keep it in step with the module READMEs.
 - **Roadmap:** `site/plans/` — a 90-day plan hub plus one animated page per phase (define the reference path, runnable and safe, package and document, grow with evidence) and a release-gates page. Content follows `docs/ROADMAP-2026.md`; every status is a proposal, and the animations show sequence, not progress.
 - **Cloud–Edge Robotics Scenario Lab:** `site/scenarios/` — searchable gallery, four detailed Jev/ROS 2/Kubernetes research blueprints, each with its own short animated explainer (`#see-it`) and an interactive synthetic decision trace, plus a results status board and reproducibility registry. **Research proposals only, not live model results.**
 - **Results governance:** `site/scenarios/data/experiments.json` starts with four planned records, all null performance values; `scripts/validate-site.py` rejects unverified result claims missing required provenance.
@@ -17,7 +17,7 @@ The static website for **ROS 2 Kubernetes Lab**, designed as an honest, accessib
 - **Progressive enhancements:** `site/script.js` — mobile nav, working tabs, copy commands, architecture highlight, scroll reveal and an accessible pause-motion control.
 - **Step animations:** `site/assets/lab-anim.js` and `lab-anim.css` — a small framework for CSS-driven step animations (see [Adding an animation](#adding-an-animation)). One CSS file per page in `site/assets/anim/`.
 - **Styles:** `site/styles.css` for the home page, `site/assets/docs.css` for documentation.
-- **SEO:** a unique title, description and canonical per page; `WebSite`/author structured data on the landing page and `BreadcrumbList` on every inner page; PNG Open Graph/Twitter metadata; `robots.txt`, an 18-URL sitemap, a served `llms.txt` and a `noindex` `404.html`.
+- **SEO:** a unique title, description and canonical per page; `WebSite`/author structured data on the landing page and `BreadcrumbList` on every inner page; PNG Open Graph/Twitter metadata; `robots.txt`, a 19-URL sitemap, a served `llms.txt` and a `noindex` `404.html`.
 - **Deploy and verify:** GitHub Actions in `.github/workflows/pages.yml`; offline validation in `scripts/validate-site.py`.
 
 The website uses **vanilla HTML, CSS, and JS** (no npm build). External fonts are optional. There are no visitor analytics, user accounts, sales processing, or tracking cookies.
@@ -46,7 +46,7 @@ The validator checks local site paths, document references, sitemap consistency,
 
 - Inspect at **360, 390, 768, 1024 and 1440 CSS pixels**; no horizontal scrolling or overlapping controls.
 - Test desktop navigation, mobile menu, architecture layer highlights, tabs and both code-copy actions.
-- Navigate all five documentation pages and their local anchor links.
+- Navigate all six documentation pages and their local anchor links.
 - With `prefers-reduced-motion: reduce`, verify decorative animations stop and content remains visible.
 - Click **Pause motion**, refresh and confirm the preference is respected.
 - Check text, keyboard focus, image alternative text and readable code blocks.

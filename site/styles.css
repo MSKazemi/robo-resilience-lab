@@ -342,3 +342,16 @@ main:focus,[tabindex="-1"]:focus{outline:none}
 /* The site is a dark theme by design (BRAND.md). Say so to the browser so scrollbars, form controls and
    default text selection follow, whatever the system scheme is. */
 :root{color-scheme:dark}
+/* Tablet/laptop widths: the main nav no longer fits on one row beside the brand (it overflowed the page
+   between ~611 and ~1010 px). Put it on its own wrapping row under the brand; phones keep the menu button. */
+@media (min-width:611px) and (max-width:1180px){
+  .nav-shell{flex-wrap:wrap;row-gap:6px;padding:12px 0;min-height:0}
+  .site-nav{flex-wrap:wrap;width:100%;gap:4px 22px}
+  .site-nav>a{display:flex;align-items:center;min-height:40px}
+  html{scroll-padding-top:165px}
+}
+/* There the wrapped header is up to three rows tall: let it scroll away instead of covering the content. */
+@media (min-width:611px) and (max-width:880px){
+  .site-header{position:static}
+  html{scroll-padding-top:20px}
+}
