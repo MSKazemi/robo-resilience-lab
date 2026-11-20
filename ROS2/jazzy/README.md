@@ -83,11 +83,11 @@ No working Kubernetes setup is provided by this container-only migration. The fi
 
 | Added to the image | Exact version and source | License |
 |---|---|---|
-| Probe `/opt/ros/jazzy/lib/libros2_pulse.so` and `/opt/ros/jazzy/lib/ros2_pulse/pulse-check` | apt `ros-jazzy-ros2-pulse=0.5.0-1noble.20260914.160740`, main `packages.ros.org/ros2` repository | Apache-2.0 |
+| Probe `/opt/ros/jazzy/lib/libros2_pulse.so` and `/opt/ros/jazzy/lib/ros2_pulse/pulse-check` | apt `ros-jazzy-ros2-pulse=0.7.0-1noble.20261105.090619`, main `packages.ros.org/ros2` repository | Apache-2.0 |
 | `/opt/pulse-export/bin/pulse-export` (Prometheus `/metrics` over the probe's logs) | PyPI `ros2-pulse-top==0.6.1`, wheel sha256 `3a5cf388e836029fd82d416d4f81c348f0371a2c7e9a8e4e279607448610075a`, `--no-deps` venv | Apache-2.0 |
 | `python3-venv`, only to hold that venv | Ubuntu noble `3.12.3-0ubuntu2.1` | Python (PSF) |
 
-**How the versions were resolved (2026-10-28).** rosdistro `jazzy/distribution.yaml` releases ros2_pulse `0.7.0-1`, but that build (`0.7.0-1noble.20261021.153920`) is still only in `ros2-testing`. The main repository's noble index, which this image already uses for every other ROS package, lists `0.5.0-1noble.20260914.160740`, so that is the pin. Everything the pilot uses (the probe, jsonl output, `pulse-check` and its exit codes) exists in 0.5.0, and pulse-export 0.6.1 (the latest `ros2-pulse-top` on PyPI) reads 0.5.0 logs. After the next Jazzy sync the main index will list only the new build and this pin will stop installing; then update `ROS2_PULSE_VERSION` in the Dockerfile from `apt-cache policy ros-jazzy-ros2-pulse` (the `demo_nodes_cpp` pin may need the same refresh). pulse-export is stdlib only; the wheel's `textual` dependency is for the `pulse-top` terminal UI, which is removed from the venv.
+**How the versions were resolved.** On 2026-10-28 the 0.7.0-1 release was only in `ros2-testing`, so the image pinned `0.5.0-1noble.20260914.160740` from the main repository. A later Jazzy sync removed that build from the main noble index (the [main-branch image build of 2026-11-20](https://github.com/MSKazemi/robo-resilience-lab/actions/runs/44646666212) failed with `Version '0.5.0-1noble.20260914.160740' for 'ros-jazzy-ros2-pulse' was not found`), and on 2026-11-20 the pin moved to `0.7.0-1noble.20261105.090619`, the only amd64 build `apt-cache madison` listed. The ros2_pulse [changelog](https://github.com/TanayK07/ros2_pulse/blob/main/CHANGELOG.md) describes the 0.6.0 and 0.7.0 output changes as additive: jsonl windows gain an `endpoints` array, receive-distribution fields and a `"partial": true` flag on a process's first and last window, and the text format is unchanged. The probe path and the four variables below are unchanged, and the existing `pulse-check` spec in the test script still passes. pulse-export stays at 0.6.1 (it reads the 0.7.0 endpoint fields, according to the same changelog). PyPI now also has `ros2-pulse-top` 0.7.0, but that release moves pulse-export's default port from 9464 (used by the test script and the manifest) to 10061, so adopting it is a separate change. The [refresh check](#refreshing-the-apt-pins) below ran against 0.7.0. pulse-export is stdlib only; the wheel's `textual` dependency is for the `pulse-top` terminal UI, which is removed from the venv.
 
 The probe is configured per process with four variables, used in both the CI check and the manifest:
 
@@ -163,7 +163,7 @@ Not covered by that run: a real multi-machine cluster, other CNIs, restarts, sca
 - **Multiple subscribers.** Each subscribing process reports its own callbacks. With K listener processes (for example `--replicas=2`, each with its own exporter) the receive rates add up to about K times the publish rate, and `pulse-check` sums receive rates across logs. Compare per process, not the sum.
 - **Restarts.** A container restart inside the same pod keeps the `emptyDir`: the new process appends to the same file, its series keeps the same label, and its first window is a ramp-up window. With the probe's default `topic_freq.<pid>.log` names a new process gets a new `pid` series, but in containers process ids repeat (here the ROS process is PID 1 every time), so neither is a reliable restart marker; use the pod's `RESTARTS` count. A new pod starts with an empty volume, and earlier windows are gone unless copied out first.
 - **Loss and QoS.** The demo uses reliable QoS. With best-effort QoS a dropped message shows up as a callback deficit (receive rate below publish rate). With reliable QoS retransmissions are invisible here: a message that needed several retransmits counts once on each side, so rates can match while the network does extra work. Reliable delivery can still lose messages when a history queue overflows.
-- **Window alignment.** Each process starts its own window clock, so talker and listener windows are offset and one window can differ by a message (0.2 Hz at 1 Hz with 5 s windows). Compare several windows or totals over a longer interval, and skip each process's first window (ramp-up) and last window (cut short at exit). Before discovery completes the listener's windows have no `/chatter` entry at all; an absent topic means "not measured", not 0.
+- **Window alignment.** Each process starts its own window clock, so talker and listener windows are offset and one window can differ by a message (0.2 Hz at 1 Hz with 5 s windows). Compare several windows or totals over a longer interval, and skip each process's first window (ramp-up) and last window (cut short at exit); since probe 0.7.0 the jsonl format marks both with `"partial": true`, according to the upstream changelog. Before discovery completes the listener's windows have no `/chatter` entry at all; an absent topic means "not measured", not 0.
 
 ### What CI verifies and what still needs a cluster
 
@@ -199,10 +199,30 @@ Agreement within about one message per window boundary supports using the probe 
 | Base image | `docker.io/library/ros:jazzy-ros-base-noble` with fixed `sha256` index in Dockerfile | Digest recorded in source, image pull/build verified by CI when green |
 | Repository-built image | `ros-jazzy-with-stress-ng:sha-475988ae383e361ebbc60c1c6e0614ecd93694d1` | Published and smoke-tested in [run 38228962264](https://github.com/MSKazemi/robo-resilience-lab/actions/runs/38228962264); digest recorded above; public pull access not yet independently checked |
 | Architectures | `linux/amd64` | CI-covered when green; arm64 not validated |
-| Additional apt packages | `ros-jazzy-demo-nodes-cpp=0.33.11-1noble.20260920.235420`, `stress-ng=0.17.06-1build1` | Direct package versions pinned from the successful 2026-10-12 CI installation; **transitive dependency versions are not locked** |
-| ros2_pulse pilot packages | `ros-jazzy-ros2-pulse=0.5.0-1noble.20260914.160740`, `python3-venv=3.12.3-0ubuntu2.1`, PyPI `ros2-pulse-top==0.6.1` (wheel sha256 pinned, `--no-deps`) | Resolved from the package indexes on 2026-10-28; built and tested on amd64 in the PR's CI; **transitive apt versions are not locked** |
+| Additional apt packages | `ros-jazzy-demo-nodes-cpp=0.33.11-1noble.20261105.092654`, `stress-ng=0.17.06-1build1` | Direct package versions; stress-ng from the 2026-10-12 CI installation, demo_nodes_cpp refreshed 2026-11-20 ([refresh](#refreshing-the-apt-pins)); **transitive dependency versions are not locked** |
+| ros2_pulse pilot packages | `ros-jazzy-ros2-pulse=0.7.0-1noble.20261105.090619`, `python3-venv=3.12.3-0ubuntu2.1`, PyPI `ros2-pulse-top==0.6.1` (wheel sha256 pinned, `--no-deps`) | python3-venv and the wheel resolved 2026-10-28; ros2_pulse refreshed 2026-11-20 and built and tested locally on amd64 ([refresh](#refreshing-the-apt-pins)); **transitive apt versions are not locked** |
 | Full Kubernetes environment | Legacy Kubernetes 1.29 / Weave Net | **Not modernized or tested** in this PR |
 | Lyrical profile | Ubuntu 26.04 platform | Deferred; no claim of support |
+
+### Refreshing the apt pins
+
+`packages.ros.org` keeps only the newest build of each package in its main index, so after a Jazzy sync an exact `ROS_*_VERSION` pin stops installing and the image build fails with `E: Version '...' was not found`. To refresh the pins, list the versions inside the pinned base image, update the `ARG`s in [`ROS2/Dockerfile`](../Dockerfile), then rebuild and run both container checks:
+
+```bash
+docker run --rm --platform linux/amd64 "$(sed -n 's/^FROM //p' ROS2/Dockerfile)" bash -c \
+  'apt-get update -qq && apt-cache madison ros-jazzy-demo-nodes-cpp ros-jazzy-ros2-pulse stress-ng python3-venv'
+```
+
+**Refresh of 2026-11-20 (amd64, local Docker, not yet a CI run).** On main, the image build failed because both ROS pins were no longer in the index. `apt-cache madison` in the pinned base image listed:
+
+| Package | Old pin | Index on 2026-11-20 | New pin |
+|---|---|---|---|
+| `ros-jazzy-demo-nodes-cpp` | `0.33.11-1noble.20260920.235420` | `0.33.11-1noble.20261105.092654` only | `0.33.11-1noble.20261105.092654` (same upstream 0.33.11, rebuilt) |
+| `ros-jazzy-ros2-pulse` | `0.5.0-1noble.20260914.160740` | `0.7.0-1noble.20261105.090619` only | `0.7.0-1noble.20261105.090619` |
+| `stress-ng` | `0.17.06-1build1` | `0.17.06-1build1` (noble/universe) | unchanged |
+| `python3-venv` | `3.12.3-0ubuntu2.1` | `3.12.3-0ubuntu2.1` (noble-updates and noble-security) | unchanged |
+
+The base image digest in the Dockerfile still pulled. The `jazzy-ros-base-noble` tag now points to a newer index digest, which this refresh did not adopt. With the new pins, `docker build --platform linux/amd64 --pull` exited 0. `scripts/test-ros2-image.sh` passed (`PASS: listener received a ROS 2 talker message inside one container.`), and `scripts/test-ros2-pulse.sh` as uid 1000 passed against probe 0.7.0 and pulse-export 0.6.1 (`PASS: pulse-check saw /chatter published and received at >= 0.5 Hz in one container.` and `PASS: pulse-export served /chatter publish and receive rates on /metrics.`). The jsonl windows now carry the additive `endpoints` array. These are single-container checks only; they say nothing about Kubernetes or cross-node DDS.
 
 **Reproducibility caveat:** The base-image digest is fixed, and a pushed image is referenced by a content digest and a source-commit tag. However, apt repositories can update. A rebuild from the same Git commit may resolve different apt package versions; fully hermetic/reproducible rebuilds require an apt snapshot or version lock and are still future work under [#7](https://github.com/MSKazemi/robo-resilience-lab/issues/7) / [#6](https://github.com/MSKazemi/robo-resilience-lab/issues/6). Consume a **published image digest** when an exact artifact matters.
 
