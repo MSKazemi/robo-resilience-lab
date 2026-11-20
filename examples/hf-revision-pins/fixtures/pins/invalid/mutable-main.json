@@ -1,0 +1,50 @@
+{
+  "schema_version": "hf-revision-pins/v1",
+  "data_kind": "synthetic",
+  "description": "SYNTHETIC fixture. The repo ids and revisions are invented for tests; they are not real Hugging Face repos or commits. Never prefetch them.",
+  "pins": [
+    {
+      "id": "tiny-policy",
+      "repo_id": "rrl-synthetic/tiny-policy-fixture",
+      "kind": "model",
+      "revision": "main",
+      "license": "apache-2.0",
+      "gated": false,
+      "files": [
+        {
+          "path": "config.json",
+          "sha256": "4b2c2f4166f5b7cbd22f18bb4c2f0209839917950a64ecc79f9897bbd6a20b2b",
+          "size": 205,
+          "role": "config"
+        },
+        {
+          "path": "weights.synthetic.txt",
+          "sha256": "3cd58e9f5b92bfca563bdf147086b6c1736328a5f2f13fc0311339b9fb0cd58d",
+          "size": 167,
+          "role": "weights"
+        }
+      ]
+    },
+    {
+      "id": "tiny-episodes",
+      "repo_id": "rrl-synthetic/tiny-episodes-fixture",
+      "kind": "dataset",
+      "revision": "e58c656f91505f7a1ed6f60fb456940e364149e8",
+      "license": "cc-by-4.0",
+      "files": [
+        {
+          "path": "data/episodes.jsonl",
+          "sha256": "85370844b0a1beea27424229e119a21aeb1c5aafaa0e8cc7ef9e5ade505b1545",
+          "size": 312,
+          "role": "data"
+        },
+        {
+          "path": "meta.json",
+          "sha256": "380e51436b6a6bd84b39599f0e3ffaed0b61fb85b5bd69ebcb2f47b30a18501e",
+          "size": 137,
+          "role": "metadata"
+        }
+      ]
+    }
+  ]
+}

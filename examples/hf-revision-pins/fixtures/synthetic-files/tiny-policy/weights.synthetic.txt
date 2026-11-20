@@ -1,0 +1,4 @@
+# SYNTHETIC placeholder "weights" for examples/hf-revision-pins.
+# Plain text, not a tensor file. Nothing here was trained.
+0.10 -0.20 0.30 -0.40
+0.05 0.15 -0.25 0.35
