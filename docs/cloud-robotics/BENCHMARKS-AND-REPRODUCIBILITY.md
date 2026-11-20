@@ -1,6 +1,6 @@
 # Research benchmarks and reproducibility contract
 
-> This is a **method specification**. No new inference, ROS/K8s placement, energy or robotics benchmark measurements have been run for this documentation. Historical plots under [DataAnalysis](../../DataAnalysis/) must remain labeled historical, and broken recovery measurement logic is tracked in [#45](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/45).
+> This is a **method specification**. No new inference, ROS/K8s placement, energy or robotics benchmark measurements have been run for this documentation. Historical plots under [DataAnalysis](../../DataAnalysis/) must remain labeled historical, and broken recovery measurement logic is tracked in [#45](https://github.com/MSKazemi/robo-resilience-lab/issues/45).
 
 ## Why robotics needs more than model latency
 
@@ -56,7 +56,7 @@ A policy forward pass is only one segment of the robotics decision chain. A vali
   "run_id": "synthetic-example-NOT-measured",
   "status": "fixture_only",
   "utc_start": "2026-10-27T00:00:00Z",
-  "source_repo": "MSKazemi/Vagrant-Kubernetes-ROS2-Deployment",
+  "source_repo": "MSKazemi/robo-resilience-lab",
   "source_commit": "EXAMPLE_COMMIT_REQUIRED",
   "container_digest": "EXAMPLE_SHA256_REQUIRED",
   "ros_distro": "jazzy",
@@ -76,7 +76,7 @@ A policy forward pass is only one segment of the robotics decision chain. A vali
 }
 ```
 
-**Never substitute these illustrative values for actual measurements.** Define a real JSON Schema and tests in [#60](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/60). Include artifact hashes, provenance and exact configuration/CI run URLs in completed manifests. Avoid logging raw customer/participant data.
+**Never substitute these illustrative values for actual measurements.** Define a real JSON Schema and tests in [#60](https://github.com/MSKazemi/robo-resilience-lab/issues/60). Include artifact hashes, provenance and exact configuration/CI run URLs in completed manifests. Avoid logging raw customer/participant data.
 
 ## Experiment lifecycle
 
@@ -103,7 +103,7 @@ Do **not** claim a physical certification/real-time SLA at any of these levels. 
 ## Recommended initial study designs
 
 ### B1: Robot middleware baseline
-Control: one published message size/rate with explicit discovery and QoS. Treatments: node restart, alternative protocol/config in [#48](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/48). Record delivery ratio, discovery, restarts, CPU and packet loss. Do not silently combine DDS and LeRobot remote Zenoh as if they were the same component.
+Control: one published message size/rate with explicit discovery and QoS. Treatments: node restart, alternative protocol/config in [#48](https://github.com/MSKazemi/robo-resilience-lab/issues/48). Record delivery ratio, discovery, restarts, CPU and packet loss. Do not silently combine DDS and LeRobot remote Zenoh as if they were the same component.
 
 ### B2: Model placement/freshness
 Control: same model, checkpoint and simulator; local synchronous baseline. Treatments: local async where supported; server same LAN; Kubernetes server, with explicit impairment. Track action age and validity, starvation, task success and full inference request times. Avoid comparing different hardware without labels.
@@ -127,4 +127,4 @@ Only after B2 has reliable instrumentation. Compare multi-client contention and 
 - Model/dataset cards, safety/risk register, optional read-only demo.
 - Academic citation and related work (FogROS2, robotics benchmarking, LeRobot) rather than ungrounded novelty marketing.
 
-Use [experiment template](templates/EXPERIMENT-TEMPLATE.md). Existing benchmark issue [#18](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/18) owns the general DDS/monitoring suite; [#60](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/60) adds this AI policy/run contract.
+Use [experiment template](templates/EXPERIMENT-TEMPLATE.md). Existing benchmark issue [#18](https://github.com/MSKazemi/robo-resilience-lab/issues/18) owns the general DDS/monitoring suite; [#60](https://github.com/MSKazemi/robo-resilience-lab/issues/60) adds this AI policy/run contract.

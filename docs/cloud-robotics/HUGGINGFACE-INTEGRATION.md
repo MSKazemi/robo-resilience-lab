@@ -53,7 +53,7 @@ Hugging Face already provides model/dataset repositories, model and dataset card
 }
 ```
 
-This is a **schema sketch**. Use a real JSON Schema and validate units, monotonic time and exact model/action compatibility in [#55](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/55). The placeholder hash must not be interpreted as a real checksum. Timestamps must not be subtracted across unrelated clocks without explicit conversion/sync.
+This is a **schema sketch**. Use a real JSON Schema and validate units, monotonic time and exact model/action compatibility in [#55](https://github.com/MSKazemi/robo-resilience-lab/issues/55). The placeholder hash must not be interpreted as a real checksum. Timestamps must not be subtracted across unrelated clocks without explicit conversion/sync.
 
 ### HF-2. Pin and cache model/dataset identities
 
@@ -96,7 +96,7 @@ Research these projects as *third-party candidates*, with pin/version/license st
 - [lerobot-robot-rosetta](https://huggingface.co/docs/lerobot/main/third_party_robots) — YAML contract-based bridge as described by upstream.
 
 ### Required comparison columns
-Upstream project/URL; license; last tested LeRobot version; Jazzy compatibility; ROS messages and QoS; ROS middleware and transport; observation and action ordering; camera mapping; calibration; action/FPS semantics; dependency pin; status of integration tests; hardware/simulator proof; privacy handling; gaps; retain-or-reject decision. This is the scope of [#57](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/57).
+Upstream project/URL; license; last tested LeRobot version; Jazzy compatibility; ROS messages and QoS; ROS middleware and transport; observation and action ordering; camera mapping; calibration; action/FPS semantics; dependency pin; status of integration tests; hardware/simulator proof; privacy handling; gaps; retain-or-reject decision. This is the scope of [#57](https://github.com/MSKazemi/robo-resilience-lab/issues/57).
 
 ## Model choice is a compatibility problem
 
@@ -114,6 +114,6 @@ A demo should start with a **mock policy**. Then evaluate a real checkpoint **on
 
 ## Implementation issue map
 
-- [#56](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/56) licensed dataset converter; [#57](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/57) plugin/policy compatibility; [#58](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/58) Hub immutable revisions; [#61](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/61) server; [#62](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/62) edge-cloud experiment; [#68](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/68) public read-only Space.
+- [#56](https://github.com/MSKazemi/robo-resilience-lab/issues/56) licensed dataset converter; [#57](https://github.com/MSKazemi/robo-resilience-lab/issues/57) plugin/policy compatibility; [#58](https://github.com/MSKazemi/robo-resilience-lab/issues/58) Hub immutable revisions; [#61](https://github.com/MSKazemi/robo-resilience-lab/issues/61) server; [#62](https://github.com/MSKazemi/robo-resilience-lab/issues/62) edge-cloud experiment; [#68](https://github.com/MSKazemi/robo-resilience-lab/issues/68) public read-only Space.
 
 No Hugging Face user account, model/dataset repository or Space has been created by this planning work.

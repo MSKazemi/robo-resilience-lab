@@ -4,7 +4,7 @@
 
 **Vision:** A reproducible, safe-by-default open laboratory for learning how to **deploy, test, observe, benchmark and responsibly operate robotics AI** across ROS 2, edge systems and Kubernetes, with Hugging Face LeRobot and optional LLM/VLA models.
 
-**Proposed program name:** *Cloud Robotics + AI Lab* (also "RobotOps Lab" as the experimental operations track). The repository renaming discussion [#22](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/22) is separate: **do not rename or announce a new production brand without review**.
+**Proposed program name:** *Cloud Robotics + AI Lab* (also "RobotOps Lab" as the experimental operations track). The repository renaming discussion [#22](https://github.com/MSKazemi/robo-resilience-lab/issues/22) is separate: **do not rename or announce a new production brand without review**.
 
 **One-sentence promise:** *From a simulated robot observation to a validated AI response, with measurable latency, data/model provenance, safe fallbacks and independently reproducible results.*
 
@@ -12,12 +12,12 @@
 
 | Dimension | Existing on main | Intended research extension | Release gate |
 | --- | --- | --- | --- |
-| Local cluster | Historical three-VM Vagrant lab | Supported kind/k3d profile with bounded resources | [#16](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/16), [#43](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/43) |
-| ROS 2 | Jazzy/Noble container-only message test; historical stress manifests | Cross-worker self-starting talker/listener + typed simulated sensor/actions | [#7](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/7), [#14](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/14), [#15](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/15) |
-| Observability | Prometheus/Grafana configs; old collected metrics | Action-aware traces and reproducible fault/placement experiments | [#18](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/18), [#60](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/60) |
-| Hugging Face | No verified integration | LeRobotDataset v3 conversion, exact Hub revisions, optional remote policy server | [#56](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/56), [#58](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/58), [#61](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/61) |
-| AI/LLM | No verified ROS runtime planner | Read-only diagnostic RAG; bounded, typed simulated skills | [#64](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/64), [#65](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/65) |
-| Responsible robotics | Safety and security notes | Risk register, model/data governance, typed fail-closed simulated action gate | [#59](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/59), [#67](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/67) |
+| Local cluster | Historical three-VM Vagrant lab | Supported kind/k3d profile with bounded resources | [#16](https://github.com/MSKazemi/robo-resilience-lab/issues/16), [#43](https://github.com/MSKazemi/robo-resilience-lab/issues/43) |
+| ROS 2 | Jazzy/Noble container-only message test; historical stress manifests | Cross-worker self-starting talker/listener + typed simulated sensor/actions | [#7](https://github.com/MSKazemi/robo-resilience-lab/issues/7), [#14](https://github.com/MSKazemi/robo-resilience-lab/issues/14), [#15](https://github.com/MSKazemi/robo-resilience-lab/issues/15) |
+| Observability | Prometheus/Grafana configs; old collected metrics | Action-aware traces and reproducible fault/placement experiments | [#18](https://github.com/MSKazemi/robo-resilience-lab/issues/18), [#60](https://github.com/MSKazemi/robo-resilience-lab/issues/60) |
+| Hugging Face | No verified integration | LeRobotDataset v3 conversion, exact Hub revisions, optional remote policy server | [#56](https://github.com/MSKazemi/robo-resilience-lab/issues/56), [#58](https://github.com/MSKazemi/robo-resilience-lab/issues/58), [#61](https://github.com/MSKazemi/robo-resilience-lab/issues/61) |
+| AI/LLM | No verified ROS runtime planner | Read-only diagnostic RAG; bounded, typed simulated skills | [#64](https://github.com/MSKazemi/robo-resilience-lab/issues/64), [#65](https://github.com/MSKazemi/robo-resilience-lab/issues/65) |
+| Responsible robotics | Safety and security notes | Risk register, model/data governance, typed fail-closed simulated action gate | [#59](https://github.com/MSKazemi/robo-resilience-lab/issues/59), [#67](https://github.com/MSKazemi/robo-resilience-lab/issues/67) |
 
 **The first outcome is deliberately modest:** CPU-only mock policy + simulator-only action validation + a transparent run record. No GPU, expensive cloud service or physical robot is necessary for that *proposed* MVP. Do not describe future commands as executable until code and CI prove them.
 
@@ -56,16 +56,16 @@ The planned hardware-free demo has four separate proofs, **not one misleading su
 
 1. **Data proof:** A licensed deterministic synthetic camera/state/action episode has explicit units, calibration, task identity, episode boundaries and valid LeRobot dataset conversion.
 2. **Contract proof:** A deterministic mock policy receives a *versioned* observation, responds with schema-valid action candidate, and is blocked if stale/malformed/unapproved.
-3. **Deployment proof:** Only after [#14](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/14), [#15](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/15) and [#16](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/16), prove ROS messages on different Kubernetes workers; later use a pinned upstream LeRobot policy server as an **optional** profile.
+3. **Deployment proof:** Only after [#14](https://github.com/MSKazemi/robo-resilience-lab/issues/14), [#15](https://github.com/MSKazemi/robo-resilience-lab/issues/15) and [#16](https://github.com/MSKazemi/robo-resilience-lab/issues/16), prove ROS messages on different Kubernetes workers; later use a pinned upstream LeRobot policy server as an **optional** profile.
 4. **Research proof:** Preserve full run metadata, raw failures, clock assumptions and offline-regenerable plots. API success alone is not evidence of task success or physical safety.
 
 A simulator is still a model of reality, not a physical-safety test. LLMs **never** directly drive actuators in this proposal.
 
 ## Open workstreams and reading
 
-- [Umbrella Hugging Face/RobotOps design #53](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/53); [Physical AI/LLM proposal #54](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/54)
-- [Existing infrastructure roadmap](../ROADMAP-2026.md), [research strategy issue #42](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/42), [proposed PR #50](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/pull/50)
-- New scoped tasks: [#55–#62](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/55) and [#64–#71](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/64). See [roadmap for exact mapping](ROADMAP-2026-2027.md).
+- [Umbrella Hugging Face/RobotOps design #53](https://github.com/MSKazemi/robo-resilience-lab/issues/53); [Physical AI/LLM proposal #54](https://github.com/MSKazemi/robo-resilience-lab/issues/54)
+- [Existing infrastructure roadmap](../ROADMAP-2026.md), [research strategy issue #42](https://github.com/MSKazemi/robo-resilience-lab/issues/42), [proposed PR #50](https://github.com/MSKazemi/robo-resilience-lab/pull/50)
+- New scoped tasks: [#55–#62](https://github.com/MSKazemi/robo-resilience-lab/issues/55) and [#64–#71](https://github.com/MSKazemi/robo-resilience-lab/issues/64). See [roadmap for exact mapping](ROADMAP-2026-2027.md).
 
 ## Explicit non-goals
 

@@ -98,6 +98,6 @@ Before a new lesson, benchmark, demo or public claim, ask:
 - [Dataset card template](templates/DATASET-CARD-TEMPLATE.md)
 - [Model card template](templates/MODEL-CARD-TEMPLATE.md)
 - [Experiment protocol](templates/EXPERIMENT-TEMPLATE.md)
-- [#67 governance workstream](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/67), [#59 simulated action gate](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/59), [#64 LLM skills](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/64)
+- [#67 governance workstream](https://github.com/MSKazemi/robo-resilience-lab/issues/67), [#59 simulated action gate](https://github.com/MSKazemi/robo-resilience-lab/issues/59), [#64 LLM skills](https://github.com/MSKazemi/robo-resilience-lab/issues/64)
 
 This guide **does not** retroactively certify or replace the repository's [SAFETY.md](../../SAFETY.md), [SECURITY.md](../../SECURITY.md), [DISCLAIMER.md](../../DISCLAIMER.md) or any institution's policies. Those remain in force.

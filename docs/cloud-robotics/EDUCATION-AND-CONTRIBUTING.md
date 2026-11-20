@@ -1,6 +1,6 @@
 # Cloud Robotics + AI/LLM teaching and contribution program
 
-> **Course design proposal; not a released verified curriculum.** Each lab must be tested by instructors before being advertised as runnable. Existing legacy Vagrant mode needs ~30 GB RAM allocated across VMs and 18 vCPUs; the intended low-resource modern mode is still [#16](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/16).
+> **Course design proposal; not a released verified curriculum.** Each lab must be tested by instructors before being advertised as runnable. Existing legacy Vagrant mode needs ~30 GB RAM allocated across VMs and 18 vCPUs; the intended low-resource modern mode is still [#16](https://github.com/MSKazemi/robo-resilience-lab/issues/16).
 
 ## Who can participate and what they get
 
@@ -107,9 +107,9 @@ Potential thesis areas: edge-cloud action-age thresholds, robotic RAG grounding 
 
 Use [CONTRIBUTING.md](../../CONTRIBUTING.md), [AGENTS.md](../../AGENTS.md), [AI-assisted contributing guide](../AI_ASSISTED_CONTRIBUTING.md) and [agent prompts](../AGENT_PROMPTS.md). Either ordinary editor workflow or coding-agent assistance is welcome. Human review is responsible for tests, safety, licenses and claims.
 
-**Beginner options:** [#55](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/55) typed CPU mock; [#65](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/65) read-only tutor evaluation fixtures; existing documentation [#24](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/24), [#29](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/29), [#30](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/30).
+**Beginner options:** [#55](https://github.com/MSKazemi/robo-resilience-lab/issues/55) typed CPU mock; [#65](https://github.com/MSKazemi/robo-resilience-lab/issues/65) read-only tutor evaluation fixtures; existing documentation [#24](https://github.com/MSKazemi/robo-resilience-lab/issues/24), [#29](https://github.com/MSKazemi/robo-resilience-lab/issues/29), [#30](https://github.com/MSKazemi/robo-resilience-lab/issues/30).
 
-**Research options:** [#56](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/56), [#60](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/60), [#62](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/62), [#69](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/69), [#70](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/70), [#71](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/71).
+**Research options:** [#56](https://github.com/MSKazemi/robo-resilience-lab/issues/56), [#60](https://github.com/MSKazemi/robo-resilience-lab/issues/60), [#62](https://github.com/MSKazemi/robo-resilience-lab/issues/62), [#69](https://github.com/MSKazemi/robo-resilience-lab/issues/69), [#70](https://github.com/MSKazemi/robo-resilience-lab/issues/70), [#71](https://github.com/MSKazemi/robo-resilience-lab/issues/71).
 
 **Example bounded agent prompt:**
 

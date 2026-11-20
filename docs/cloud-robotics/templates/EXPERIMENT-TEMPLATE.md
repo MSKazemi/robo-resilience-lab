@@ -79,7 +79,7 @@ Below is **illustrative only**, not yet validated against an executable schema:
 }
 ```
 
-Replace placeholders with actual run values. Log model/dataset/image revisions, manifest checksums and run status. This proposal is tracked in [#60](https://github.com/MSKazemi/Vagrant-Kubernetes-ROS2-Deployment/issues/60).
+Replace placeholders with actual run values. Log model/dataset/image revisions, manifest checksums and run status. This proposal is tracked in [#60](https://github.com/MSKazemi/robo-resilience-lab/issues/60).
 
 ## D. Raw data and measurement documentation
 
