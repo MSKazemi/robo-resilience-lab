@@ -1,0 +1,7 @@
+{
+  "_comment": "SYNTHETIC fixture for examples/hf-revision-pins. Not a real model config.",
+  "architecture": "synthetic-linear-policy",
+  "observation_dim": 4,
+  "action_dim": 2,
+  "actuation": "none"
+}

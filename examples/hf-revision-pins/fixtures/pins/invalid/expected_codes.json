@@ -1,0 +1,17 @@
+{
+  "invalid/license-unknown.json": [
+    "LICENSE"
+  ],
+  "invalid/mutable-main.json": [
+    "REVISION_BRANCH"
+  ],
+  "invalid/pr-ref.json": [
+    "REVISION_PR_REF"
+  ],
+  "invalid/short-sha.json": [
+    "REVISION_SHORT_SHA"
+  ],
+  "invalid/tag-ref.json": [
+    "REVISION_NOT_COMMIT"
+  ]
+}

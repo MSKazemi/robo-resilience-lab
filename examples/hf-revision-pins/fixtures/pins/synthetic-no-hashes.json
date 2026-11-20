@@ -1,0 +1,22 @@
+{
+  "schema_version": "hf-revision-pins/v1",
+  "data_kind": "synthetic",
+  "description": "SYNTHETIC fixture. The repo ids and revisions are invented for tests; they are not real Hugging Face repos or commits. Never prefetch them.",
+  "pins": [
+    {
+      "id": "tiny-policy",
+      "repo_id": "rrl-synthetic/tiny-policy-fixture",
+      "kind": "model",
+      "revision": "da9e025ec4303c3fd76795c8dd1c7837a655c812",
+      "license": "apache-2.0",
+      "gated": false
+    },
+    {
+      "id": "tiny-episodes",
+      "repo_id": "rrl-synthetic/tiny-episodes-fixture",
+      "kind": "dataset",
+      "revision": "e58c656f91505f7a1ed6f60fb456940e364149e8",
+      "license": "cc-by-4.0"
+    }
+  ]
+}
