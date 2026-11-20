@@ -33,7 +33,7 @@
 <meta name="twitter:title" content="ROS 2 Fault Diagnosis + Jev | DDS, QoS &amp; Kubernetes Lab">
 <meta name="twitter:description" content="Proposal, not benchmarked: a synthetic ROS 2 DDS/QoS fault-diagnosis study comparing deterministic rules with optional Jev advice. Open student tasks.">
 <meta name="twitter:image" content="https://mskazemi.com/robo-resilience-lab/assets/social-card.png">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","name":"ROS 2 Fault Diagnosis + Jev | DDS, QoS & Kubernetes Lab","headline":"ROS 2 Fault Diagnosis + Jev | DDS, QoS & Kubernetes Lab","description":"Study a Jev-assisted ROS 2 and Kubernetes fault diagnosis experiment: synthetic DDS/QoS incidents, baseline rules, research metrics and open student tasks.","url":"https://mskazemi.com/robo-resilience-lab/scenarios/ros2-fault-triage.html","isAccessibleForFree":true,"dateModified":"2026-10-29","author":{"@type":"Person","name":"Mohsen Seyedkazemi Ardebili"},"about":[{"@type":"Thing","name":"ROS 2"},{"@type":"Thing","name":"Kubernetes"},{"@type":"Thing","name":"Cloud robotics"},{"@type":"Thing","name":"Jev structured decision models"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Lab","item":"https://mskazemi.com/robo-resilience-lab/"},{"@type":"ListItem","position":2,"name":"Research scenarios","item":"https://mskazemi.com/robo-resilience-lab/scenarios/"},{"@type":"ListItem","position":3,"name":"Fault triage","item":"https://mskazemi.com/robo-resilience-lab/scenarios/ros2-fault-triage.html"}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"TechArticle","name":"ROS 2 Fault Diagnosis + Jev | DDS, QoS & Kubernetes Lab","headline":"ROS 2 Fault Diagnosis + Jev | DDS, QoS & Kubernetes Lab","description":"Study a Jev-assisted ROS 2 and Kubernetes fault diagnosis experiment: synthetic DDS/QoS incidents, baseline rules, research metrics and open student tasks.","url":"https://mskazemi.com/robo-resilience-lab/scenarios/ros2-fault-triage.html","isAccessibleForFree":true,"dateModified":"2026-11-20","author":{"@type":"Person","name":"Mohsen Seyedkazemi Ardebili"},"about":[{"@type":"Thing","name":"ROS 2"},{"@type":"Thing","name":"Kubernetes"},{"@type":"Thing","name":"Cloud robotics"},{"@type":"Thing","name":"Jev structured decision models"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Lab","item":"https://mskazemi.com/robo-resilience-lab/"},{"@type":"ListItem","position":2,"name":"Research scenarios","item":"https://mskazemi.com/robo-resilience-lab/scenarios/"},{"@type":"ListItem","position":3,"name":"Fault triage","item":"https://mskazemi.com/robo-resilience-lab/scenarios/ros2-fault-triage.html"}]}]}</script>
 </head><body>
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="docs-nav"><div class="sc-shell docs-nav-inner">
@@ -124,7 +124,7 @@
 <p class="sc-intro">A listener went quiet. Pick one of four made-up incidents and step through what plain code does with it. Two of the four are not clean wins on purpose: one tempting diagnosis is rejected and one record is refused before anyone diagnoses it. Everything below is a fixed storyboard, not output from a model or a ROS 2 system.</p>
 <div class="xp" data-xp id="xp-player" role="group" aria-labelledby="xp-title" data-scenario="s1">
 <ul class="xp-badges" aria-label="Status of this explanation">
-<li class="xp-badge xp-badge--status">Status: planned</li>
+<li class="xp-badge xp-badge--status">Status: synthetic casebook and rule baseline</li>
 <li class="xp-badge xp-badge--sim">Storyboard: illustrative, hand-authored</li>
 <li class="xp-badge xp-badge--na">Measured results: N/A (not run)</li>
 <li class="xp-badge">No model call, no ROS 2 traffic, no robot</li>
@@ -271,7 +271,7 @@ family: unknown</pre>
 </li>
 <li class="xp-step" data-stage="human" data-outcome="info">
 <h4>The reviewer sees the line, quoted <span class="xp-out">info</span></h4>
-<p>The flagged line is shown verbatim to the person. The design requires that no stage can run text taken from a log; a test for that is planned.</p>
+<p>The flagged line is shown verbatim to the person. The design requires that no stage can run text taken from a log. In the merged casebook, the rule baseline never reads the free-text log field, and a unit test pins that injected log lines leave its answer unchanged.</p>
 </li>
 </ol>
 <p class="xp-verdict" data-kind="rejected"><strong>Outcome: rejected</strong> Diagnosis unchanged: QoS incompatibility. The embedded order was not followed.</p>
@@ -279,7 +279,7 @@ family: unknown</pre>
 </div>
 <div class="xp-grid">
 <section class="xp-card xp-card--wide" aria-labelledby="xp-rej"><h3 id="xp-rej">What gets rejected, and why</h3>
-<p>Each row is a negative case in the storyboard above. Reason names are proposals for this study, not an implemented interface, unless the simulator source below defines them.</p>
+<p>Each row is a negative case in the storyboard above. Reason names are proposals for this study, not an implemented interface. The merged casebook validator uses its own diagnostic codes (listed in its README); <code>EVIDENCE_STALE</code> and <code>INSTRUCTION_LIKE_TEXT</code> are not among them. Its baseline abstains instead of guessing when no rule matches or rules conflict.</p>
 <div class="xp-tablewrap"><table class="xp-table"><caption>Rejections in the storyboard</caption><thead><tr><th scope="col">Case</th><th scope="col">Stopped at</th><th scope="col">Reason</th><th scope="col">What it guards against</th></tr></thead><tbody>
 <tr><th scope="row"><a href="#xp-case-compatible-silent" data-xp-pick="xp-case-compatible-silent">Compatible QoS, still silent</a></th><td>Rule gate</td><td>The QoS rule does not apply, so the family stays unknown.</td><td>A guess based on the closest label.</td></tr>
 <tr><th scope="row"><a href="#xp-case-stale-evidence" data-xp-pick="xp-case-stale-evidence">Stale evidence</a></th><td>Validate</td><td>EVIDENCE_STALE (proposed code)</td><td>Any diagnosis from old evidence.</td></tr>
@@ -294,8 +294,8 @@ family: unknown</pre>
 </ol><p class="xp-note">Variables, failure cases and the evidence required before publishing a result are in the experiment blueprint below. Proposed reason codes on this page are not an implemented API. See also the <a href="#experiment">experiment blueprint</a> on this page.</p></section>
 <section class="xp-card" aria-labelledby="xp-metrics"><h3 id="xp-metrics">Measured values</h3>
 <div class="xp-tablewrap"><table class="xp-table"><caption>Every value is N/A until a reviewed run exists</caption><thead><tr><th scope="col">Metric</th><th scope="col">Value</th><th scope="col">Why</th></tr></thead><tbody>
-<tr><th scope="row">Macro-F1 (registry primary metric)</th><td><span class="xp-na">N/A</span></td><td>The casebook and baseline do not exist yet.</td></tr>
-<tr><th scope="row">Per-class recall</th><td><span class="xp-na">N/A</span></td><td>Not run.</td></tr>
+<tr><th scope="row">Macro-F1 (registry primary metric)</th><td><span class="xp-na">N/A</span></td><td>Not measured. The casebook and baseline exist, but cases and rules were written together, so their 31 of 31 match is a regression check, not accuracy. The module reports no macro-F1.</td></tr>
+<tr><th scope="row">Per-class recall</th><td><span class="xp-na">N/A</span></td><td>Not measured. Most labels have only one or two synthetic cases.</td></tr>
 <tr><th scope="row">Abstention rate and selective risk</th><td><span class="xp-na">N/A</span></td><td>Not run.</td></tr>
 <tr><th scope="row">End-to-end triage time</th><td><span class="xp-na">N/A</span></td><td>Not measured.</td></tr>
 </tbody></table></div><p class="xp-note">See the <a href="./results.html">evidence registry</a>. Nothing on this page is a benchmark.</p></section>
@@ -306,8 +306,19 @@ family: unknown</pre>
 <li><a href="https://github.com/MSKazemi/robo-resilience-lab/tree/main/examples/ros2-sequence-probe/"><code>examples/ros2-sequence-probe/</code></a><br>Sequence-ID publisher/subscriber probe with explicit reliability and durability options (seqprobe/qos.py).</li>
 <li><a href="https://github.com/MSKazemi/robo-resilience-lab/tree/main/experiments/e02-dds-resilience/"><code>experiments/e02-dds-resilience/</code></a><br>Design-only reliability-by-impairment matrix and a deterministic analysis harness. Live runs are marked NOT RUN there.</li>
 <li><a href="https://github.com/MSKazemi/robo-resilience-lab/blob/main/scripts/test-ros2-image.sh"><code>scripts/test-ros2-image.sh</code></a><br>Image-local ROS 2 check. It does not test cross-node DDS.</li>
-<li>Triage casebook, rule baseline and classifier: not created yet. Tracked in issue #84. <a href="https://github.com/MSKazemi/robo-resilience-lab/issues/84">Issue #84</a></li>
+<li><a href="https://github.com/MSKazemi/robo-resilience-lab/tree/main/examples/ros2-fault-triage-casebook/"><code>examples/ros2-fault-triage-casebook/</code></a><br>31 hand-authored SYNTHETIC incident cases, a closed 13-label taxonomy with an abstain label, a validator with typed diagnostics, a deterministic rule baseline and an evaluator. Issue #84.</li>
+<li>Still not built: any Jev, language-model or Choice-question comparison (the module&#x27;s evaluation plan marks every cell NOT RUN) and any case taken from a real incident. <a href="https://github.com/MSKazemi/robo-resilience-lab/issues/84">Issue #84</a></li>
 </ul></section>
+<section class="xp-card xp-card--wide" aria-labelledby="xp-run"><h3 id="xp-run">Run it offline</h3>
+<p>From the repository root. Standard library only, CPU only, no network, no ROS 2. Commands are copied from the module README; the first three run inside the module directory.</p>
+<pre class="sc-code"><code>cd examples/ros2-fault-triage-casebook
+python3 -m triage validate
+python3 -m triage evaluate
+python3 -m triage triage fixtures/case_001.json
+cd ../..
+python3 -m unittest discover -s examples/ros2-fault-triage-casebook/tests -t examples/ros2-fault-triage-casebook</code></pre>
+<p class="xp-note">Commands checked on 2026-11-20 at commit <code>e45de7a</code> with Python 3.12.3. <code>validate</code> reported 31 valid cases and 0 diagnostics; <code>evaluate</code> reported an exact match on 31 of 31 cases, with 8 correct abstentions, and labelled the result circular.</p>
+<p class="xp-note"><strong>What this does not show:</strong> no real ROS 2 or DDS behaviour was observed: every case is invented, and the 31 of 31 score only shows the rules reproduce what their author wrote. No Jev, language-model or Choice result exists, and nothing here verifies DDS delivery across Kubernetes workers.</p></section>
 </div>
 <p class="xp-note">Illustration only. The steps are fixed text written by hand. This page runs no model, sends no network request, publishes no ROS 2 message and moves no robot. Use the Pause decorative motion button near the top of the page to stop all motion; the player never starts by itself.</p>
 </div></section>
